@@ -31,14 +31,14 @@ export default function TermsOfService() {
 
           <hr className="my-6" />
 
-          <p className="text-lg">Welcome to Access Realty! These Terms of Service ("Terms") govern your access to and use of our real estate listing platform, website, and services. By creating an account or using our services, you agree to be bound by these Terms.</p>
+          <p className="text-lg">Welcome to Access Realty! These Terms of Service (&quot;Terms&quot;) govern your access to and use of our real estate listing platform, website, and services. By creating an account or using our services, you agree to be bound by these Terms.</p>
 
           <p className="mt-4">Please read these Terms carefully before using our platform. If you do not agree to these Terms, you may not access or use our services.</p>
 
           <hr className="my-6" />
 
           <h2 className="text-2xl font-semibold mt-8 mb-4">1. Acceptance of Terms</h2>
-          <p>By accessing or using the Access Realty platform ("Platform"), you agree to comply with and be bound by these Terms of Service, our <Link href="/privacy" className="text-[#2C5282] hover:underline">Privacy Policy</Link>, and our Communications Policy.</p>
+          <p>By accessing or using the Access Realty platform (&quot;Platform&quot;), you agree to comply with and be bound by these Terms of Service, our <Link href="/privacy" className="text-[#2C5282] hover:underline">Privacy Policy</Link>, and our Communications Policy.</p>
 
           <h3 className="text-xl font-semibold mt-6 mb-3">Eligibility</h3>
           <p>You must be at least 18 years old to use our services. By using our Platform, you represent and warrant that:</p>
@@ -95,8 +95,8 @@ export default function TermsOfService() {
 
           <h2 className="text-2xl font-semibold mt-8 mb-4">10. Disclaimers and Limitation of Liability</h2>
 
-          <h3 className="text-xl font-semibold mt-6 mb-3">Services Provided "As Is"</h3>
-          <p className="uppercase font-semibold">ACCESS REALTY PROVIDES THE PLATFORM AND SERVICES ON AN "AS IS" AND "AS AVAILABLE" BASIS WITHOUT WARRANTIES OF ANY KIND. WE DO NOT GUARANTEE:</p>
+          <h3 className="text-xl font-semibold mt-6 mb-3">Services Provided &quot;As Is&quot;</h3>
+          <p className="uppercase font-semibold">ACCESS REALTY PROVIDES THE PLATFORM AND SERVICES ON AN &quot;AS IS&quot; AND &quot;AS AVAILABLE&quot; BASIS WITHOUT WARRANTIES OF ANY KIND. WE DO NOT GUARANTEE:</p>
           <ul className="list-disc pl-6 space-y-2 mt-2">
             <li>That your property will sell or sell at any particular price or timeframe</li>
             <li>Uninterrupted or error-free service</li>
