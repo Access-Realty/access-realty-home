@@ -1,36 +1,82 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Access Realty - Marketing Site
 
-## Getting Started
+Marketing website and landing pages for Access Realty, deployed at [access.realty](https://access.realty).
 
-First, run the development server:
+## Overview
+
+This repository contains the public-facing marketing site for Access Realty. It serves as:
+- Company homepage and brand presence
+- Privacy Policy and Terms of Service
+- Future: Paid advertising landing pages for lead capture
+
+## Tech Stack
+
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **Styling:** Tailwind CSS v4
+- **Deployment:** Vercel
+- **Database:** Supabase (shared with main app)
+
+## Architecture
+
+This is part of the Access Realty multi-repo platform:
+1. **`access-realty-app`** (`app.access.realty`) - Main application for property submissions and management
+2. **`access-realty-home`** (`access.realty`) - THIS REPO - Marketing site and landing pages
+3. **`access-realty-seo`** (`start.access.realty`) - SEO property pages (100K+ static pages)
+
+See `PLATFORM_ARCHITECTURE.md` in the main app repo for complete platform documentation.
+
+## Development
 
 ```bash
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
+# Build for production
+npm run build
+
+# Start production server
+npm start
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the site.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Project Structure
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```
+access-realty-home/
+├── app/
+│   ├── page.tsx           # Homepage
+│   ├── privacy/page.tsx   # Privacy Policy
+│   ├── terms/page.tsx     # Terms of Service
+│   ├── layout.tsx         # Root layout
+│   └── globals.css        # Global styles
+├── public/                # Static assets
+└── README.md
+```
 
-## Learn More
+## Deployment
 
-To learn more about Next.js, take a look at the following resources:
+Deployed automatically to Vercel on push to `main` branch.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+**Production:** https://access.realty
+**Vercel Project:** `access-realty-home`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Environment Variables
 
-## Deploy on Vercel
+See Vercel project settings for environment variables. No environment variables required for basic site functionality.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Related Repositories
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- [access-realty-app](https://github.com/Bmiller4evr/access-realty-app) - Main application
+- access-realty-seo (future) - SEO property pages
+
+## Contact
+
+**Access Realty**
+5755 Rufe Snow Dr STE 160
+North Richland Hills, TX 76180
+[https://access.realty](https://access.realty)

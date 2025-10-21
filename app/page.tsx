@@ -1,102 +1,101 @@
-import Image from "next/image";
+// ABOUTME: Homepage for Access Realty marketing site
+// ABOUTME: Serves as the main landing page with CTAs to the app
+
+import Link from "next/link";
 
 export default function Home() {
   return (
-    <div className="font-sans grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="font-mono list-inside list-decimal text-sm/6 text-center sm:text-left">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] font-mono font-semibold px-1 py-0.5 rounded">
-              app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="min-h-screen flex flex-col">
+      {/* Header */}
+      <header className="border-b">
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="text-xl font-bold text-[#2C5282]">Access Realty</div>
+          <div className="flex gap-4">
+            <Link href="/privacy" className="text-gray-600 hover:text-gray-900">
+              Privacy
+            </Link>
+            <Link href="/terms" className="text-gray-600 hover:text-gray-900">
+              Terms
+            </Link>
+            <a
+              href="https://app.access.realty"
+              className="bg-[#2C5282] text-white px-4 py-2 rounded-md hover:bg-[#1e3a5f] transition-colors"
+            >
+              Sign In
+            </a>
+          </div>
+        </nav>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
+      {/* Hero Section */}
+      <main className="flex-1">
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
+          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-6">
+            Sell Your House Fast
+          </h1>
+          <p className="text-xl text-gray-600 mb-8 max-w-2xl mx-auto">
+            Get a fair cash offer for your home in minutes. No fees, no repairs, no hassle.
+          </p>
+          <div className="flex gap-4 justify-center">
+            <a
+              href="https://app.access.realty/signup?source=home"
+              className="bg-[#2C5282] text-white px-8 py-4 rounded-md text-lg font-semibold hover:bg-[#1e3a5f] transition-colors"
+            >
+              Get Started
+            </a>
+            <a
+              href="https://app.access.realty/signin"
+              className="bg-white text-[#2C5282] px-8 py-4 rounded-md text-lg font-semibold border-2 border-[#2C5282] hover:bg-gray-50 transition-colors"
+            >
+              Sign In
+            </a>
+          </div>
+        </section>
+
+        {/* Features Section */}
+        <section className="bg-gray-50 py-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <h2 className="text-3xl font-bold text-center mb-12">Why Choose Access Realty?</h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="text-center">
+                <div className="text-4xl mb-4">⚡</div>
+                <h3 className="text-xl font-semibold mb-2">Fast Offers</h3>
+                <p className="text-gray-600">
+                  Get a cash offer in as little as 24 hours
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-4">💰</div>
+                <h3 className="text-xl font-semibold mb-2">No Fees</h3>
+                <p className="text-gray-600">
+                  No commissions, no closing costs, no hidden fees
+                </p>
+              </div>
+              <div className="text-center">
+                <div className="text-4xl mb-4">🏠</div>
+                <h3 className="text-xl font-semibold mb-2">Sell As-Is</h3>
+                <p className="text-gray-600">
+                  No repairs needed, we buy houses in any condition
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="border-t py-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-gray-600">
+          <p>&copy; {new Date().getFullYear()} Access Realty. All rights reserved.</p>
+          <div className="mt-4 flex gap-6 justify-center">
+            <Link href="/privacy" className="hover:text-gray-900">
+              Privacy Policy
+            </Link>
+            <Link href="/terms" className="hover:text-gray-900">
+              Terms of Service
+            </Link>
+          </div>
+        </div>
       </footer>
     </div>
   );
