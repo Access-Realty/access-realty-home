@@ -22,7 +22,6 @@ This repository contains the public-facing marketing site for Access Realty. It 
 This is part of the Access Realty multi-repo platform:
 1. **`access-realty-app`** (`app.access.realty`) - Main application for property submissions and management
 2. **`access-realty-home`** (`access.realty`) - THIS REPO - Marketing site and landing pages
-3. **`access-realty-seo`** (`start.access.realty`) - SEO property pages (100K+ static pages)
 
 See `PLATFORM_ARCHITECTURE.md` in the main app repo for complete platform documentation.
 
