@@ -26,7 +26,7 @@ export default function PrivacyPolicy() {
         <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg max-w-none">
           <h1 className="text-4xl font-bold mb-2">Privacy Policy</h1>
           <p className="text-gray-600 mb-8">
-            <strong>Last Updated:</strong> October 21, 2025
+            <strong>Last Updated:</strong> December 8, 2025
           </p>
 
           <hr className="my-6" />
@@ -44,6 +44,17 @@ export default function PrivacyPolicy() {
             <li><strong>Authentication Data:</strong> Password (encrypted) or OAuth tokens when signing in through Google, Apple, or Facebook</li>
             <li><strong>Profile Information:</strong> User preferences, notification settings, and account type</li>
           </ul>
+
+          <h3 className="text-xl font-semibold mt-6 mb-3">Third-Party Authentication (Google, Apple, Facebook)</h3>
+          <p>When you choose to sign in using Google, Apple, or Facebook, we receive the following information from the authentication provider:</p>
+          <ul className="list-disc pl-6 space-y-2 mt-2">
+            <li><strong>Email Address:</strong> Your email address associated with your Google, Apple, or Facebook account</li>
+            <li><strong>Name:</strong> Your first and last name as registered with the provider</li>
+            <li><strong>Profile Picture:</strong> Your profile photo (if available and permitted by the provider)</li>
+          </ul>
+          <p className="mt-4"><strong>How we use this data:</strong> We use your email address and name solely to create and identify your Access Realty account. We do not access your contacts, calendar, emails, or any other data from these services beyond what is listed above.</p>
+          <p className="mt-2"><strong>Storage:</strong> Your email and name are stored securely in our database. OAuth tokens are encrypted and used only to verify your identity during sign-in. We do not share this authentication data with third parties except as required to operate our service.</p>
+          <p className="mt-2"><strong>Revoking access:</strong> You can disconnect your Google, Apple, or Facebook account at any time through your account settings or by contacting us. You may also revoke access directly through your Google, Apple, or Facebook account settings.</p>
 
           <h3 className="text-xl font-semibold mt-6 mb-3">Property Information</h3>
           <ul className="list-disc pl-6 space-y-2">
