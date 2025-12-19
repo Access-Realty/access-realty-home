@@ -1,0 +1,19 @@
+// ABOUTME: Staff directory page
+// ABOUTME: Lists all Access Realty team members with links to individual pages
+
+export default function Staff() {
+  return (
+    <div className="min-h-screen bg-background">
+      {/* TODO: Add header component */}
+
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <h1 className="text-4xl font-bold text-center mb-12">Our Team</h1>
+
+        {/* TODO: Add staff member cards with links to /staff/[slug] */}
+        <p className="text-center text-muted-foreground">Page under construction</p>
+      </main>
+
+      {/* TODO: Add footer component */}
+    </div>
+  );
+}
