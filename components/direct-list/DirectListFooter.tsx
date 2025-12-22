@@ -1,9 +1,9 @@
-// ABOUTME: Site footer with logo, quick links, and contact info
-// ABOUTME: Navy background with light text
+// ABOUTME: Footer component for DirectList pages
+// ABOUTME: Focused on DirectList-relevant links (How It Works, pricing)
 
 import Link from "next/link";
 
-const Footer = () => {
+export function DirectListFooter() {
   return (
     <footer className="bg-primary text-primary-foreground py-8 md:py-12">
       <div className="container mx-auto px-4">
@@ -21,22 +21,22 @@ const Footer = () => {
           </div>
 
           <div className="space-y-4">
-            <h3 className="font-bold text-lg">Quick Links</h3>
+            <h3 className="font-bold text-lg">DirectList</h3>
             <ul className="space-y-2 text-sm">
+              <li>
+                <Link
+                  href="/how-it-works"
+                  className="hover:text-secondary transition-colors"
+                >
+                  How It Works
+                </Link>
+              </li>
               <li>
                 <Link
                   href="/services"
                   className="hover:text-secondary transition-colors"
                 >
-                  Solutions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/direct-list"
-                  className="hover:text-secondary transition-colors"
-                >
-                  DirectList
+                  Compare Plans
                 </Link>
               </li>
               <li>
@@ -53,14 +53,6 @@ const Footer = () => {
                   className="hover:text-secondary transition-colors"
                 >
                   Terms of Service
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="/staff"
-                  className="hover:text-secondary transition-colors"
-                >
-                  Our Team
                 </Link>
               </li>
             </ul>
@@ -92,6 +84,4 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}
