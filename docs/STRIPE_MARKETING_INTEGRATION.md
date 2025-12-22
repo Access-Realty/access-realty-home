@@ -1,8 +1,8 @@
-# Marketing Site Stripe Integration - Developer Primer
+# Marketing Site Stripe Integration
 
 ## Overview
 
-The marketing site (`access.realty`) now collects Stripe payments BEFORE users create accounts. This document explains the integration and what needs to be implemented in `access-realty-app`.
+The marketing site (`access.realty`) collects Stripe payments BEFORE users create accounts using **Embedded Checkout**. The payment form renders directly on access.realty in a modal, so users never leave the site during payment. After payment, users are redirected to the app (`app.access.realty`) where their payment is verified and their service tier is pre-selected.
 
 ## Flow Diagram
 
@@ -12,21 +12,19 @@ The marketing site (`access.realty`) now collects Stripe payments BEFORE users c
 │                         (access.realty)                                      │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│  1. User lands on /services page (possibly with UTM params)                 │
-│     Example: /services?utm_source=google&utm_campaign=spring2025            │
+│  1. User lands on /direct-list or /services page                            │
 │                                                                              │
-│  2. User clicks "Select DirectList" or "Select DirectList+"                 │
-│     → PlanSelectButton captures UTM params from URL                         │
+│  2. User clicks "Get Started" → TierSelectionModal opens                    │
+│     User selects "DirectList" or "DirectList+"                              │
+│                                                                              │
+│  3. EmbeddedCheckoutModal opens                                             │
 │     → POST /api/stripe/create-checkout-session                              │
 │       Body: { plan, source, utmParams }                                     │
+│     → API returns clientSecret (NOT a redirect URL)                         │
 │                                                                              │
-│  3. API creates Stripe Checkout Session with:                               │
-│     - success_url: app.access.realty/signup?session_id={ID}&plan=X          │
-│     - metadata: { plan, source, utm_source, utm_medium, ... }               │
-│                                                                              │
-│  4. User redirects to Stripe hosted checkout                                │
-│     → Enters credit card                                                    │
-│     → Payment completes                                                     │
+│  4. Stripe <EmbeddedCheckout /> renders IN THE MODAL                        │
+│     → User enters payment info WITHOUT leaving access.realty                │
+│     → Payment completes → Stripe redirects to return_url                    │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
                                     │
@@ -36,252 +34,360 @@ The marketing site (`access.realty`) now collects Stripe payments BEFORE users c
 │                        (app.access.realty)                                   │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
-│  5. User arrives at /signup?session_id=cs_xxx&plan=direct-list              │
-│     → App detects session_id in URL                                         │
-│     → App verifies session with Stripe API                                  │
+│  5. User arrives at /?stripe_session_id=cs_xxx&tier=direct_list&ref=...     │
+│     → App parses URL params → stores in sessionStorage                      │
 │                                                                              │
-│  6. User completes SSO/OAuth signup                                         │
-│     → User record created in auth.users                                     │
-│     → Profile created                                                       │
+│  6. User completes signup (OAuth or email/password)                         │
+│     → App calls POST /api/stripe/verify-marketing-payment                   │
+│     → Session verified → marketing_stripe_session_id saved to profile       │
 │                                                                              │
-│  7. App links payment to user:                                              │
-│     → Retrieve Stripe session metadata                                      │
-│     → UPDATE stripe_payments SET user_id = X WHERE stripe_session_id = Y    │
-│                                                                              │
-│  8. User enters app with payment already complete                           │
+│  7. User starts submission flow                                             │
+│     → Service tier step is pre-selected with their paid tier                │
+│     → User proceeds with submission                                         │
 │                                                                              │
 └─────────────────────────────────────────────────────────────────────────────┘
 ```
 
-## What the Marketing Site Does
-
-### Files Modified
-
-1. **`/api/stripe/create-checkout-session/route.ts`** - Creates Stripe Checkout sessions
-2. **`/components/services/PlanSelectButton.tsx`** - Button component that captures UTMs and triggers checkout
-3. **`/app/services/page.tsx`** - Uses PlanSelectButton for CTA buttons
-
-### What Gets Sent to Stripe
-
-The Stripe Checkout session is created with this metadata:
-
-```typescript
-metadata: {
-  plan: "direct-list" | "direct-list-plus",
-  source: "services-page",
-  created_from: "marketing-site",
-  utm_source?: string,
-  utm_medium?: string,
-  utm_campaign?: string,
-  utm_term?: string,
-  utm_content?: string,
-}
-```
-
-### Success URL Format
-
-After payment, Stripe redirects to:
-```
-https://app.access.realty/signup?session_id={CHECKOUT_SESSION_ID}&plan=direct-list&payment_complete=true
-```
-
-The `{CHECKOUT_SESSION_ID}` is replaced by Stripe with the actual session ID (e.g., `cs_test_abc123...`).
-
 ---
 
-## What access-realty-app Needs to Implement
+## Marketing Site Implementation
 
-### 1. Database Migration
+### 1. Create Checkout Session API
 
-The existing `stripe_payments` table needs two changes:
-
-```sql
--- Migration: Add support for pre-auth payments from marketing site
-
--- 1. Make user_id nullable (payments can exist before user signup)
-ALTER TABLE stripe_payments
-ALTER COLUMN user_id DROP NOT NULL;
-
--- 2. Add stripe_session_id for linking payments after signup
-ALTER TABLE stripe_payments
-ADD COLUMN stripe_session_id TEXT UNIQUE;
-
--- 3. Add index for session lookups
-CREATE INDEX idx_stripe_payments_session_id
-ON stripe_payments(stripe_session_id)
-WHERE stripe_session_id IS NOT NULL;
-
--- Note: Existing rows will have NULL stripe_session_id (legacy payments)
--- New payments from marketing site will have session_id but NULL user_id initially
-```
-
-### 2. Signup Flow Changes
-
-In the signup/onboarding flow, check for `session_id` query parameter:
+`/app/api/stripe/create-checkout-session/route.ts`:
 
 ```typescript
-// In /signup page or auth callback
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
 
-const searchParams = useSearchParams();
-const sessionId = searchParams.get('session_id');
-const paymentComplete = searchParams.get('payment_complete');
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 
-if (sessionId && paymentComplete === 'true') {
-  // User paid on marketing site before signup
-  // Store sessionId for linking after OAuth completes
-  sessionStorage.setItem('stripe_session_id', sessionId);
-}
-```
+// Map plan IDs to Stripe price IDs
+const PLAN_PRICE_MAP: Record<string, { priceId: string; name: string; amountCents: number }> = {
+  "direct-list": {
+    priceId: process.env.STRIPE_PRICE_DIRECT_LIST || "",
+    name: "DirectList",
+    amountCents: 49500, // $495 upfront
+  },
+  "direct-list-plus": {
+    priceId: process.env.STRIPE_PRICE_DIRECT_LIST_PLUS || "",
+    name: "DirectList+",
+    amountCents: 99500, // $995 upfront
+  },
+  "full-service": {
+    priceId: "",
+    name: "Full Service",
+    amountCents: 0, // No upfront - 3% at closing
+  },
+};
 
-### 3. Post-Auth Payment Linking
+export async function POST(request: NextRequest) {
+  const { plan, source, utmParams } = await request.json();
 
-After user completes OAuth and profile creation:
-
-```typescript
-async function linkPendingPayment(userId: string) {
-  const sessionId = sessionStorage.getItem('stripe_session_id');
-  if (!sessionId) return;
-
-  // Verify session with Stripe
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
-
-  if (session.payment_status !== 'paid') {
-    console.error('Session not paid:', sessionId);
-    return;
+  const planConfig = PLAN_PRICE_MAP[plan];
+  if (!planConfig) {
+    return NextResponse.json({ error: "Invalid plan" }, { status: 400 });
   }
 
-  // Link payment to user in database
-  const { error } = await supabase
-    .from('stripe_payments')
-    .update({ user_id: userId })
-    .eq('stripe_session_id', sessionId);
-
-  if (!error) {
-    sessionStorage.removeItem('stripe_session_id');
-  }
-}
-```
-
-### 4. Create Payment Record (Option A: Webhook)
-
-The marketing site does NOT insert into `stripe_payments`. You have two options:
-
-**Option A: Stripe Webhook (Recommended)**
-
-Add a webhook handler for `checkout.session.completed`:
-
-```typescript
-// /api/webhooks/stripe/route.ts
-
-case 'checkout.session.completed': {
-  const session = event.data.object;
-
-  // Only handle sessions from marketing site
-  if (session.metadata?.created_from !== 'marketing-site') {
-    break;
+  // Full Service has no upfront payment - redirect directly to app
+  if (planConfig.amountCents === 0) {
+    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
+    const signupUrl = new URL(appBaseUrl);
+    signupUrl.searchParams.set("tier", "full_service");
+    if (source) signupUrl.searchParams.set("ref", source);
+    // Forward UTM params
+    if (utmParams) {
+      Object.entries(utmParams).forEach(([key, value]) => {
+        if (value) signupUrl.searchParams.set(key, value as string);
+      });
+    }
+    return NextResponse.json({
+      redirectUrl: signupUrl.toString(),
+      clientSecret: null,
+      noPaymentRequired: true,
+    });
   }
 
-  await supabase.from('stripe_payments').insert({
-    stripe_session_id: session.id,
-    stripe_payment_intent_id: session.payment_intent,
-    amount: session.amount_total,
-    currency: session.currency,
-    status: 'succeeded',
-    stripe_metadata: session.metadata, // Contains UTMs!
-    user_id: null, // Will be linked after signup
+  // Build return URL with UTM params forwarded
+  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
+  const tier = plan === "direct-list" ? "direct_list" : "direct_list_plus";
+  const returnUrlParams = new URLSearchParams({
+    stripe_session_id: "{CHECKOUT_SESSION_ID}",
+    tier,
+    ...(source && { ref: source }),
+  });
+  if (utmParams) {
+    Object.entries(utmParams).forEach(([key, value]) => {
+      if (value) returnUrlParams.set(key, value as string);
+    });
+  }
+  const checkoutReturnUrl = `${appBaseUrl}/?${returnUrlParams.toString()}`;
+
+  // Create Stripe Checkout session in EMBEDDED mode
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    ui_mode: "embedded", // <-- Key difference from hosted checkout
+    line_items: [{ price: planConfig.priceId, quantity: 1 }],
+    return_url: checkoutReturnUrl, // Not success_url - embedded uses return_url
+    metadata: {
+      plan,
+      source: source || "services-page",
+      created_from: "marketing-site",
+      ...(utmParams?.utm_source && { utm_source: utmParams.utm_source }),
+      ...(utmParams?.utm_medium && { utm_medium: utmParams.utm_medium }),
+      ...(utmParams?.utm_campaign && { utm_campaign: utmParams.utm_campaign }),
+    },
+    billing_address_collection: "required",
   });
 
-  break;
+  // Return clientSecret for embedded checkout (NOT a redirect URL)
+  return NextResponse.json({
+    clientSecret: session.client_secret,
+    sessionId: session.id,
+  });
 }
 ```
 
-**Option B: Create on Verification**
+### 2. Embedded Checkout Modal Component
 
-Alternatively, create the record when the user arrives with a session_id:
+`/components/checkout/EmbeddedCheckoutModal.tsx`:
 
 ```typescript
-// During signup flow
-async function verifyAndRecordPayment(sessionId: string) {
-  const stripe = new Stripe(process.env.STRIPE_SECRET_KEY);
-  const session = await stripe.checkout.sessions.retrieve(sessionId);
+"use client";
 
-  if (session.payment_status !== 'paid') return null;
+import { useState, useEffect, useCallback } from "react";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout,
+} from "@stripe/react-stripe-js";
 
-  // Check if already recorded
-  const { data: existing } = await supabase
-    .from('stripe_payments')
-    .select('id')
-    .eq('stripe_session_id', sessionId)
-    .single();
+// Initialize Stripe outside component to avoid recreation
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
-  if (existing) return existing;
-
-  // Create payment record
-  const { data } = await supabase.from('stripe_payments').insert({
-    stripe_session_id: sessionId,
-    stripe_payment_intent_id: session.payment_intent,
-    amount: session.amount_total,
-    currency: session.currency,
-    status: 'succeeded',
-    stripe_metadata: session.metadata,
-    user_id: null, // Will be updated after signup completes
-  }).select().single();
-
-  return data;
+interface EmbeddedCheckoutModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  plan: string;
+  planName: string;
+  source?: string;
+  utmParams?: Record<string, string>;
+  onSuccess?: (sessionId: string) => void;
+  onError?: (error: string) => void;
 }
+
+export function EmbeddedCheckoutModal({
+  isOpen,
+  onClose,
+  plan,
+  planName,
+  source,
+  utmParams,
+  onError,
+}: EmbeddedCheckoutModalProps) {
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  // Fetch client secret when modal opens
+  useEffect(() => {
+    if (isOpen && !clientSecret && !loading) {
+      setLoading(true);
+      fetch("/api/stripe/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ plan, source, utmParams }),
+      })
+        .then((res) => res.json())
+        .then((data) => {
+          if (data.noPaymentRequired && data.redirectUrl) {
+            window.location.href = data.redirectUrl;
+          } else if (data.clientSecret) {
+            setClientSecret(data.clientSecret);
+          }
+        })
+        .catch((err) => onError?.(err.message))
+        .finally(() => setLoading(false));
+    }
+  }, [isOpen, plan, source, utmParams, clientSecret, loading, onError]);
+
+  if (!isOpen) return null;
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      <div className="absolute inset-0 bg-black/60" onClick={onClose} />
+      <div className="relative bg-white rounded-xl max-w-2xl w-full max-h-[90vh] overflow-hidden">
+        <div className="p-4 border-b">
+          <h2>Complete Your {planName} Purchase</h2>
+          <button onClick={onClose}>Close</button>
+        </div>
+        <div className="p-4">
+          {loading || !clientSecret ? (
+            <div>Loading checkout...</div>
+          ) : (
+            <EmbeddedCheckoutProvider
+              stripe={stripePromise}
+              options={{ clientSecret }}
+            >
+              <EmbeddedCheckout />
+            </EmbeddedCheckoutProvider>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+```
+
+### 3. Environment Variables
+
+```bash
+# .env.local
+
+# Stripe keys
+STRIPE_SECRET_KEY=sk_test_xxx           # Server-side only
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_xxx  # Client-side (for EmbeddedCheckout)
+
+# Service tier price IDs (from Stripe Dashboard)
+STRIPE_PRICE_DIRECT_LIST=price_xxx      # $495 DirectList
+STRIPE_PRICE_DIRECT_LIST_PLUS=price_xxx # $995 DirectList+
+
+# Webhook secret (for checkout.session.completed events)
+STRIPE_WEBHOOK_SECRET=whsec_xxx
+
+# URLs
+NEXT_PUBLIC_APP_URL=https://app.access.realty
+```
+
+### 4. Required Packages
+
+```bash
+npm install @stripe/stripe-js @stripe/react-stripe-js stripe
+```
+
+### 5. Price IDs Reference
+
+| Tier | Plan ID | Price | Stripe Product ID |
+|------|---------|-------|-------------------|
+| DirectList | `direct-list` | $495 | `prod_TJxlMoNGc1otZ5` |
+| DirectList+ | `direct-list-plus` | $995 | `prod_TNOHtbmROWkZoh` |
+
+**Note:** Full Service is commission-based (3% at closing, no upfront payment) - redirects directly to app without Stripe checkout.
+
+---
+
+## Hosted vs Embedded Checkout Comparison
+
+| Feature | Hosted Checkout | Embedded Checkout (Current) |
+|---------|-----------------|----------------------------|
+| User experience | Redirects to checkout.stripe.com | Stays on access.realty |
+| API returns | `{ url }` for redirect | `{ clientSecret }` for component |
+| Session param | `success_url` | `return_url` |
+| UI mode | `ui_mode: undefined` (default) | `ui_mode: "embedded"` |
+| Client packages | None required | `@stripe/stripe-js`, `@stripe/react-stripe-js` |
+| Brand consistency | Stripe-branded page | Your site's modal |
+
+---
+
+## URL Parameters
+
+When redirecting to the app after payment, these URL parameters are used:
+
+| Parameter | Required | Description |
+|-----------|----------|-------------|
+| `stripe_session_id` | Yes | Stripe Checkout Session ID (`{CHECKOUT_SESSION_ID}` template) |
+| `tier` | Yes | Service tier code: `direct_list` or `direct_list_plus` |
+| `ref` | No | Source page (e.g., `direct-list-page`, `services-page`) |
+| `utm_*` | No | UTM params forwarded for attribution |
+
+### Return URL Template
+
+```
+https://app.access.realty/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&ref=direct-list-page
 ```
 
 ---
 
-## Environment Variables
+## App-Side Implementation (Already Complete)
 
-The marketing site uses these env vars (already configured):
+The main app handles:
 
-```bash
-STRIPE_SECRET_KEY=sk_live_xxx  # Same key as main app
-STRIPE_PRICE_DIRECT_LIST=price_xxx
-STRIPE_PRICE_DIRECT_LIST_PLUS=price_xxx
-```
+1. **URL param parsing** - Extracts `stripe_session_id`, `tier`, `ref`, and UTM params
+2. **`/api/stripe/verify-marketing-payment`** - Verifies payment with Stripe
+3. **`profiles.marketing_stripe_session_id`** - Stores verified session for audit
+4. **`SubmissionFlow`** - Pre-selects service tier based on verified payment
 
 ---
 
 ## Testing
 
-### Test with UTM Parameters
+### Local Testing
 
-1. Visit: `http://localhost:3000/services?utm_source=test&utm_campaign=dev`
-2. Click "Select DirectList"
-3. Complete Stripe test payment (card: 4242 4242 4242 4242)
-4. Check Stripe Dashboard → Payments → click payment → Metadata
-5. Confirm UTMs are present: `utm_source: test`, `utm_campaign: dev`
+1. Start marketing site: `npm run dev` (port 4000)
+2. Start app on port 3000
 
-### Test Full Flow
+Test the full flow:
+```
+1. Go to http://localhost:4000/direct-list
+2. Click "Get Started"
+3. Select "DirectList" tier in the modal
+4. Stripe checkout form appears IN THE MODAL (not a redirect!)
+5. Complete test payment (card: 4242 4242 4242 4242)
+6. Should redirect to http://localhost:3000/?stripe_session_id=cs_test_xxx&tier=direct_list
+7. Complete signup
+8. Start submission - tier should be pre-selected
+```
 
-1. Start both apps (marketing on :3000, app on :4000)
-2. Complete payment on marketing site
-3. Should redirect to `app.access.realty/signup?session_id=cs_xxx...`
-4. Complete OAuth signup
-5. Verify payment is linked to user in database
+### Test Card Numbers
 
----
-
-## Edge Cases to Handle
-
-1. **User abandons after payment** - Payment record exists with `user_id = NULL`. Consider a cleanup job or re-engagement email.
-
-2. **User already has account** - If user with same email exists during OAuth, link payment to existing account.
-
-3. **Session expired** - Stripe sessions expire after 24 hours. Handle gracefully if user returns with stale session_id.
-
-4. **Duplicate session attempts** - The UNIQUE constraint on `stripe_session_id` prevents double-recording.
+- Success: `4242 4242 4242 4242`
+- Decline: `4000 0000 0000 0002`
+- 3D Secure: `4000 0027 6000 3184`
 
 ---
 
-## Questions?
+## Webhook (Optional)
 
-Reach out to the team if anything is unclear. The key points are:
-1. Migration makes `user_id` nullable and adds `stripe_session_id`
-2. Signup flow needs to detect and store `session_id` from URL
-3. After OAuth, link the payment to the new user
-4. UTM data is in the Stripe session metadata and should be preserved in `stripe_metadata` JSONB column
+For tracking/analytics, add a webhook handler for `checkout.session.completed`:
+
+```typescript
+// /app/api/stripe/webhook/route.ts
+// Not required for core functionality - the app verifies sessions on arrival
+// Useful for: analytics, email triggers, CRM updates
+
+case 'checkout.session.completed': {
+  const session = event.data.object;
+
+  if (session.metadata?.created_from !== 'marketing-site') break;
+
+  console.log('Marketing payment completed:', {
+    tier: session.metadata.plan,
+    amount: session.amount_total,
+    email: session.customer_details?.email,
+    source: session.metadata.source,
+    utm_source: session.metadata.utm_source,
+  });
+}
+```
+
+---
+
+## Troubleshooting
+
+### Checkout modal shows "Loading..." forever
+- Check browser console for errors
+- Verify `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` is set
+- Verify API is returning `clientSecret`
+
+### "Payment not completed" error in app
+- Check Stripe Dashboard to confirm payment succeeded
+- Verify session hasn't expired (24 hour limit)
+
+### Tier not pre-selected in app
+- Confirm `tier` URL param matches exactly: `direct_list` or `direct_list_plus`
+- Check browser console for sessionStorage issues
+
+### Session verification fails
+- Confirm both apps use the same Stripe account
+- Check `STRIPE_SECRET_KEY` is correctly set in app's environment

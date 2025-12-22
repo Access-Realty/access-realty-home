@@ -6,6 +6,7 @@
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { HiXMark, HiCheck } from "react-icons/hi2";
+import { EmbeddedCheckoutModal } from "../checkout/EmbeddedCheckoutModal";
 
 // Tier configuration
 const TIERS = [
@@ -246,8 +247,9 @@ export function TierSelectionModal({
   onClose,
   source = "direct-list-page",
 }: TierSelectionModalProps) {
-  const [loadingTier, setLoadingTier] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTier, setSelectedTier] = useState<typeof TIERS[0] | null>(null);
+  const [showCheckout, setShowCheckout] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -260,9 +262,9 @@ export function TierSelectionModal({
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === "Escape" && isOpen) onClose();
+      if (e.key === "Escape" && isOpen && !showCheckout) onClose();
     },
-    [isOpen, onClose]
+    [isOpen, showCheckout, onClose]
   );
 
   useEffect(() => {
@@ -270,29 +272,24 @@ export function TierSelectionModal({
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, [handleKeyDown]);
 
-  const handleSelectTier = async (tierId: string) => {
-    setLoadingTier(tierId);
-    setError(null);
-
-    try {
-      const response = await fetch("/api/stripe/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          plan: tierId,
-          source,
-          utmParams: getUTMParams(),
-        }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || "Failed to start checkout");
-      if (data.url) window.location.href = data.url;
-    } catch (err) {
-      console.error("Checkout error:", err);
-      setError(err instanceof Error ? err.message : "Something went wrong");
-      setLoadingTier(null);
+  const handleSelectTier = (tierId: string) => {
+    const tier = TIERS.find((t) => t.id === tierId);
+    if (tier) {
+      setSelectedTier(tier);
+      setShowCheckout(true);
+      setError(null);
     }
+  };
+
+  const handleCloseCheckout = () => {
+    setShowCheckout(false);
+    setSelectedTier(null);
+  };
+
+  const handleCheckoutError = (errorMsg: string) => {
+    setError(errorMsg);
+    setShowCheckout(false);
+    setSelectedTier(null);
   };
 
   if (!isOpen) return null;
@@ -432,114 +429,100 @@ export function TierSelectionModal({
           {/* Select Buttons - Desktop */}
           <div className="hidden md:grid grid-cols-4 gap-2 mb-2">
             <div /> {/* Empty corner */}
-            {TIERS.map((tier) => {
-              const isLoading = loadingTier === tier.id;
-              return (
-                <button
-                  key={tier.id}
-                  onClick={() => handleSelectTier(tier.id)}
-                  disabled={loadingTier !== null}
-                  className={`py-2 px-4 rounded-lg text-sm font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary-dark ${loadingTier !== null ? "opacity-70 cursor-wait" : ""}`}
-                >
-                  {isLoading ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                      </svg>
-                    </span>
-                  ) : (
-                    <>Select <TierName name={tier.name} inherit /></>
-                  )}
-                </button>
-              );
-            })}
+            {TIERS.map((tier) => (
+              <button
+                key={tier.id}
+                onClick={() => handleSelectTier(tier.id)}
+                className="py-2 px-4 rounded-lg text-sm font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary-dark"
+              >
+                Select <TierName name={tier.name} inherit />
+              </button>
+            ))}
           </div>
 
           {/* Mobile Layout - Stacked Cards */}
           <div className="md:hidden space-y-4">
-            {TIERS.map((tier) => {
-              const isLoading = loadingTier === tier.id;
-              return (
-                <div
-                  key={tier.id}
-                  className={`rounded-lg border-2 overflow-hidden ${
-                    tier.id === "full-service"
-                      ? "border-primary bg-primary/10"
-                      : tier.id === "direct-list-plus"
-                      ? "border-primary/50 bg-primary/5"
-                      : "border-border bg-card"
-                  }`}
-                >
-                  {/* Card Header */}
-                  <div className="p-4 border-b border-border/50">
-                    <div className="flex justify-between items-start">
-                      <div>
-                        <h3 className="text-lg font-semibold">
-                          <TierName name={tier.name} />
-                        </h3>
-                        {tier.badge && (
-                          <span className="inline-block mt-1 bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-xs font-semibold">
-                            {tier.badge}
-                          </span>
-                        )}
-                      </div>
-                      <div className="text-right">
-                        <div className="text-xl font-bold text-primary">{tier.totalPrice}</div>
-                        <div className="text-xs text-muted-foreground">{tier.upfrontPrice}</div>
-                      </div>
+            {TIERS.map((tier) => (
+              <div
+                key={tier.id}
+                className={`rounded-lg border-2 overflow-hidden ${
+                  tier.id === "full-service"
+                    ? "border-primary bg-primary/10"
+                    : tier.id === "direct-list-plus"
+                    ? "border-primary/50 bg-primary/5"
+                    : "border-border bg-card"
+                }`}
+              >
+                {/* Card Header */}
+                <div className="p-4 border-b border-border/50">
+                  <div className="flex justify-between items-start">
+                    <div>
+                      <h3 className="text-lg font-semibold">
+                        <TierName name={tier.name} />
+                      </h3>
+                      {tier.badge && (
+                        <span className="inline-block mt-1 bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-xs font-semibold">
+                          {tier.badge}
+                        </span>
+                      )}
+                    </div>
+                    <div className="text-right">
+                      <div className="text-xl font-bold text-primary">{tier.totalPrice}</div>
+                      <div className="text-xs text-muted-foreground">{tier.upfrontPrice}</div>
                     </div>
                   </div>
-
-                  {/* Card Features */}
-                  <div className="p-4 space-y-2">
-                    {COMPARISON_ROWS.map((row, idx) => {
-                      const value = row.values[tier.code];
-                      if (value === false) return null;
-                      return (
-                        <div
-                          key={idx}
-                          className="flex justify-between items-center py-1 border-b border-border/30 last:border-0 text-sm"
-                        >
-                          <span className="text-muted-foreground">{row.feature}</span>
-                          <span className="font-medium text-foreground">
-                            {value === true ? (
-                              <HiCheck className="h-4 w-4 text-green-600" />
-                            ) : (
-                              value
-                            )}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Card CTA */}
-                  <div className="p-4 pt-0">
-                    <button
-                      onClick={() => handleSelectTier(tier.id)}
-                      disabled={loadingTier !== null}
-                      className={`block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary-dark ${loadingTier !== null ? "opacity-70 cursor-wait" : ""}`}
-                    >
-                      {isLoading ? (
-                        <span className="flex items-center justify-center gap-2">
-                          <svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24">
-                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
-                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
-                          </svg>
-                          Processing...
-                        </span>
-                      ) : (
-                        <>Select <TierName name={tier.name} inherit /></>
-                      )}
-                    </button>
-                  </div>
                 </div>
-              );
-            })}
+
+                {/* Card Features */}
+                <div className="p-4 space-y-2">
+                  {COMPARISON_ROWS.map((row, idx) => {
+                    const value = row.values[tier.code];
+                    if (value === false) return null;
+                    return (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center py-1 border-b border-border/30 last:border-0 text-sm"
+                      >
+                        <span className="text-muted-foreground">{row.feature}</span>
+                        <span className="font-medium text-foreground">
+                          {value === true ? (
+                            <HiCheck className="h-4 w-4 text-green-600" />
+                          ) : (
+                            value
+                          )}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+
+                {/* Card CTA */}
+                <div className="p-4 pt-0">
+                  <button
+                    onClick={() => handleSelectTier(tier.id)}
+                    className="block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary-dark"
+                  >
+                    Select <TierName name={tier.name} inherit />
+                  </button>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
+
+      {/* Embedded Checkout Modal */}
+      {selectedTier && (
+        <EmbeddedCheckoutModal
+          isOpen={showCheckout}
+          onClose={handleCloseCheckout}
+          plan={selectedTier.id}
+          planName={selectedTier.name}
+          source={source}
+          utmParams={getUTMParams()}
+          onError={handleCheckoutError}
+        />
+      )}
     </div>
   );
 }

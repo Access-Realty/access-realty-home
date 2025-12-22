@@ -1,5 +1,5 @@
 // ABOUTME: API route to create Stripe Checkout sessions for service tier purchases
-// ABOUTME: Redirects users to Stripe-hosted checkout, then back to app.access.realty with session_id
+// ABOUTME: Returns clientSecret for embedded checkout (payment stays on marketing site)
 
 import { NextRequest, NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -48,10 +48,11 @@ interface UTMParams {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { plan, source, utmParams } = body as {
+    const { plan, source, utmParams, returnUrl } = body as {
       plan: string;
       source?: string;
       utmParams?: UTMParams;
+      returnUrl?: string; // For embedded checkout return
     };
 
     // Validate plan
@@ -73,13 +74,13 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Full Service has no upfront payment - redirect directly to signup
+    // Full Service has no upfront payment - redirect directly to app
     if (planConfig.amountCents === 0) {
       const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
-      // Build signup URL with UTM params preserved
-      const signupUrl = new URL(`${appBaseUrl}/signup`);
-      signupUrl.searchParams.set("plan", plan);
-      signupUrl.searchParams.set("source", source || "services-page");
+      const tier = "full_service";
+      const signupUrl = new URL(appBaseUrl);
+      signupUrl.searchParams.set("tier", tier);
+      if (source) signupUrl.searchParams.set("ref", source);
       // Forward UTM params to the app
       if (utmParams) {
         Object.entries(utmParams).forEach(([key, value]) => {
@@ -87,32 +88,45 @@ export async function POST(request: NextRequest) {
         });
       }
       return NextResponse.json({
-        url: signupUrl.toString(),
-        sessionId: null,
+        redirectUrl: signupUrl.toString(),
+        clientSecret: null,
         noPaymentRequired: true,
       });
     }
 
-    // Build success URL - redirects to app with session_id for payment linking
+    // Build return URL for embedded checkout
+    // After payment completes, user is redirected to the app with session info
     const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
-    const successUrl = `${appBaseUrl}/signup?session_id={CHECKOUT_SESSION_ID}&plan=${plan}&payment_complete=true`;
+    const tier = plan === "direct-list" ? "direct_list" : plan === "direct-list-plus" ? "direct_list_plus" : plan;
 
-    // Cancel URL returns to marketing site services page
-    const cancelUrl = `${process.env.NEXT_PUBLIC_SITE_URL || "https://access.realty"}/services?cancelled=true`;
+    // Build return URL with UTM params forwarded for attribution tracking
+    const returnUrlParams = new URLSearchParams({
+      stripe_session_id: "{CHECKOUT_SESSION_ID}",
+      tier,
+      ...(source && { ref: source }),
+    });
 
-    // Create Stripe Checkout session
+    // Forward UTM params to the app
+    if (utmParams) {
+      Object.entries(utmParams).forEach(([key, value]) => {
+        if (value) returnUrlParams.set(key, value);
+      });
+    }
+
+    const checkoutReturnUrl = `${appBaseUrl}/?${returnUrlParams.toString()}`;
+
+    // Create Stripe Checkout session in embedded mode
     const stripe = getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
-      payment_method_types: ["card"],
+      ui_mode: "embedded", // Embedded checkout - stays on our site
       line_items: [
         {
           price: planConfig.priceId,
           quantity: 1,
         },
       ],
-      success_url: successUrl,
-      cancel_url: cancelUrl,
+      return_url: checkoutReturnUrl,
       metadata: {
         plan,
         source: source || "services-page",
@@ -124,17 +138,13 @@ export async function POST(request: NextRequest) {
         ...(utmParams?.utm_term && { utm_term: utmParams.utm_term }),
         ...(utmParams?.utm_content && { utm_content: utmParams.utm_content }),
       },
-      // Allow promotion codes for marketing campaigns
-      allow_promotion_codes: true,
       // Collect billing address for compliance
       billing_address_collection: "required",
-      // Session expires in 30 minutes
-      expires_at: Math.floor(Date.now() / 1000) + 30 * 60,
     });
 
-    // Return the checkout URL for redirect
+    // Return the client secret for embedded checkout
     return NextResponse.json({
-      url: session.url,
+      clientSecret: session.client_secret,
       sessionId: session.id,
     });
   } catch (error) {
