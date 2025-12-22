@@ -3,7 +3,6 @@
 
 import {
   HiCheck,
-  HiXMark,
   HiOutlineBanknotes,
   HiOutlineHomeModern,
   HiOutlineShieldCheck,
@@ -14,6 +13,8 @@ import {
   HiOutlineLifebuoy
 } from "react-icons/hi2";
 import Link from "next/link";
+import { TierSelectTrigger } from "@/components/services/TierSelectTrigger";
+import { StyledTierName } from "@/components/services/StyledTierName";
 
 // Styled DirectList logo component
 function DirectListLogo({ className = "" }: { className?: string }) {
@@ -56,47 +57,51 @@ export default function DirectListPage() {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-center text-white">
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-24 text-left text-white">
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
             <DirectListLogo />
           </h1>
-          <p className="text-2xl md:text-3xl italic mb-4 text-white/90">
+          <p
+            className="text-2xl md:text-3xl mb-4 text-secondary font-semibold"
+            style={{ fontFamily: "'Times New Roman', serif", fontStyle: "italic" }}
+          >
             Exactly what you need, nothing you don&apos;t.
           </p>
-          <p className="text-lg md:text-xl mb-8 max-w-2xl mx-auto text-white/80">
+          <p className="text-lg md:text-xl mb-8 max-w-2xl text-white/80 font-bold">
             Everything an agent provides for a fraction of the cost.<br />
             Because selling smart shouldn&apos;t cost 6%.
           </p>
 
           {/* CTAs */}
-          <div className="flex flex-wrap justify-center gap-4 mb-12">
-            <a
-              href="https://app.access.realty/signup?plan=direct-list-plus"
-              className="border-2 border-white text-white px-8 py-3 rounded-md font-semibold hover:bg-white hover:text-primary transition-colors"
+          <div className="flex flex-wrap gap-4 mb-12">
+            <TierSelectTrigger
+              initialTier="direct-list-plus"
+              source="direct-list-hero"
+              className="inline-flex items-center justify-center bg-white text-primary px-8 py-3 rounded-md font-semibold hover:bg-white/90 transition-colors"
             >
               Get Started Now
-            </a>
+            </TierSelectTrigger>
             <Link
               href="#pricing"
-              className="bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+              className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
             >
               Calculate Your Savings
             </Link>
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto">
+          <div className="grid grid-cols-3 gap-8 max-w-2xl text-secondary">
             <div>
               <div className="text-3xl md:text-4xl font-bold">$12,000</div>
-              <div className="text-sm text-white/70">Average Savings</div>
+              <div className="text-sm opacity-80">Average Savings</div>
             </div>
             <div>
               <div className="text-3xl md:text-4xl font-bold">72 hrs</div>
-              <div className="text-sm text-white/70">MLS Activation</div>
+              <div className="text-sm opacity-80">MLS Activation</div>
             </div>
             <div>
               <div className="text-3xl md:text-4xl font-bold">100%</div>
-              <div className="text-sm text-white/70">Your Equity</div>
+              <div className="text-sm opacity-80">Your Equity</div>
             </div>
           </div>
         </div>
@@ -307,6 +312,14 @@ export default function DirectListPage() {
                   <span>Pay-per-use add-ons</span>
                 </li>
               </ul>
+
+              <TierSelectTrigger
+                initialTier="direct-list"
+                source="direct-list-page"
+                className="block w-full bg-secondary text-secondary-foreground text-center py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+              >
+                Get Started
+              </TierSelectTrigger>
             </div>
 
             {/* Direct List Plus - Best Value */}
@@ -345,44 +358,53 @@ export default function DirectListPage() {
                 </li>
               </ul>
 
-              <a
-                href="https://app.access.realty/signup?plan=direct-list-plus"
+              <TierSelectTrigger
+                initialTier="direct-list-plus"
+                source="direct-list-page"
                 className="block w-full bg-primary text-primary-foreground text-center py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
               >
                 Get Started Now
-              </a>
+              </TierSelectTrigger>
             </div>
 
-            {/* Traditional Realtor (comparison) */}
-            <div className="border-2 border-border rounded-xl p-6 bg-muted/50">
+            {/* Full Service */}
+            <div className="border-2 border-border rounded-xl p-6 bg-card">
               <h3 className="text-xl font-bold text-foreground mb-1">
-                Traditional Realtor
+                <StyledTierName name="Full Service" />
               </h3>
-              <div className="text-3xl font-bold text-muted-foreground mb-1">6%</div>
-              <p className="text-sm text-muted-foreground mb-6">~$24,000 on $400k home</p>
+              <div className="text-3xl font-bold text-primary mb-1">3%</div>
+              <p className="text-sm text-muted-foreground mb-6">No upfront payment</p>
 
               <ul className="space-y-3 mb-6">
-                <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HiCheck className="h-4 w-4" />
-                  <span>MLS listing</span>
+                <li className="flex items-center gap-2 text-sm">
+                  <HiCheck className="h-4 w-4 text-green-600" />
+                  <span>Full agent representation</span>
                 </li>
-                <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HiCheck className="h-4 w-4" />
-                  <span>Professional photos</span>
+                <li className="flex items-center gap-2 text-sm">
+                  <HiCheck className="h-4 w-4 text-green-600" />
+                  <span>Negotiation on every offer</span>
                 </li>
-                <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HiCheck className="h-4 w-4" />
-                  <span>Agent representation</span>
+                <li className="flex items-center gap-2 text-sm">
+                  <HiCheck className="h-4 w-4 text-green-600" />
+                  <span>Repairs management</span>
                 </li>
-                <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HiCheck className="h-4 w-4" />
-                  <span>Commission split</span>
+                <li className="flex items-center gap-2 text-sm">
+                  <HiCheck className="h-4 w-4 text-green-600" />
+                  <span>Transaction coordination</span>
                 </li>
-                <li className="flex items-center gap-2 text-sm text-muted-foreground">
-                  <HiXMark className="h-4 w-4 text-red-400" />
-                  <span>Keep full equity</span>
+                <li className="flex items-center gap-2 text-sm">
+                  <HiCheck className="h-4 w-4 text-green-600" />
+                  <span>Preferred vendors access</span>
                 </li>
               </ul>
+
+              <TierSelectTrigger
+                initialTier="full-service"
+                source="direct-list-page"
+                className="block w-full bg-secondary text-secondary-foreground text-center py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+              >
+                Get Started
+              </TierSelectTrigger>
             </div>
           </div>
 
@@ -402,13 +424,14 @@ export default function DirectListPage() {
           <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
             Get full MLS exposure and keep more money in your pocket.
           </p>
-          <a
-            href="https://app.access.realty/signup?plan=direct-list-plus"
+          <TierSelectTrigger
+            initialTier="direct-list-plus"
+            source="direct-list-cta"
             className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
           >
             List My Home on MLS
             <span aria-hidden="true">&rarr;</span>
-          </a>
+          </TierSelectTrigger>
         </div>
       </section>
     </div>

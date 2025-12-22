@@ -5,9 +5,9 @@ import Link from "next/link";
 
 const Footer = () => {
   return (
-    <footer className="bg-primary text-primary-foreground py-12">
+    <footer className="bg-primary text-primary-foreground py-8 md:py-12">
       <div className="container mx-auto px-4">
-        <div className="grid md:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           <div className="space-y-4">
             <div className="text-2xl font-bold">
               <span style={{ fontFamily: "'Times New Roman', serif", fontStyle: "italic" }}>
@@ -71,14 +71,14 @@ const Footer = () => {
             <p className="text-sm opacity-90">
               Ready to get started? Reach out to discuss your selling options.
             </p>
-            <p className="text-sm opacity-90">
-              5755 Rufe Snow Dr STE 120<br />
-              North Richland Hills, TX 76180
-            </p>
             <p className="text-sm">
               <a href="tel:+19728207902" className="hover:text-secondary transition-colors">
                 (972) 820-7902
               </a>
+            </p>
+            <p className="text-sm opacity-90">
+              5755 Rufe Snow Dr STE 120<br />
+              North Richland Hills, TX 76180
             </p>
           </div>
         </div>
