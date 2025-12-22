@@ -1,29 +1,29 @@
 // ABOUTME: Interactive flip cards showing different selling solutions
 // ABOUTME: Cards flip on hover to reveal description and CTA
 
-import { Clock, TrendingUp, Wrench, Smile } from "lucide-react";
+import { HiOutlineClock, HiArrowTrendingUp, HiWrenchScrewdriver, HiFaceSmile } from "react-icons/hi2";
 
 const cards = [
   {
-    icon: Clock,
+    icon: HiOutlineClock,
     title: "Need to Sell Fast?",
     description:
       "We buy houses in any condition — and can close in days, not months.",
   },
   {
-    icon: TrendingUp,
+    icon: HiArrowTrendingUp,
     title: "Want to Maximize Price?",
     description:
       "List your home with our top performing agents or use our exclusive self service listing option and save thousands in fees.",
   },
   {
-    icon: Wrench,
+    icon: HiWrenchScrewdriver,
     title: "House Less Than Perfect?",
     description:
       "No problem — we have a team ready to handle updates so you don't leave money on the table.",
   },
   {
-    icon: Smile,
+    icon: HiFaceSmile,
     title: "Want To Avoid Showings And Negotiations?",
     description:
       "Let us handle everything behind the scenes while you stay in control.",

@@ -2,7 +2,7 @@
 // ABOUTME: Displays agent bio, services, and contact info
 
 import { notFound } from "next/navigation";
-import { Home, TrendingUp, MapPin, Building } from "lucide-react";
+import { HiOutlineHomeModern, HiArrowTrendingUp, HiMapPin, HiBuildingOffice2 } from "react-icons/hi2";
 import CalendlyButton from "@/components/CalendlyButton";
 
 // Staff data - will be replaced with Supabase data later
@@ -75,10 +75,10 @@ const staffData: Record<string, {
 };
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Home,
-  TrendingUp,
-  MapPin,
-  Building,
+  Home: HiOutlineHomeModern,
+  TrendingUp: HiArrowTrendingUp,
+  MapPin: HiMapPin,
+  Building: HiBuildingOffice2,
 };
 
 export function generateStaticParams() {
@@ -150,7 +150,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid md:grid-cols-2 gap-6">
             {staff.services.map((service, index) => {
-              const IconComponent = iconMap[service.icon] || Home;
+              const IconComponent = iconMap[service.icon] || HiOutlineHomeModern;
               return (
                 <div
                   key={index}

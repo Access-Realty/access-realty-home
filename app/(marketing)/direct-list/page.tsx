@@ -1,7 +1,18 @@
 // ABOUTME: DirectList landing page for flat-fee MLS listing service
 // ABOUTME: Showcases savings, process, and pricing comparison
 
-import { Check, X, DollarSign, Home, Shield, Clock, FileText, Camera, Globe, Headphones, Phone, Mail } from "lucide-react";
+import {
+  HiCheck,
+  HiXMark,
+  HiOutlineBanknotes,
+  HiOutlineHomeModern,
+  HiOutlineShieldCheck,
+  HiOutlineClock,
+  HiOutlineDocumentText,
+  HiOutlineCamera,
+  HiOutlineGlobeAlt,
+  HiOutlineLifebuoy
+} from "react-icons/hi2";
 import Link from "next/link";
 
 // Styled DirectList logo component
@@ -107,7 +118,7 @@ export default function DirectListPage() {
             {/* Save Thousands */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="h-8 w-8 text-primary" />
+                <HiOutlineBanknotes className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Save Thousands in Commissions
@@ -123,7 +134,7 @@ export default function DirectListPage() {
             {/* Full MLS Exposure */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Home className="h-8 w-8 text-primary" />
+                <HiOutlineHomeModern className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Full MLS Exposure
@@ -139,7 +150,7 @@ export default function DirectListPage() {
             {/* Complete Control */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Shield className="h-8 w-8 text-primary" />
+                <HiOutlineShieldCheck className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Complete Control
@@ -155,7 +166,7 @@ export default function DirectListPage() {
             {/* Quick MLS Activation */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <Clock className="h-8 w-8 text-primary" />
+                <HiOutlineClock className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Quick MLS Activation
@@ -190,7 +201,7 @@ export default function DirectListPage() {
             {/* Step 1 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <FileText className="h-6 w-6 text-primary-foreground" />
+                <HiOutlineDocumentText className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -205,7 +216,7 @@ export default function DirectListPage() {
             {/* Step 2 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <Camera className="h-6 w-6 text-primary-foreground" />
+                <HiOutlineCamera className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -220,7 +231,7 @@ export default function DirectListPage() {
             {/* Step 3 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <Globe className="h-6 w-6 text-primary-foreground" />
+                <HiOutlineGlobeAlt className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -235,7 +246,7 @@ export default function DirectListPage() {
             {/* Step 4 */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <Headphones className="h-6 w-6 text-primary-foreground" />
+                <HiOutlineLifebuoy className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -276,23 +287,23 @@ export default function DirectListPage() {
 
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-sm">
-                  <X className="h-4 w-4 text-red-500" />
+                  <HiXMark className="h-4 w-4 text-red-500" />
                   <span className="text-muted-foreground">MLS listing</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>You control pricing</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>You control timeline</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>Keep full equity</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <X className="h-4 w-4 text-red-500" />
+                  <HiXMark className="h-4 w-4 text-red-500" />
                   <span className="text-muted-foreground">Professional marketing</span>
                 </li>
               </ul>
@@ -313,23 +324,23 @@ export default function DirectListPage() {
 
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>Full MLS listing</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>Professional photos & copy</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>You control pricing</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>You control timeline</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm font-semibold">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>Save Thousands</span>
                 </li>
               </ul>
@@ -352,23 +363,23 @@ export default function DirectListPage() {
 
               <ul className="space-y-3 mb-6">
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>MLS listing</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>Professional photos</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>You control pricing</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>You control timeline</span>
                 </li>
                 <li className="flex items-center gap-2 text-sm">
-                  <Check className="h-4 w-4 text-green-600" />
+                  <HiCheck className="h-4 w-4 text-green-600" />
                   <span>Keep full commission</span>
                 </li>
               </ul>
@@ -382,59 +393,22 @@ export default function DirectListPage() {
         </div>
       </section>
 
-      {/* Final CTA Section */}
-      <section className="py-20 bg-primary text-primary-foreground">
+      {/* Simplified Final CTA Section */}
+      <section className="py-16 bg-primary text-primary-foreground">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl md:text-4xl font-bold mb-2">
-            <DirectListLogo />
-          </h2>
-          <h3 className="text-2xl md:text-3xl font-bold mb-4">
+          <h2 className="text-2xl md:text-3xl font-bold mb-4">
             Ready to Save Thousands on Your Home Sale?
-          </h3>
-          <p className="text-lg mb-8 text-primary-foreground/80 max-w-2xl mx-auto">
-            Join thousands of homeowners who have successfully sold their homes without paying expensive listing fees. Get full MLS exposure and keep more money in your pocket.
+          </h2>
+          <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
+            Get full MLS exposure and keep more money in your pocket.
           </p>
-
-          {/* CTAs */}
-          <div className="flex flex-wrap justify-center gap-4 mb-10">
-            <a
-              href="https://app.access.realty/signup?plan=direct-list-plus"
-              className="border-2 border-white text-white px-8 py-3 rounded-md font-semibold hover:bg-white hover:text-primary transition-colors inline-flex items-center gap-2"
-            >
-              List My Home on MLS
-              <span aria-hidden="true">&rarr;</span>
-            </a>
-            <Link
-              href="#pricing"
-              className="bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
-            >
-              Calculate My Savings
-            </Link>
-          </div>
-
-          {/* Contact Info */}
-          <div className="flex flex-wrap justify-center gap-8 mb-8 text-sm">
-            <a href="tel:+19728207902" className="flex items-center gap-2 hover:text-secondary transition-colors">
-              <Phone className="h-4 w-4" />
-              (972) 820-7902
-            </a>
-            <a href="mailto:info@access.realty" className="flex items-center gap-2 hover:text-secondary transition-colors">
-              <Mail className="h-4 w-4" />
-              info@access.realty
-            </a>
-          </div>
-
-          {/* Trust Badges */}
-          <div className="flex flex-wrap justify-center gap-6 text-sm text-primary-foreground/70">
-            <span className="flex items-center gap-2">
-              <Check className="h-4 w-4" />
-              No long-term contracts
-            </span>
-            <span className="flex items-center gap-2">
-              <Check className="h-4 w-4" />
-              24/7 support
-            </span>
-          </div>
+          <a
+            href="https://app.access.realty/signup?plan=direct-list-plus"
+            className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+          >
+            List My Home on MLS
+            <span aria-hidden="true">&rarr;</span>
+          </a>
         </div>
       </section>
     </div>

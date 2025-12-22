@@ -1,7 +1,7 @@
 // ABOUTME: Benefits section highlighting customer-centric selling approach
 // ABOUTME: Shows key value propositions with checkmarks
 
-import { CheckCircle2 } from "lucide-react";
+import { HiCheckCircle } from "react-icons/hi2";
 
 const benefits = [
   "Top-dollar with a full-service listing",
@@ -34,7 +34,7 @@ const Benefits = () => {
                 className="flex items-start gap-4 text-left max-w-2xl mx-auto"
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <CheckCircle2 className="h-8 w-8 text-secondary flex-shrink-0 mt-1" />
+                <HiCheckCircle className="h-8 w-8 text-secondary flex-shrink-0 mt-1" />
                 <p className="text-lg md:text-xl text-foreground">{benefit}</p>
               </div>
             ))}

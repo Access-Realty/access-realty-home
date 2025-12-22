@@ -1,7 +1,7 @@
 // ABOUTME: Services page with pricing comparison table
 // ABOUTME: Displays Direct List, Direct List+, and Full Service tiers
 
-import { Check } from "lucide-react";
+import { HiCheck } from "react-icons/hi2";
 import { PlanSelectButton } from "@/components/services/PlanSelectButton";
 
 // Service tier definitions with pricing
@@ -207,7 +207,7 @@ function CellValue({ value }: { value: string | boolean | undefined }) {
     return <span className="text-muted-foreground">—</span>;
   }
   if (value === true) {
-    return <Check className="h-4 w-4 text-success mx-auto" />;
+    return <HiCheck className="h-4 w-4 text-success mx-auto" />;
   }
   return <span className="text-xs">{value}</span>;
 }
@@ -235,7 +235,7 @@ export default function Services() {
             <div className="grid grid-cols-4 gap-3 text-sm">
               {BASE_FEATURES.map((feature, idx) => (
                 <span key={idx} className="flex items-center gap-2">
-                  <Check className="h-4 w-4 text-success shrink-0" />
+                  <HiCheck className="h-4 w-4 text-success shrink-0" />
                   <span className="text-foreground">{feature}</span>
                 </span>
               ))}
@@ -365,7 +365,7 @@ export default function Services() {
               <div className="flex flex-wrap justify-center gap-x-4 gap-y-1 text-xs text-muted-foreground">
                 {BASE_FEATURES.map((feature, idx) => (
                   <span key={idx} className="flex items-center gap-1">
-                    <Check className="h-3 w-3 text-success" />
+                    <HiCheck className="h-3 w-3 text-success" />
                     {feature}
                   </span>
                 ))}
@@ -426,7 +426,7 @@ export default function Services() {
                         </span>
                         <span className="font-medium">
                           {value === true ? (
-                            <Check className="h-4 w-4 text-success" />
+                            <HiCheck className="h-4 w-4 text-success" />
                           ) : (
                             value
                           )}
