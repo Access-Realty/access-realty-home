@@ -4,6 +4,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
 import { HiXMark, HiCheck } from "react-icons/hi2";
 import { EmbeddedCheckoutModal } from "../checkout/EmbeddedCheckoutModal";
@@ -605,12 +606,12 @@ export function TierSelectionModal({
         </div>
       </div>
 
-      {/* Terms Acceptance Modal */}
-      {selectedTier && showTerms && (() => {
+      {/* Terms Acceptance Modal - rendered via portal to escape stacking context */}
+      {selectedTier && showTerms && typeof document !== "undefined" && (() => {
         const terms = generateTermsOfService(selectedTier);
-        return (
+        return createPortal(
           <div
-            className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+            className="fixed inset-0 z-[100] flex items-center justify-center p-4"
             role="dialog"
             aria-modal="true"
             aria-labelledby="terms-title"
@@ -674,7 +675,8 @@ export function TierSelectionModal({
                 </button>
               </div>
             </div>
-          </div>
+          </div>,
+          document.body
         );
       })()}
 

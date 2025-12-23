@@ -1,0 +1,382 @@
+================================================================================
+                     ACCESS REALTY MARKETING SITE ARCHITECTURE
+                              access.realty
+================================================================================
+
+This document describes the page structure, navigation pathways, and key
+elements for the Access Realty marketing website.
+
+================================================================================
+                              ROUTE GROUPS
+================================================================================
+
+The site uses Next.js route groups to apply different layouts:
+
+  /(marketing)     - Main marketing pages (Header + Footer)
+  /(direct-list)   - DirectList landing page (DirectListHeader + DirectListFooter)
+  /(staff)         - Staff/team pages (StaffHeader + Footer)
+
+================================================================================
+                           NAVIGATION COMPARISON
+================================================================================
+
++------------------------------------------------------------------------------+
+|                              MAIN HEADER                                      |
+|   (Used on: Homepage, /services, /how-it-works, /privacy, /terms)            |
++------------------------------------------------------------------------------+
+|                                                                              |
+|   [Access Realty Logo]        Solutions  |  How It Works  |  [Sign In]      |
+|        (links to /)            (/services)   (/how-it-works)  (app.access.realty)|
+|                                                                              |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+|                           DIRECTLIST HEADER                                   |
+|   (Used on: /direct-list only)                                               |
++------------------------------------------------------------------------------+
+|                                                                              |
+|   [Access Realty Logo]       How It Works | Compare Plans  |  [Sign In]     |
+|        (links to /)          (/how-it-works)   (/services)   (app.access.realty)|
+|                                                                              |
++------------------------------------------------------------------------------+
+Note: DirectList header emphasizes "How It Works" first, then "Compare Plans"
+
++------------------------------------------------------------------------------+
+|                             STAFF HEADER                                      |
+|   (Used on: /staff, /staff/[slug])                                           |
++------------------------------------------------------------------------------+
+|                                                                              |
+|   [Access Realty Logo]                                       [Sign In]      |
+|        (links to /)                                      (app.access.realty)|
+|                                                                              |
++------------------------------------------------------------------------------+
+Note: Staff header has NO navigation links - just logo and sign in button
+
+================================================================================
+                            FOOTER COMPARISON
+================================================================================
+
++------------------------------------------------------------------------------+
+|                              MAIN FOOTER                                      |
+|   (Used on: Homepage, /services, /how-it-works, /privacy, /terms, /staff)    |
++------------------------------------------------------------------------------+
+|                                                                              |
+|   [Access Realty]         Quick Links            Contact Us                  |
+|   "Sell Your House        - Solutions            "Ready to get started..."   |
+|    Your Way"              - DirectList           (972) 820-7902              |
+|                           - Privacy Policy       5755 Rufe Snow Dr STE 120   |
+|                           - Terms of Service     North Richland Hills, TX    |
+|                           - Our Team                                         |
+|                                                                              |
++------------------------------------------------------------------------------+
+
++------------------------------------------------------------------------------+
+|                          DIRECTLIST FOOTER                                    |
+|   (Used on: /direct-list only)                                               |
++------------------------------------------------------------------------------+
+|                                                                              |
+|   [Access Realty]         DirectList             Contact Us                  |
+|   "Sell Your House        - How It Works         "Ready to get started..."   |
+|    Your Way"              - Compare Plans        (972) 820-7902              |
+|                           - Privacy Policy       5755 Rufe Snow Dr STE 120   |
+|                           - Terms of Service     North Richland Hills, TX    |
+|                                                                              |
++------------------------------------------------------------------------------+
+Note: DirectList footer OMITS "Our Team" link and focuses on DirectList journey
+
+================================================================================
+                              PAGE STRUCTURE
+================================================================================
+
+--------------------------------------------------------------------------------
+HOME PAGE  (/)
+--------------------------------------------------------------------------------
+Layout: Marketing (Header + Footer)
+
+  +----------------------------------------------------------+
+  |                     HEADER                                |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  HERO SECTION                                            |
+  |  - Headline: "Sell Your House Your Way"                  |
+  |  - Description text about Access Realty                  |
+  |  - Address input form → redirects to app.access.realty   |
+  |  - Hero house image                                      |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  TESTIMONIALS SECTION                                    |
+  |  - Customer quotes and reviews                           |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  FLIP CARDS SECTION                                      |
+  |  - Interactive cards showcasing services                 |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  BENEFITS SECTION                                        |
+  |  - Key value propositions                                |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  FINAL CTA SECTION                                       |
+  |  - Call to action to get started                         |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                     FOOTER                                |
+  +----------------------------------------------------------+
+
+--------------------------------------------------------------------------------
+SERVICES/SOLUTIONS PAGE  (/services)
+--------------------------------------------------------------------------------
+Layout: Marketing (Header + Footer)
+
+  +----------------------------------------------------------+
+  |                     HEADER                                |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  PAGE HEADER                                             |
+  |  - "Choose Your Level of Service"                        |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  ALL PLANS INCLUDE BOX                                   |
+  |  - MLS + Syndication                                     |
+  |  - Professional Photography                              |
+  |  - Guided Pricing Strategy                               |
+  |  - Pre-Listing Consultation                              |
+  |  - Digital Document Signing                              |
+  |  - Lockbox & Yard Sign                                   |
+  |  - Showings by ShowingTime                               |
+  |  - Zillow/Homes Traffic                                  |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  PRICING COMPARISON TABLE (3 columns)                    |
+  |                                                          |
+  |    DirectList     |  DirectList+    |  Full Service      |
+  |    $2,995         |  $4,495         |  3%                |
+  |    ($495 upfront) |  ($995 upfront) |  (no upfront)      |
+  |                   |  "BEST VALUE"   |  "MOST POPULAR"    |
+  |                                                          |
+  |  Features comparison matrix...                           |
+  |                                                          |
+  |  [Select Plan buttons open tier selection modal]         |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                     FOOTER                                |
+  +----------------------------------------------------------+
+
+--------------------------------------------------------------------------------
+HOW IT WORKS PAGE  (/how-it-works)
+--------------------------------------------------------------------------------
+Layout: Marketing (Header + Footer)
+
+  +----------------------------------------------------------+
+  |                     HEADER                                |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  HERO SECTION (Navy background)                          |
+  |  - "How It Works"                                        |
+  |  - "Selling your home should be simple..."               |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  STEPS SECTION (5 steps with icons)                      |
+  |                                                          |
+  |  Step 1: Choose Your Plan                                |
+  |          Select the listing option that fits...          |
+  |                                                          |
+  |  Step 2: Enter Your Information                          |
+  |          Provide basic details about your home...        |
+  |                                                          |
+  |  Step 3: Get Listed on the MLS                           |
+  |          Your home is professionally listed...           |
+  |                                                          |
+  |  Step 4: Review Offers as They Come In                   |
+  |          Offers are delivered to you directly...         |
+  |                                                          |
+  |  Step 5: Select the Best Offer & Sell                    |
+  |          Choose the offer that works best...             |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  CTA SECTION                                             |
+  |  - "Ready to Get Started?"                               |
+  |  - [Start Your Listing] button                           |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                     FOOTER                                |
+  +----------------------------------------------------------+
+
+--------------------------------------------------------------------------------
+DIRECTLIST PAGE  (/direct-list)  ** DIFFERENT HEADER/FOOTER **
+--------------------------------------------------------------------------------
+Layout: DirectList (DirectListHeader + DirectListFooter)
+
+  +----------------------------------------------------------+
+  |                  DIRECTLIST HEADER                        |
+  |   (How It Works | Compare Plans | Sign In)               |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  HERO SECTION (with background image)                    |
+  |  - "DirectList" logo                                     |
+  |  - Tagline: "Exactly what you need, nothing you don't"   |
+  |  - "Everything an agent provides..."                     |
+  |  - CTAs: [Get Started Now] [Calculate Your Savings]      |
+  |  - Stats: $12,000 avg savings | 72 hrs MLS | 100% equity |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  WHY SELL WITHOUT A REALTOR (4 cards)                    |
+  |  - Save Thousands in Commissions                         |
+  |  - Full MLS Exposure                                     |
+  |  - Complete Control                                      |
+  |  - Quick MLS Activation (72-hour setup)                  |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  HOW IT WORKS (4 steps)                                  |
+  |  1. Complete Your Listing                                |
+  |  2. Professional Setup                                   |
+  |  3. Property Goes Live                                   |
+  |  4. Manage Your Sale                                     |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  PRICING SECTION (#pricing anchor)                       |
+  |                                                          |
+  |    DirectList    | DirectList Plus  | Full Service       |
+  |    $2,995        | $4,495           | 3%                 |
+  |                  | "BEST VALUE"     |                    |
+  |                                                          |
+  |  "Save $9,000 on a $400k home sale..."                   |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  FINAL CTA (Navy background)                             |
+  |  - "Ready to Save Thousands on Your Home Sale?"          |
+  |  - [List My Home on MLS] button                          |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                  DIRECTLIST FOOTER                        |
+  |   (DirectList-focused links, no "Our Team")              |
+  +----------------------------------------------------------+
+
+--------------------------------------------------------------------------------
+STAFF DIRECTORY PAGE  (/staff)
+--------------------------------------------------------------------------------
+Layout: Staff (StaffHeader + Footer)
+
+  +----------------------------------------------------------+
+  |                   STAFF HEADER                            |
+  |   (Logo only - no nav links, just Sign In)               |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  PAGE HEADER                                             |
+  |  - "Our Team"                                            |
+  |  - "Meet the dedicated professionals..."                 |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                                                          |
+  |  TEAM MEMBER CARDS (3 columns)                           |
+  |                                                          |
+  |    [JB]              [CS]              [JL]              |
+  |  Justin Brown     Cassidy Spilker   Jennifer Lovett      |
+  |  Broker Associate    Realtor           Realtor           |
+  |  [View Profile]    [View Profile]    [View Profile]      |
+  |                                                          |
+  +----------------------------------------------------------+
+  |                     FOOTER                                |
+  +----------------------------------------------------------+
+
+--------------------------------------------------------------------------------
+STAFF PROFILE PAGE  (/staff/[slug])
+--------------------------------------------------------------------------------
+Layout: Staff (StaffHeader + Footer)
+
+  - Individual team member profile
+  - Calendly scheduling integration
+  - Uses same header/footer as staff directory
+
+--------------------------------------------------------------------------------
+LEGAL PAGES  (/privacy, /terms)
+--------------------------------------------------------------------------------
+Layout: Marketing (Header + Footer)
+
+  - Privacy Policy content
+  - Terms of Service content
+  - Standard marketing header/footer
+
+================================================================================
+                           EXTERNAL LINKS
+================================================================================
+
+All authentication flows redirect to the main application:
+
+  Sign In  →  https://app.access.realty
+  Sign Up  →  https://app.access.realty/signup
+
+With tracking:
+  Get Started (from home)  →  app.access.realty/signup?source=home&address=...
+  Plan selection           →  app.access.realty/signup?plan=direct-list
+
+================================================================================
+                          LOGO STYLING PATTERN
+================================================================================
+
+Brand logos use consistent font styling:
+
+  "Access Realty" Logo:
+    - "Access" → Times New Roman, italic
+    - "Realty" → Be Vietnam Pro, bold weight 700
+
+  "DirectList" Logo:
+    - "Direct" → Times New Roman, italic
+    - "List"   → Be Vietnam Pro, bold weight 700
+
+  "Full Service" (when styled):
+    - "Full"    → Times New Roman, italic
+    - "Service" → Be Vietnam Pro, bold weight 700
+
+================================================================================
+                            COLOR SCHEME
+================================================================================
+
+  Primary:    #284b70  (Navy)      - Headers, buttons, accents
+  Secondary:  #d6b283  (Tan/Gold)  - CTAs, highlights, badges
+  Background: #f8f4ef  (Cream)     - Page backgrounds
+
+================================================================================
+                           FILE STRUCTURE
+================================================================================
+
+  app/
+    (marketing)/
+      layout.tsx          ← Uses Header + Footer
+      page.tsx            ← Homepage
+      services/page.tsx   ← Pricing comparison
+      how-it-works/page.tsx
+      privacy/page.tsx
+      terms/page.tsx
+
+    (direct-list)/
+      direct-list/
+        page.tsx          ← DirectList landing (different header/footer)
+
+    (staff)/
+      layout.tsx          ← Uses StaffHeader + Footer
+      staff/
+        page.tsx          ← Team directory
+        [slug]/page.tsx   ← Individual profiles
+
+  components/
+    Header.tsx            ← Main header (Solutions, How It Works, Sign In)
+    Footer.tsx            ← Main footer (full Quick Links)
+    StaffHeader.tsx       ← Simplified header (logo + Sign In only)
+    direct-list/
+      DirectListHeader.tsx ← DirectList header (How It Works, Compare Plans)
+      DirectListFooter.tsx ← DirectList footer (DirectList-focused links)
+
+================================================================================
