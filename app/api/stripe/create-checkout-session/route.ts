@@ -168,21 +168,8 @@ export async function POST(request: NextRequest) {
         ...(utmParams?.utm_term && { utm_term: utmParams.utm_term }),
         ...(utmParams?.utm_content && { utm_content: utmParams.utm_content }),
       },
-      // Collect billing address for compliance
+      // Collect billing address for compliance (includes name)
       billing_address_collection: "required",
-      // Collect first/last name separately for app signup
-      custom_fields: [
-        {
-          key: "first_name",
-          label: { type: "custom", custom: "First name" },
-          type: "text",
-        },
-        {
-          key: "last_name",
-          label: { type: "custom", custom: "Last name" },
-          type: "text",
-        },
-      ],
     });
 
     // Return the client secret for embedded checkout
