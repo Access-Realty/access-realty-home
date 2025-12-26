@@ -4,7 +4,7 @@
 "use client";
 
 import { useState } from "react";
-import { HiArrowRight, HiArrowLeft } from "react-icons/hi2";
+import { HiArrowRight, HiArrowLeft, HiCheck } from "react-icons/hi2";
 
 // Question types
 type QuestionType = "single" | "multi" | "rank";
@@ -16,6 +16,15 @@ interface Question {
   type: QuestionType;
   options: { id: string; label: string; description?: string }[];
 }
+
+// Priority options for the stepped ranking
+const priorityOptions = [
+  { id: "price", label: "Maximizing price", description: "Getting the most money from the sale" },
+  { id: "speed", label: "Selling quickly", description: "Closing as fast as possible" },
+  { id: "repairs", label: "Avoiding repairs", description: "Not having to fix anything" },
+  { id: "convenience", label: "Avoiding hassle", description: "No showings, paperwork, or negotiations" },
+  { id: "financial-freedom", label: "Financial fresh start", description: "Freeing up equity or simplifying monthly obligations" },
+];
 
 const questions: Question[] = [
   {
@@ -68,16 +77,19 @@ const questions: Question[] = [
   },
   {
     id: "priorities",
-    question: "Please rank the following in order of importance",
-    subtitle: "Drag to reorder, 1 = Most important",
+    question: "What matters most to you?",
     type: "rank",
-    options: [
-      { id: "price", label: "Maximizing price" },
-      { id: "speed", label: "Selling quickly" },
-      { id: "repairs", label: "Avoiding repairs" },
-      { id: "convenience", label: "Avoiding inconvenience", description: "showings, paperwork, negotiations" },
-    ],
+    options: priorityOptions,
   },
+];
+
+// Stepped ranking prompts
+const rankingPrompts = [
+  "What's MOST important to you?",
+  "What's next most important?",
+  "And after that?",
+  "What comes next?",
+  "And finally...",
 ];
 
 // Option card component
@@ -85,62 +97,65 @@ function OptionCard({
   option,
   selected,
   onClick,
-  type,
-  rank,
+  disabled,
 }: {
   option: { id: string; label: string; description?: string };
   selected: boolean;
   onClick: () => void;
-  type: QuestionType;
-  rank?: number;
+  disabled?: boolean;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left p-5 rounded-xl border-2 transition-all ${
-        selected
+      disabled={disabled}
+      className={`w-full text-left p-5 rounded-xl border-2 transition-all duration-200 ${
+        disabled
+          ? "opacity-50 cursor-not-allowed border-border"
+          : selected
           ? "border-primary bg-primary/5"
-          : "border-border hover:border-primary/50"
+          : "border-border hover:border-primary/50 hover:bg-muted/50"
       }`}
     >
       <div className="flex items-center gap-4">
-        {type === "rank" && rank !== undefined && (
-          <div className="flex items-center gap-3">
-            <span className="text-muted-foreground cursor-grab">⋮⋮</span>
-            <span className="h-8 w-8 rounded-full bg-muted flex items-center justify-center text-sm font-semibold text-primary">
-              {rank}
-            </span>
-          </div>
-        )}
-        {type !== "rank" && (
-          <div
-            className={`h-6 w-6 rounded-md border-2 flex items-center justify-center transition-colors ${
-              selected ? "border-primary bg-primary" : "border-border"
-            }`}
-          >
-            {selected && (
-              <svg className="h-4 w-4 text-white" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                  clipRule="evenodd"
-                />
-              </svg>
-            )}
-          </div>
-        )}
+        <div
+          className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
+            selected ? "border-primary bg-primary" : "border-border"
+          }`}
+        >
+          {selected && (
+            <HiCheck className="h-4 w-4 text-white" />
+          )}
+        </div>
         <div>
           <span className="font-medium text-foreground">
             {option.label}
-            {option.description && (
-              <span className="text-muted-foreground font-normal">
-                {" "}— {option.description}
-              </span>
-            )}
           </span>
+          {option.description && (
+            <span className="block text-sm text-muted-foreground mt-0.5">
+              {option.description}
+            </span>
+          )}
         </div>
       </div>
     </button>
+  );
+}
+
+// Ranked item display (shows already-selected priorities)
+function RankedItem({
+  rank,
+  option,
+}: {
+  rank: number;
+  option: { id: string; label: string; description?: string };
+}) {
+  return (
+    <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
+      <span className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
+        {rank}
+      </span>
+      <span className="font-medium text-foreground">{option.label}</span>
+    </div>
   );
 }
 
@@ -148,16 +163,53 @@ export default function SellingPlanPage() {
   const [started, setStarted] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
-  const [rankOrder, setRankOrder] = useState<string[]>(
-    questions[4].options.map((o) => o.id)
-  );
+  const [priorityRanking, setPriorityRanking] = useState<string[]>([]);
   const [completed, setCompleted] = useState(false);
 
+  // Transition state
+  const [isVisible, setIsVisible] = useState(true);
+  const [isTransitioning, setIsTransitioning] = useState(false);
+  const [slideDirection, setSlideDirection] = useState<"left" | "right">("left");
+
   const question = questions[currentQuestion];
-  const progress = ((currentQuestion + 1) / questions.length) * 100;
+  const isRankingQuestion = question.type === "rank";
+  const rankingStep = priorityRanking.length;
+  const totalRankingSteps = priorityOptions.length;
+
+  // Calculate progress - ranking question counts as multiple sub-steps
+  const baseProgress = currentQuestion / questions.length;
+  const rankingProgress = isRankingQuestion ? (rankingStep / totalRankingSteps) / questions.length : 0;
+  const progress = Math.round((baseProgress + rankingProgress) * 100);
+
+  // Transition helper
+  const transitionTo = (direction: "left" | "right", callback: () => void) => {
+    if (isTransitioning) return;
+
+    setSlideDirection(direction);
+    setIsVisible(false);
+    setIsTransitioning(true);
+
+    setTimeout(() => {
+      callback();
+      setIsVisible(true);
+      setTimeout(() => setIsTransitioning(false), 300);
+    }, 200);
+  };
 
   const handleSingleSelect = (optionId: string) => {
+    // Set answer and auto-advance
     setAnswers({ ...answers, [question.id]: optionId });
+
+    // Auto-advance after brief delay to show selection
+    setTimeout(() => {
+      transitionTo("left", () => {
+        if (currentQuestion < questions.length - 1) {
+          setCurrentQuestion(currentQuestion + 1);
+        } else {
+          setCompleted(true);
+        }
+      });
+    }, 150);
   };
 
   const handleMultiSelect = (optionId: string) => {
@@ -172,12 +224,16 @@ export default function SellingPlanPage() {
     }
   };
 
-  const handleRankMove = (fromIndex: number, toIndex: number) => {
-    const newOrder = [...rankOrder];
-    const [removed] = newOrder.splice(fromIndex, 1);
-    newOrder.splice(toIndex, 0, removed);
-    setRankOrder(newOrder);
-    setAnswers({ ...answers, [question.id]: newOrder });
+  const handlePrioritySelect = (optionId: string) => {
+    transitionTo("left", () => {
+      const newRanking = [...priorityRanking, optionId];
+      setPriorityRanking(newRanking);
+
+      // If all priorities ranked, save to answers
+      if (newRanking.length === totalRankingSteps) {
+        setAnswers({ ...answers, priorities: newRanking });
+      }
+    });
   };
 
   const canProceed = () => {
@@ -187,22 +243,62 @@ export default function SellingPlanPage() {
     if (question.type === "multi") {
       return ((answers[question.id] as string[]) || []).length > 0;
     }
-    return true; // rank always has a default order
+    if (question.type === "rank") {
+      return priorityRanking.length === totalRankingSteps;
+    }
+    return true;
   };
 
   const handleNext = () => {
-    if (currentQuestion < questions.length - 1) {
-      setCurrentQuestion(currentQuestion + 1);
-    } else {
-      setCompleted(true);
-    }
+    transitionTo("left", () => {
+      if (currentQuestion < questions.length - 1) {
+        setCurrentQuestion(currentQuestion + 1);
+      } else {
+        setCompleted(true);
+      }
+    });
   };
 
   const handleBack = () => {
-    if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
-    }
+    transitionTo("right", () => {
+      if (isRankingQuestion && priorityRanking.length > 0) {
+        setPriorityRanking(priorityRanking.slice(0, -1));
+      } else if (currentQuestion > 0) {
+        setCurrentQuestion(currentQuestion - 1);
+      }
+    });
   };
+
+  const handleStart = () => {
+    transitionTo("left", () => {
+      setStarted(true);
+    });
+  };
+
+  const handleRestart = () => {
+    transitionTo("right", () => {
+      setStarted(false);
+      setCurrentQuestion(0);
+      setAnswers({});
+      setPriorityRanking([]);
+      setCompleted(false);
+    });
+  };
+
+  // Get remaining priority options (not yet ranked)
+  const remainingPriorities = priorityOptions.filter(
+    (opt) => !priorityRanking.includes(opt.id)
+  );
+
+  // Transition classes - horizontal slide
+  const getSlideTransform = () => {
+    if (isVisible) return "translate-x-0";
+    return slideDirection === "left" ? "-translate-x-8" : "translate-x-8";
+  };
+
+  const contentClasses = `transform transition-all duration-300 ease-out ${
+    isVisible ? "opacity-100" : "opacity-0"
+  } ${getSlideTransform()}`;
 
   // Intro screen
   if (!started) {
@@ -210,7 +306,7 @@ export default function SellingPlanPage() {
       <div className="bg-background min-h-screen">
         <section className="pt-24 pb-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
+            <div className={`max-w-3xl mx-auto text-center ${contentClasses}`}>
               <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
                 Your Home. Your Best Selling Plan.
               </h1>
@@ -225,7 +321,8 @@ export default function SellingPlanPage() {
                 best for you.
               </p>
               <button
-                onClick={() => setStarted(true)}
+                onClick={handleStart}
+                disabled={isTransitioning}
                 className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors"
               >
                 Get Started
@@ -244,7 +341,7 @@ export default function SellingPlanPage() {
       <div className="bg-background min-h-screen">
         <section className="pt-24 pb-16">
           <div className="container mx-auto px-4">
-            <div className="max-w-3xl mx-auto text-center">
+            <div className={`max-w-3xl mx-auto text-center ${contentClasses}`}>
               <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
                 Your Personalized Plan
               </h1>
@@ -266,13 +363,8 @@ export default function SellingPlanPage() {
                 </a>
               </div>
               <button
-                onClick={() => {
-                  setStarted(false);
-                  setCurrentQuestion(0);
-                  setAnswers({});
-                  setCompleted(false);
-                  setRankOrder(questions[4].options.map((o) => o.id));
-                }}
+                onClick={handleRestart}
+                disabled={isTransitioning}
                 className="text-primary hover:text-secondary transition-colors font-semibold"
               >
                 Start Over
@@ -290,91 +382,107 @@ export default function SellingPlanPage() {
       <section className="pt-24 pb-16">
         <div className="container mx-auto px-4">
           <div className="max-w-2xl mx-auto">
-            {/* Progress header */}
+            {/* Progress header - always visible */}
             <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
               <span>Question {currentQuestion + 1} of {questions.length}</span>
-              <span>{Math.round(progress)}% complete</span>
+              <span>{progress}% complete</span>
             </div>
             <div className="h-2 bg-muted rounded-full mb-10 overflow-hidden">
               <div
-                className="h-full bg-primary transition-all duration-300"
+                className="h-full bg-primary transition-all duration-500 ease-out"
                 style={{ width: `${progress}%` }}
               />
             </div>
 
-            {/* Question */}
-            <h2 className="text-3xl font-bold text-primary mb-2">
-              {question.question}
-            </h2>
-            {question.subtitle && (
-              <p className="text-muted-foreground mb-6">({question.subtitle})</p>
-            )}
+            {/* Question content with transitions */}
+            <div className={contentClasses}>
+              {/* Ranking Question - Stepped UI */}
+              {isRankingQuestion ? (
+                <>
+                  <h2 className="text-3xl font-bold text-primary mb-2">
+                    {rankingPrompts[rankingStep] || "What matters most?"}
+                  </h2>
+                  <p className="text-muted-foreground mb-6">
+                    Step {rankingStep + 1} of {totalRankingSteps}
+                  </p>
 
-            {/* Options */}
-            <div className="space-y-3 mb-10">
-              {question.type === "rank"
-                ? rankOrder.map((optionId, index) => {
-                    const option = question.options.find((o) => o.id === optionId)!;
-                    return (
-                      <div key={option.id} className="flex gap-2">
-                        <button
-                          onClick={() => index > 0 && handleRankMove(index, index - 1)}
-                          disabled={index === 0}
-                          className="p-2 text-muted-foreground hover:text-primary disabled:opacity-30"
-                          aria-label="Move up"
-                        >
-                          ▲
-                        </button>
-                        <button
+                  {/* Already ranked items */}
+                  {priorityRanking.length > 0 && (
+                    <div className="space-y-2 mb-6">
+                      {priorityRanking.map((id, index) => {
+                        const option = priorityOptions.find((o) => o.id === id)!;
+                        return <RankedItem key={id} rank={index + 1} option={option} />;
+                      })}
+                    </div>
+                  )}
+
+                  {/* Remaining options to choose from */}
+                  {remainingPriorities.length > 0 && (
+                    <div className="space-y-3 mb-10">
+                      {remainingPriorities.map((option) => (
+                        <OptionCard
+                          key={option.id}
+                          option={option}
+                          selected={false}
+                          onClick={() => handlePrioritySelect(option.id)}
+                          disabled={isTransitioning}
+                        />
+                      ))}
+                    </div>
+                  )}
+
+                  {/* All ranked - show summary */}
+                  {remainingPriorities.length === 0 && (
+                    <div className="bg-primary/5 rounded-xl p-6 mb-10 border border-primary/20">
+                      <p className="text-center text-foreground font-medium">
+                        Your priorities are set. Click &quot;See My Plan&quot; to continue.
+                      </p>
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  {/* Regular Question */}
+                  <h2 className="text-3xl font-bold text-primary mb-2">
+                    {question.question}
+                  </h2>
+                  {question.subtitle && (
+                    <p className="text-muted-foreground mb-6">({question.subtitle})</p>
+                  )}
+
+                  {/* Options */}
+                  <div className="space-y-3 mb-10">
+                    {question.options.map((option) => {
+                      const isSelected =
+                        question.type === "single"
+                          ? answers[question.id] === option.id
+                          : ((answers[question.id] as string[]) || []).includes(option.id);
+                      return (
+                        <OptionCard
+                          key={option.id}
+                          option={option}
+                          selected={isSelected}
                           onClick={() =>
-                            index < rankOrder.length - 1 && handleRankMove(index, index + 1)
+                            question.type === "single"
+                              ? handleSingleSelect(option.id)
+                              : handleMultiSelect(option.id)
                           }
-                          disabled={index === rankOrder.length - 1}
-                          className="p-2 text-muted-foreground hover:text-primary disabled:opacity-30"
-                          aria-label="Move down"
-                        >
-                          ▼
-                        </button>
-                        <div className="flex-1">
-                          <OptionCard
-                            option={option}
-                            selected={false}
-                            onClick={() => {}}
-                            type="rank"
-                            rank={index + 1}
-                          />
-                        </div>
-                      </div>
-                    );
-                  })
-                : question.options.map((option) => {
-                    const isSelected =
-                      question.type === "single"
-                        ? answers[question.id] === option.id
-                        : ((answers[question.id] as string[]) || []).includes(option.id);
-                    return (
-                      <OptionCard
-                        key={option.id}
-                        option={option}
-                        selected={isSelected}
-                        onClick={() =>
-                          question.type === "single"
-                            ? handleSingleSelect(option.id)
-                            : handleMultiSelect(option.id)
-                        }
-                        type={question.type}
-                      />
-                    );
-                  })}
+                          disabled={isTransitioning}
+                        />
+                      );
+                    })}
+                  </div>
+                </>
+              )}
             </div>
 
-            {/* Navigation */}
-            <div className="flex items-center justify-between">
+            {/* Navigation - only show for multi-select and ranking */}
+            <div className={`flex items-center justify-between transition-opacity duration-200 ${isTransitioning ? 'opacity-50' : 'opacity-100'}`}>
               <button
                 onClick={handleBack}
-                disabled={currentQuestion === 0}
+                disabled={(currentQuestion === 0 && priorityRanking.length === 0) || isTransitioning}
                 className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
-                  currentQuestion === 0
+                  currentQuestion === 0 && priorityRanking.length === 0
                     ? "opacity-0 pointer-events-none"
                     : "border border-border hover:bg-muted"
                 }`}
@@ -382,18 +490,22 @@ export default function SellingPlanPage() {
                 <HiArrowLeft className="h-4 w-4" />
                 Back
               </button>
-              <button
-                onClick={handleNext}
-                disabled={!canProceed()}
-                className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
-                  canProceed()
-                    ? "bg-primary text-primary-foreground hover:bg-primary-dark"
-                    : "bg-muted text-muted-foreground cursor-not-allowed"
-                }`}
-              >
-                {currentQuestion === questions.length - 1 ? "See My Plan" : "Next"}
-                <HiArrowRight className="h-4 w-4" />
-              </button>
+
+              {/* Only show Next for multi-select and completed ranking */}
+              {(question.type === "multi" || (isRankingQuestion && remainingPriorities.length === 0)) && (
+                <button
+                  onClick={handleNext}
+                  disabled={!canProceed() || isTransitioning}
+                  className={`inline-flex items-center gap-2 px-6 py-3 rounded-lg font-semibold transition-colors ${
+                    canProceed() && !isTransitioning
+                      ? "bg-primary text-primary-foreground hover:bg-primary-dark"
+                      : "bg-muted text-muted-foreground cursor-not-allowed"
+                  }`}
+                >
+                  {currentQuestion === questions.length - 1 ? "See My Plan" : "Next"}
+                  <HiArrowRight className="h-4 w-4" />
+                </button>
+              )}
             </div>
           </div>
         </div>
