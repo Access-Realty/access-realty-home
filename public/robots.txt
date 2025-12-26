@@ -1,0 +1,9 @@
+# *
+User-agent: *
+Allow: /
+
+# Host
+Host: https://access.realty
+
+# Sitemaps
+Sitemap: https://access.realty/sitemap.xml
