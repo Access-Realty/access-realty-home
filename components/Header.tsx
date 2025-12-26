@@ -18,12 +18,6 @@ const Header = () => {
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              href="/solutions"
-              className="text-foreground hover:text-secondary transition-colors"
-            >
-              Solutions
-            </Link>
-            <Link
               href="/selling-plan"
               className="text-foreground hover:text-secondary transition-colors"
             >
