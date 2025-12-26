@@ -18,10 +18,10 @@ export function DirectListHeader() {
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <Link
-              href="/how-it-works"
+              href="/selling-plan"
               className="text-foreground hover:text-secondary transition-colors"
             >
-              How It Works
+              Selling Plan
             </Link>
             <Link
               href="/services"

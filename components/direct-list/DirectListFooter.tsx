@@ -25,10 +25,10 @@ export function DirectListFooter() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/how-it-works"
+                  href="/selling-plan"
                   className="hover:text-secondary transition-colors"
                 >
-                  How It Works
+                  Selling Plan
                 </Link>
               </li>
               <li>

@@ -24,10 +24,10 @@ const Header = () => {
               Solutions
             </Link>
             <Link
-              href="/how-it-works"
+              href="/selling-plan"
               className="text-foreground hover:text-secondary transition-colors"
             >
-              How It Works
+              Selling Plan
             </Link>
             <a
               href="https://app.access.realty"
