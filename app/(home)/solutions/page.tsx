@@ -24,10 +24,10 @@ const solutions = [
   {
     id: "price-launch",
     name: "Price Launch",
-    tagline: "Test the market risk-free",
+    tagline: "Renovate first. Sell for more.",
     description:
-      "Launch your home at an aspirational price before committing to a full listing. See real buyer interest before making decisions.",
-    icon: HiOutlineRocketLaunch,
+      "We handle the entire renovation — design, contractors, materials — so your home sells for top dollar. You pay nothing until closing.",
+    icon: HiOutlineWrenchScrewdriver,
     href: "/solutions/price-launch",
   },
   {
@@ -42,10 +42,10 @@ const solutions = [
   {
     id: "uplist",
     name: "Uplist",
-    tagline: "Renovate now, pay at closing",
+    tagline: "Market price, zero hassle",
     description:
-      "Our remodeling team upgrades your property before listing — new flooring, paint, kitchens, and more. No upfront cost; pay from your sale proceeds.",
-    icon: HiOutlineWrenchScrewdriver,
+      "Your home is loanable and livable but you won't accept a low investor offer. We cover your mortgage while it sells on the open market — you get a net-to-seller price.",
+    icon: HiOutlineClipboardDocumentList,
     href: "/solutions/uplist",
   },
   {
