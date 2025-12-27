@@ -6,10 +6,10 @@ import RedirectClient from "./redirect-client";
 
 export const metadata: Metadata = {
   title: "Direct List by Access Realty",
-  description: "Get full MLS exposure while avoiding full MLS fees, without sacrificing dedicated support to sell smarter.",
+  description: "Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.",
   openGraph: {
     title: "Direct List by Access Realty",
-    description: "Get full MLS exposure while avoiding full MLS fees, without sacrificing dedicated support to sell smarter.",
+    description: "Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.",
     images: [
       {
         url: "https://access.realty/direct-list-logo.png",
@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Direct List by Access Realty",
-    description: "Get full MLS exposure while avoiding full MLS fees, without sacrificing dedicated support to sell smarter.",
+    description: "Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.",
     images: ["https://access.realty/direct-list-logo.png"],
   },
 };

@@ -67,10 +67,9 @@ export default function DirectListPage() {
           >
             Exactly what you need, nothing you don&apos;t.
           </p>
-          <p className="text-lg md:text-xl mb-8 max-w-2xl text-white/80 font-bold">
-            Everything an agent provides for a fraction of the cost.<br />
-            Because selling smart shouldn&apos;t cost 6%.
-          </p>
+          <h2 className="text-lg md:text-xl mb-8 max-w-2xl text-white/90 font-bold">
+            Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.
+          </h2>
 
           {/* CTAs */}
           <div className="flex flex-wrap gap-4 mb-12">
