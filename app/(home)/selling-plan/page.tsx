@@ -4,6 +4,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { HiArrowRight, HiArrowLeft, HiCheck } from "react-icons/hi2";
 
 // Question types
@@ -142,21 +143,76 @@ function OptionCard({
   );
 }
 
-// Ranked item display (shows already-selected priorities)
-function RankedItem({
-  rank,
+// Animated priority card for ranking question
+function PriorityCard({
   option,
+  rank,
+  onClick,
+  disabled,
+  isRanked,
 }: {
-  rank: number;
   option: { id: string; label: string; description?: string };
+  rank?: number;
+  onClick?: () => void;
+  disabled?: boolean;
+  isRanked: boolean;
 }) {
+  if (isRanked) {
+    // Ranked state - compact display with rank number
+    return (
+      <motion.div
+        layoutId={`priority-${option.id}`}
+        className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20"
+        initial={false}
+        transition={{
+          type: "spring",
+          stiffness: 500,
+          damping: 35,
+          mass: 1,
+        }}
+      >
+        <motion.span
+          initial={{ scale: 0 }}
+          animate={{ scale: 1 }}
+          transition={{ type: "spring", stiffness: 500, damping: 25, delay: 0.1 }}
+          className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground"
+        >
+          {rank}
+        </motion.span>
+        <span className="font-medium text-foreground">{option.label}</span>
+      </motion.div>
+    );
+  }
+
+  // Selectable state - full card with description
   return (
-    <div className="flex items-center gap-3 p-3 bg-primary/5 rounded-lg border border-primary/20">
-      <span className="h-7 w-7 rounded-full bg-primary flex items-center justify-center text-sm font-bold text-primary-foreground">
-        {rank}
-      </span>
-      <span className="font-medium text-foreground">{option.label}</span>
-    </div>
+    <motion.button
+      layoutId={`priority-${option.id}`}
+      onClick={onClick}
+      disabled={disabled}
+      className="w-full text-left p-5 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      initial={false}
+      whileHover={{ scale: 1.01 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{
+        type: "spring",
+        stiffness: 500,
+        damping: 35,
+        mass: 1,
+      }}
+    >
+      <div className="flex items-center gap-4">
+        <div className="h-6 w-6 rounded-full border-2 border-border flex items-center justify-center" />
+        <div>
+          <span className="font-medium text-foreground">{option.label}</span>
+          {option.description && (
+            <span className="block text-sm text-muted-foreground mt-0.5">
+              {option.description}
+            </span>
+          )}
+        </div>
+      </div>
+    </motion.button>
   );
 }
 
@@ -248,15 +304,14 @@ export default function SellingPlanPage() {
   };
 
   const handlePrioritySelect = (optionId: string) => {
-    transitionTo("left", () => {
-      const newRanking = [...priorityRanking, optionId];
-      setPriorityRanking(newRanking);
+    // No transitionTo - framer-motion handles the animation
+    const newRanking = [...priorityRanking, optionId];
+    setPriorityRanking(newRanking);
 
-      // If all priorities ranked, save to answers
-      if (newRanking.length === totalRankingSteps) {
-        setAnswers({ ...answers, priorities: newRanking });
-      }
-    });
+    // If all priorities ranked, save to answers
+    if (newRanking.length === totalRankingSteps) {
+      setAnswers({ ...answers, priorities: newRanking });
+    }
   };
 
   const canProceed = () => {
@@ -418,51 +473,71 @@ export default function SellingPlanPage() {
             </div>
 
             {/* Question content with transitions */}
-            <div className={contentClasses}>
-              {/* Ranking Question - Stepped UI */}
+            <div className={isRankingQuestion ? "" : contentClasses}>
+              {/* Ranking Question - Stepped UI with Framer Motion */}
               {isRankingQuestion ? (
-                <>
-                  <h2 className="text-3xl font-bold text-primary mb-2">
-                    {rankingPrompts[rankingStep] || "What matters most?"}
-                  </h2>
-                  <p className="text-muted-foreground mb-6">
-                    Step {rankingStep + 1} of {totalRankingSteps}
-                  </p>
+                <LayoutGroup>
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <h2 className="text-3xl font-bold text-primary mb-2">
+                      {rankingPrompts[rankingStep] || "What matters most?"}
+                    </h2>
+                    <p className="text-muted-foreground mb-6">
+                      Step {rankingStep + 1} of {totalRankingSteps}
+                    </p>
+                  </motion.div>
 
                   {/* Already ranked items */}
-                  {priorityRanking.length > 0 && (
-                    <div className="space-y-2 mb-6">
+                  <motion.div layout className="space-y-2 mb-6">
+                    <AnimatePresence mode="popLayout">
                       {priorityRanking.map((id, index) => {
                         const option = priorityOptions.find((o) => o.id === id)!;
-                        return <RankedItem key={id} rank={index + 1} option={option} />;
+                        return (
+                          <PriorityCard
+                            key={id}
+                            option={option}
+                            rank={index + 1}
+                            isRanked={true}
+                          />
+                        );
                       })}
-                    </div>
-                  )}
+                    </AnimatePresence>
+                  </motion.div>
 
                   {/* Remaining options to choose from */}
-                  {remainingPriorities.length > 0 && (
-                    <div className="space-y-3 mb-10">
+                  <motion.div layout className="space-y-3 mb-10">
+                    <AnimatePresence mode="popLayout">
                       {remainingPriorities.map((option) => (
-                        <OptionCard
+                        <PriorityCard
                           key={option.id}
                           option={option}
-                          selected={false}
                           onClick={() => handlePrioritySelect(option.id)}
                           disabled={isTransitioning}
+                          isRanked={false}
                         />
                       ))}
-                    </div>
-                  )}
+                    </AnimatePresence>
+                  </motion.div>
 
                   {/* All ranked - show summary */}
-                  {remainingPriorities.length === 0 && (
-                    <div className="bg-primary/5 rounded-xl p-6 mb-10 border border-primary/20">
-                      <p className="text-center text-foreground font-medium">
-                        Your priorities are set. Click &quot;See My Plan&quot; to continue.
-                      </p>
-                    </div>
-                  )}
-                </>
+                  <AnimatePresence>
+                    {remainingPriorities.length === 0 && (
+                      <motion.div
+                        initial={{ opacity: 0, scale: 0.95 }}
+                        animate={{ opacity: 1, scale: 1 }}
+                        exit={{ opacity: 0, scale: 0.95 }}
+                        className="bg-primary/5 rounded-xl p-6 mb-10 border border-primary/20"
+                      >
+                        <p className="text-center text-foreground font-medium">
+                          Your priorities are set. Click &quot;See My Plan&quot; to continue.
+                        </p>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </LayoutGroup>
               ) : (
                 <>
                   {/* Regular Question */}
