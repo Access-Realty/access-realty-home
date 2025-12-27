@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { HiOutlineHomeModern, HiArrowTrendingUp, HiMapPin, HiBuildingOffice2 } from "react-icons/hi2";
 import CalendlyButton from "@/components/CalendlyButton";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
+import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
 
 // Staff data - will be replaced with Supabase data later
 const staffData: Record<string, {
@@ -202,6 +203,14 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
           agentKey={staff.listAgentKey}
           limit={8}
           showViewAll={false}
+        />
+      )}
+
+      {/* Closed Deals Map */}
+      {staff.listAgentKey && (
+        <ClosedDealsSection
+          agentMlsId={staff.listAgentKey}
+          agentName={staff.name}
         />
       )}
 

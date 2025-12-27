@@ -263,3 +263,57 @@ export function formatPropertyType(type: string | null): string {
 
   return typeMap[type] || type;
 }
+
+// Minimal fields for map markers (keeps response small)
+const MAP_SELECT_FIELDS = `
+  id,
+  listing_id,
+  list_price,
+  unparsed_address,
+  city,
+  bedrooms_total,
+  bathrooms_total_decimal,
+  living_area,
+  latitude,
+  longitude
+`;
+
+export interface ClosedDeal {
+  id: string;
+  listing_id: string | null;
+  list_price: number | null;
+  unparsed_address: string | null;
+  city: string | null;
+  bedrooms_total: number | null;
+  bathrooms_total_decimal: number | null;
+  living_area: number | null;
+  latitude: number | null;
+  longitude: number | null;
+}
+
+/**
+ * Fetch closed deals for an agent (for map display)
+ */
+export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> {
+  const officeKeys = getOfficeKeys(ACCESS_REALTY_OFFICE_MLS_IDS);
+
+  const { data, error } = await supabase
+    .from("mls_listings")
+    .select(MAP_SELECT_FIELDS)
+    .eq("mls_name", MLS_NAME)
+    .in("list_office_key", officeKeys)
+    .eq("list_agent_mls_id", agentMlsId)
+    .eq("standard_status", "Closed")
+    .neq("property_type", "Residential Lease")
+    .not("latitude", "is", null)
+    .not("longitude", "is", null)
+    .order("list_price", { ascending: false })
+    .limit(100);
+
+  if (error) {
+    console.error("Error fetching closed deals:", error);
+    return [];
+  }
+
+  return (data as ClosedDeal[]) ?? [];
+}
