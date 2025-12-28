@@ -9,8 +9,8 @@ import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
 import ContactSection from "@/components/staff/ContactSection";
 import { getStaffBySlug, getStaffSlugs } from "@/lib/staff";
 
-// Local avatar images by slug (until we have storage)
-const staffAvatars: Record<string, string> = {
+// Local avatar fallbacks (DB avatar_url takes precedence)
+const staffAvatarFallbacks: Record<string, string> = {
   "justin-brown": "/staff/justin-brown.jpg",
   "cassidy-spilker": "/staff/cassidy-spilker.webp",
 };
@@ -66,7 +66,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
   const phone = staff.phone || "9728207902";
   const formattedPhone = formatPhone(phone);
   const telPhone = phone.replace(/\D/g, "");
-  const avatarUrl = staffAvatars[slug] || staff.avatar_url;
+  const avatarUrl = staff.avatar_url || staffAvatarFallbacks[slug];
   const hasCalendly = staff.calendly_phone_url || staff.calendly_remote_url;
   const calendlyUrl = staff.calendly_phone_url || staff.calendly_remote_url;
 
