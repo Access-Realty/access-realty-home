@@ -1,5 +1,16 @@
 // ABOUTME: Service layer for fetching MLS listings from Supabase
 // ABOUTME: Uses indexed (mls_name, list_office_key) for efficient queries
+//
+// MLS KEY REFERENCE:
+// ==================
+// mls_agents.member_mls_id = Human-readable MLS ID (e.g., "0681230" for Cassidy)
+// mls_agents.member_key    = Hash/UUID from Bridge API (internal use only)
+//
+// mls_listings.list_agent_mls_id = Human-readable MLS ID (matches member_mls_id)
+// mls_listings.list_agent_key    = Hash/UUID (FK to mls_agents.member_key)
+//
+// staff.member_key = Stores the HUMAN-READABLE MLS ID (member_mls_id), NOT the hash!
+//                    This is what we filter by using list_agent_mls_id
 
 import { supabase } from "./supabase";
 import type { MlsListing, ListingsFilter, ListingsResponse } from "@/types/mls";
