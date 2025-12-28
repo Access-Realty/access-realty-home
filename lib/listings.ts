@@ -294,8 +294,8 @@ export interface ClosedDeal {
 }
 
 /**
- * Fetch closed deals for an agent (for map display)
- * Note: Uses list_agent_mls_id index directly (no office filter needed)
+ * Fetch all closed deals for an agent (for map display)
+ * Uses idx_mls_listings_agent_status index for performance
  */
 export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> {
   const { data, error } = await supabase
@@ -307,8 +307,7 @@ export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> 
     .neq("property_type", "Residential Lease")
     .not("latitude", "is", null)
     .not("longitude", "is", null)
-    .order("list_price", { ascending: false })
-    .limit(1000);
+    .order("list_price", { ascending: false });
 
   if (error) {
     console.error("Error fetching closed deals:", error);

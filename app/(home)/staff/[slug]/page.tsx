@@ -3,11 +3,18 @@
 
 import { notFound } from "next/navigation";
 import { HiOutlineHomeModern, HiArrowTrendingUp, HiMapPin, HiBuildingOffice2 } from "react-icons/hi2";
-import CalendlyButton from "@/components/CalendlyButton";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
 import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
-import SchedulingSection from "@/components/staff/SchedulingSection";
+import ContactSection from "@/components/staff/ContactSection";
 import { getStaffBySlug, getStaffSlugs } from "@/lib/staff";
+
+function formatPhone(phone: string): string {
+  const digits = phone.replace(/\D/g, "");
+  if (digits.length === 10) {
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`;
+  }
+  return phone;
+}
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Home: HiOutlineHomeModern,
@@ -49,7 +56,9 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
 
   const name = staff.full_name || `${staff.first_name} ${staff.last_name}`;
   const title = staff.role || "Realtor®";
-  const phone = staff.phone || "(972) 820-7902";
+  const phone = staff.phone || "9728207902";
+  const formattedPhone = formatPhone(phone);
+  const telPhone = phone.replace(/\D/g, "");
 
   return (
     <div className="bg-card">
@@ -71,35 +80,17 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
           </p>
 
           <div className="flex flex-wrap justify-center gap-4">
-            {staff.calendly_remote_url && (
-              <CalendlyButton
-                url={staff.calendly_remote_url}
-                className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors cursor-pointer"
-              >
-                Schedule Video Call
-              </CalendlyButton>
-            )}
-            {staff.calendly_phone_url && (
-              <CalendlyButton
-                url={staff.calendly_phone_url}
-                className="bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:bg-secondary-dark transition-colors cursor-pointer"
-              >
-                Schedule Phone Call
-              </CalendlyButton>
-            )}
-            {!staff.calendly_remote_url && !staff.calendly_phone_url && (
-              <a
-                href={`mailto:${staff.email}`}
-                className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
-              >
-                Contact Me
-              </a>
-            )}
             <a
-              href={`tel:${phone.replace(/[^\d+]/g, "")}`}
+              href={`mailto:${staff.email}`}
+              className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
+            >
+              Contact Me
+            </a>
+            <a
+              href={`tel:+1${telPhone}`}
               className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
             >
-              {phone}
+              {formattedPhone}
             </a>
           </div>
         </div>
@@ -169,12 +160,13 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
         />
       )}
 
-      {/* Scheduling Section */}
-      <SchedulingSection
+      {/* Contact Section */}
+      <ContactSection
         agentName={staff.first_name}
-        calendlyRemoteUrl={staff.calendly_remote_url}
-        calendlyPhoneUrl={staff.calendly_phone_url}
+        phone={staff.phone}
         email={staff.email}
+        calendlyPhoneUrl={staff.calendly_phone_url}
+        calendlyRemoteUrl={staff.calendly_remote_url}
       />
     </div>
   );
