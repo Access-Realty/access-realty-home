@@ -116,12 +116,15 @@ export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps
 
   return (
     <div className="rounded-xl overflow-hidden border border-border">
+      {/* Hide Google Maps InfoWindow close button - clicking elsewhere closes it */}
+      <style>{`.gm-ui-hover-effect { display: none !important; }`}</style>
       <GoogleMap
         mapContainerStyle={mapContainerStyle}
         center={center}
         zoom={10}
         options={mapOptions}
         onLoad={onLoad}
+        onClick={() => setSelectedDeal(null)}
       >
         {deals.map((deal) => (
           deal.latitude && deal.longitude && (
