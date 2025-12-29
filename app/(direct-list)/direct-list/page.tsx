@@ -208,7 +208,7 @@ export default function DirectListPage() {
             <div className="flex-shrink-0 w-[320px] sm:w-[360px] snap-start">
               <div className="bg-card rounded-xl p-6 border border-border h-full">
                 <p className="text-foreground mb-4">
-                  &quot;Traditional agents wanted 6% — that&apos;s nearly $29,000 on our $480k home. We used DirectList, got the same MLS exposure, and kept most of that money. The listing looked just as professional as our neighbor&apos;s who paid full commission. I don&apos;t know why everyone doesn&apos;t do this.&quot;
+                  &quot;Traditional agents wanted 6% of our sale price. We used DirectList instead, got the same MLS exposure, and kept most of that money. The listing looked just as professional as our neighbor&apos;s who paid full commission. I don&apos;t know why everyone doesn&apos;t do this.&quot;
                 </p>
                 <div className="border-t border-border pt-4">
                   <p className="font-semibold text-foreground">Michael T.</p>
