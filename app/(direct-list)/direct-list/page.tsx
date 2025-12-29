@@ -190,8 +190,79 @@ export default function DirectListPage() {
         </div>
       </section>
 
-      {/* How It Works */}
+      {/* Testimonials */}
       <section className="py-20 bg-muted">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12">
+            <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
+              REAL RESULTS
+            </p>
+            <h2 className="text-3xl md:text-4xl font-bold text-foreground">
+              What Our Sellers Say
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {/* Testimonial 1 - The Skeptic */}
+            <div className="bg-card rounded-xl p-6 border border-border">
+              <p className="text-foreground mb-4">
+                &quot;I was skeptical at first — how could I sell without an agent? But we saved over $14,000 on our $480k home. The MLS listing looked just as professional as our neighbor&apos;s who paid full commission. Honestly, I don&apos;t know why everyone doesn&apos;t do this.&quot;
+              </p>
+              <div className="border-t border-border pt-4">
+                <p className="font-semibold text-foreground">Michael T.</p>
+                <p className="text-sm text-muted-foreground">Plano · Sold in 23 days</p>
+              </div>
+            </div>
+
+            {/* Testimonial 2 - The First-Timer */}
+            <div className="bg-card rounded-xl p-6 border border-border">
+              <p className="text-foreground mb-4">
+                &quot;I&apos;d never sold a house before and was nervous about doing it myself. The app walked me through everything step by step. When I got my first offer and started second-guessing myself, my agent called me back within an hour and walked me through what to look for. Closed in 30 days, no surprises.&quot;
+              </p>
+              <div className="border-t border-border pt-4">
+                <p className="font-semibold text-foreground">Sarah M.</p>
+                <p className="text-sm text-muted-foreground">Keller · First-time seller</p>
+              </div>
+            </div>
+
+            {/* Testimonial 3 - The Experienced Seller */}
+            <div className="bg-card rounded-xl p-6 border border-border">
+              <p className="text-foreground mb-4">
+                &quot;This was my third home sale. I know how to price, I know how to show, I know how to negotiate. What I needed was MLS access — not a 3% babysitter. DirectList gave me exactly that. Listed, sold in two weeks, saved $9,000. Perfect for anyone who&apos;s done this before.&quot;
+              </p>
+              <div className="border-t border-border pt-4">
+                <p className="font-semibold text-foreground">Mark H.</p>
+                <p className="text-sm text-muted-foreground">Coppell · Third home sale</p>
+              </div>
+            </div>
+
+            {/* Testimonial 4 - The Negotiation Win */}
+            <div className="bg-card rounded-xl p-6 border border-border">
+              <p className="text-foreground mb-4">
+                &quot;I was fine until the offer came in $20k under asking. I had no idea how to respond. My DirectList agent reviewed the buyer&apos;s terms, helped me write a counter, and coached me through two rounds of back-and-forth. Closed $8,000 higher than that first offer. That support alone was worth it.&quot;
+              </p>
+              <div className="border-t border-border pt-4">
+                <p className="font-semibold text-foreground">Angela R.</p>
+                <p className="text-sm text-muted-foreground">Lewisville · Sold $8k over initial offer</p>
+              </div>
+            </div>
+
+            {/* Testimonial 5 - The Investor */}
+            <div className="bg-card rounded-xl p-6 border border-border lg:col-span-2">
+              <p className="text-foreground mb-4">
+                &quot;In 2025 I sold five flips through DirectList — ranged from $285k to $465k. If I&apos;d paid 3% on each of those, that&apos;s $56,000 in listing commissions. Instead I paid under $15,000 total. Same MLS, same Zillow exposure, same buyer pool. I kept $41,000 that would&apos;ve gone to agents. Flat fee beats percentage every time.&quot;
+              </p>
+              <div className="border-t border-border pt-4">
+                <p className="font-semibold text-foreground">Ryan D.</p>
+                <p className="text-sm text-muted-foreground">Dallas · Real estate investor</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works */}
+      <section className="py-20 bg-card">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
