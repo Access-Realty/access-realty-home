@@ -1,8 +1,7 @@
 // ABOUTME: API route to handle contact form submissions
-// ABOUTME: Saves inquiry to Supabase and sends Slack notification to needs-attention channel
+// ABOUTME: Sends Slack notification to needs-attention channel
 
 import { NextRequest, NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
 
 interface ContactFormData {
   firstName: string;
@@ -96,20 +95,6 @@ export async function POST(request: NextRequest) {
         { error: "Please provide a valid email address" },
         { status: 400 }
       );
-    }
-
-    // Save to Supabase
-    const { error: dbError } = await supabase.from("inquiries").insert({
-      first_name: firstName.trim(),
-      last_name: lastName.trim(),
-      email: email.trim().toLowerCase(),
-      inquiry: inquiry.trim(),
-      source: "contact-page",
-    });
-
-    if (dbError) {
-      console.error("Failed to save inquiry to database:", dbError);
-      // Continue anyway - we still want to send Slack notification
     }
 
     // Send Slack notification
