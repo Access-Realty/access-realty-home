@@ -2,14 +2,6 @@
 // ABOUTME: Cards link to individual solution detail pages
 
 import Link from "next/link";
-import {
-  HiOutlineBanknotes,
-  HiOutlineRocketLaunch,
-  HiOutlineCreditCard,
-  HiOutlineWrenchScrewdriver,
-  HiOutlineClipboardDocumentList,
-  HiOutlineUserGroup,
-} from "react-icons/hi2";
 
 const solutions = [
   {
@@ -18,7 +10,6 @@ const solutions = [
     tagline: "Close in days, not months",
     description:
       "Get a competitive cash offer on your home. Skip showings, repairs, and uncertainty. Ideal for sellers who need speed and simplicity.",
-    icon: HiOutlineBanknotes,
     href: "https://metroplexhomebuyers.com",
   },
   {
@@ -27,7 +18,6 @@ const solutions = [
     tagline: "Renovate first. Sell for more.",
     description:
       "We handle the entire renovation — design, contractors, materials — so your home sells for top dollar. You pay nothing until closing.",
-    icon: HiOutlineWrenchScrewdriver,
     href: "/solutions/price-launch",
   },
   {
@@ -36,7 +26,6 @@ const solutions = [
     tagline: "Pay when it works for you",
     description:
       "Split your fees into two payments — a small amount upfront, the rest at closing. Keep more cash in your pocket until you sell.",
-    icon: HiOutlineCreditCard,
     href: "/solutions/2-payment",
   },
   {
@@ -45,7 +34,6 @@ const solutions = [
     tagline: "Market price, zero hassle",
     description:
       "Your home is loanable and livable but you won't accept a low investor offer. We cover your mortgage while it sells on the open market — you get a net-to-seller price.",
-    icon: HiOutlineClipboardDocumentList,
     href: "/solutions/uplist",
   },
   {
@@ -54,7 +42,6 @@ const solutions = [
     tagline: "Full exposure, flat fee",
     description:
       "Get on the MLS and all major sites for a flat fee. You handle showings and negotiations, we handle the paperwork.",
-    icon: HiOutlineClipboardDocumentList,
     href: "/direct-list",
   },
   {
@@ -63,7 +50,6 @@ const solutions = [
     tagline: "Full-service representation",
     description:
       "Work with one of our experienced team members who handles everything — pricing, marketing, showings, negotiations, and closing.",
-    icon: HiOutlineUserGroup,
     href: "/staff",
   },
 ];
@@ -101,12 +87,6 @@ export default function Solutions() {
                   className="group bg-card border-2 border-border rounded-xl p-8 hover:border-secondary hover:shadow-xl transition-all"
                   {...extraProps}
                 >
-                  {/* Icon */}
-                  <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6 group-hover:bg-secondary/20 transition-colors">
-                    <solution.icon className="h-8 w-8 text-primary group-hover:text-secondary transition-colors" />
-                  </div>
-
-                  {/* Content */}
                   <h2 className="text-2xl font-bold text-foreground mb-2">
                     {solution.name}
                   </h2>
