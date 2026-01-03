@@ -65,6 +65,56 @@ Colors are defined in `app/globals.css` using the `@theme inline` block - not a 
 
 Use classes like `bg-primary`, `text-secondary`, `bg-background`.
 
+## Spacing Standards
+
+**Use layout components for consistent vertical spacing.** Do NOT use raw `<section>` tags with manual padding.
+
+### Layout Components
+
+```tsx
+import { HeroSection, Section } from "@/components/layout";
+
+// Hero with header clearance (pt-24 pb-12)
+<HeroSection maxWidth="4xl">
+  <h1>Page Title</h1>
+</HeroSection>
+
+// Standard content section (py-16)
+<Section variant="content" maxWidth="4xl">
+  ...
+</Section>
+
+// Secondary/minor section (py-12)
+<Section variant="tight" maxWidth="3xl">
+  ...
+</Section>
+
+// CTA section with primary background
+<Section variant="cta" background="primary" maxWidth="4xl">
+  ...
+</Section>
+```
+
+### Spacing Values (for reference)
+
+| Element | Spacing | Tailwind |
+|---------|---------|----------|
+| Hero top (header clearance) | 6rem | pt-24 |
+| Hero bottom | 3rem | pb-12 |
+| Section padding | 4rem | py-16 |
+| Tight section padding | 3rem | py-12 |
+
+### Container Max-Widths
+
+| Use Case | Max Width |
+|----------|-----------|
+| Narrow content (forms, text) | max-w-2xl or max-w-3xl |
+| Standard pages | max-w-4xl |
+| Multi-column layouts | max-w-5xl |
+| Wide hero sections | max-w-6xl |
+
+**Do NOT use:** `py-20`, `pt-28`, `pb-16`, `pb-20` or other non-standard spacing values.
+
 ## Logo Pattern
 
 Text-based logo (no image file):

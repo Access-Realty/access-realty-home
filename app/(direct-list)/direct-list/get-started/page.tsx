@@ -17,6 +17,7 @@ import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
 import { TierSelectionModal } from "@/components/services/TierSelectionModal";
+import { HeroSection, Section } from "@/components/layout";
 import {
   HiOutlineArrowRight,
   HiOutlineArrowLeft,
@@ -576,22 +577,19 @@ export default function GetStartedPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background">
       {/* Hero Section */}
-      <section className="bg-primary pt-28 pb-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-            List Your Home on the MLS
-          </h1>
-          <p className="text-lg text-white/80 max-w-2xl mx-auto">
-            Get started in minutes. Save thousands compared to traditional agents.
-          </p>
-        </div>
-      </section>
+      <HeroSection maxWidth="4xl">
+        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+          List Your Home on the MLS
+        </h1>
+        <p className="text-lg text-white/80 max-w-2xl mx-auto">
+          Get started in minutes. Save thousands compared to traditional agents.
+        </p>
+      </HeroSection>
 
       {/* Main Content */}
-      <section className="py-12">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Section variant="content" maxWidth="4xl">
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">
@@ -1255,8 +1253,7 @@ export default function GetStartedPage() {
               </div>
             </div>
           )}
-        </div>
-      </section>
+      </Section>
 
       {/* Tier Selection Modal - opens directly to terms for selected tier */}
       <TierSelectionModal
@@ -1272,23 +1269,21 @@ export default function GetStartedPage() {
       />
 
       {/* Schedule a Call Section */}
-      <section className="py-12 md:py-16 bg-muted/30 border-t border-border">
-        <div className="container mx-auto px-4 max-w-2xl text-center">
-          <h2 className="text-2xl font-semibold text-foreground mb-3">
-            Not ready to get started?
-          </h2>
-          <p className="text-muted-foreground mb-6">
-            Our team can answer your questions and help you choose the right
-            plan.
-          </p>
-          <button
-            onClick={openCalendlyPopup}
-            className="bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
-          >
-            Schedule a Free Consultation
-          </button>
-        </div>
-      </section>
+      <Section variant="tight" maxWidth="2xl" background="muted" borderTop className="text-center">
+        <h2 className="text-xl font-semibold text-foreground mb-2">
+          Not ready to get started?
+        </h2>
+        <p className="text-muted-foreground mb-4">
+          Our team can answer your questions and help you choose the right
+          plan.
+        </p>
+        <button
+          onClick={openCalendlyPopup}
+          className="bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
+        >
+          Schedule a Free Consultation
+        </button>
+      </Section>
     </div>
   );
 }
