@@ -1,10 +1,13 @@
-// ABOUTME: Service layer for fetching MLS listings from Supabase
+// ABOUTME: Service layer for fetching MLS listings from Supabase (SERVER-ONLY)
 // ABOUTME: Uses indexed (mls_name, list_office_key) for efficient queries
 //
 // MLS KEY REFERENCE: See docs/MLS_KEYS_REFERENCE.md for full documentation
 // Quick ref: staff.member_key stores human-readable "Agt ID" (e.g., "0549418")
 //            We filter by list_agent_mls_id which uses the same format
+//
+// NOTE: For client-side formatting utilities, use @/lib/listing-utils instead
 
+import "server-only";
 import { supabase } from "./supabase";
 import type { MlsListing, ListingsFilter, ListingsResponse } from "@/types/mls";
 

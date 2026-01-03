@@ -10,12 +10,11 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import type { MlsListing } from "@/types/mls";
 import {
   formatPrice,
-  formatBedsBaths,
   formatSqft,
   formatAddress,
   formatCityState,
   getPrimaryPhoto,
-} from "@/lib/listings";
+} from "@/lib/listing-utils";
 
 interface ListingCardProps {
   listing: MlsListing;

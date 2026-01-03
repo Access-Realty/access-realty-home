@@ -17,7 +17,8 @@ import {
 } from "react-icons/hi2";
 import Link from "next/link";
 import { StyledTierName } from "@/components/services/StyledTierName";
-import ListingsCarousel from "@/components/listings/ListingsCarousel";
+// NOTE: ListingsCarousel removed - it's a server component that can't be imported into a client component
+// TODO: Add back via a server layout wrapper if needed
 import CarouselNav from "@/components/listings/CarouselNav";
 import { SavingsCalculatorModal } from "@/components/direct-list/SavingsCalculatorModal";
 import { HeroSection, Section } from "@/components/layout";
@@ -534,11 +535,7 @@ export default function DirectListPage() {
         </p>
       </Section>
 
-      {/* Current Listings Section - Social Proof */}
-      <ListingsCarousel
-        title="Our Current Listings"
-        subtitle="See the homes we're helping clients sell right now"
-      />
+      {/* NOTE: ListingsCarousel removed - see import comment above */}
 
       {/* Simplified Final CTA Section */}
       <Section variant="cta" maxWidth="4xl" background="primary" className="text-center">
