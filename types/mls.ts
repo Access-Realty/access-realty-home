@@ -51,6 +51,7 @@ export interface MlsListing {
   photo_urls: string[] | null;
   thumbnail_urls: string[] | null;
   photos_count: number | null;
+  photos_stored: boolean | null;
 
   // Description
   public_remarks: string | null;

@@ -11,6 +11,13 @@ import "server-only";
 import { supabase } from "./supabase";
 import type { MlsListing, ListingsFilter, ListingsResponse } from "@/types/mls";
 
+// Edge function URL for downloading photos
+const PHOTO_DOWNLOAD_FUNCTION_URL =
+  "https://hvbicnpvactgxzprnygc.supabase.co/functions/v1/download-listing-photos";
+
+// Supabase anon key for edge function auth
+const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";
+
 // MLS name for our market (North Texas)
 const MLS_NAME = "ntreis2";
 
@@ -23,6 +30,44 @@ const ACCESS_REALTY_OFFICES: Record<string, string> = {
 
 // Default office MLS IDs to query
 export const ACCESS_REALTY_OFFICE_MLS_IDS = Object.keys(ACCESS_REALTY_OFFICES);
+
+// Minimal type for triggering photo downloads
+interface ListingWithPhotos {
+  id: string;
+  photo_urls: string[] | null;
+  photos_stored: boolean | null;
+}
+
+/**
+ * Trigger photo downloads for listings that don't have photos stored locally.
+ * Fires edge function calls asynchronously (fire-and-forget) to not block page load.
+ * Photos will be available from our CDN on subsequent page loads.
+ */
+function triggerPhotoDownloads(listings: ListingWithPhotos[]): void {
+  // Filter to listings that need photos downloaded
+  const needsDownload = listings.filter(
+    (listing) => listing.photos_stored !== true && listing.photo_urls?.length
+  );
+
+  if (needsDownload.length === 0) return;
+
+  console.log(`Triggering photo download for ${needsDownload.length} listings`);
+
+  // Fire-and-forget: trigger downloads without awaiting
+  for (const listing of needsDownload) {
+    fetch(PHOTO_DOWNLOAD_FUNCTION_URL, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ mls_listing_id: listing.id }),
+    }).catch((err) => {
+      // Log but don't throw - this is background work
+      console.error(`Failed to trigger photo download for ${listing.id}:`, err);
+    });
+  }
+}
 
 // Fields to select for listing queries (keeps response lean)
 const LISTING_SELECT_FIELDS = `
@@ -63,6 +108,7 @@ const LISTING_SELECT_FIELDS = `
   photo_urls,
   thumbnail_urls,
   photos_count,
+  photos_stored,
   public_remarks,
   list_agent_key,
   list_agent_mls_id,
@@ -152,8 +198,13 @@ export async function getListings(
   const total = count ?? 0;
   const hasMore = offset + limit < total;
 
+  const listings = (data as MlsListing[]) ?? [];
+
+  // Trigger background photo downloads for listings without stored photos
+  triggerPhotoDownloads(listings);
+
   return {
-    listings: (data as MlsListing[]) ?? [],
+    listings,
     total,
     hasMore,
   };
@@ -177,7 +228,14 @@ export async function getListingById(
     return null;
   }
 
-  return data as MlsListing;
+  const listing = data as MlsListing;
+
+  // Trigger background photo download if needed
+  if (listing) {
+    triggerPhotoDownloads([listing]);
+  }
+
+  return listing;
 }
 
 /**
@@ -283,7 +341,8 @@ const MAP_SELECT_FIELDS = `
   living_area,
   latitude,
   longitude,
-  photo_urls
+  photo_urls,
+  photos_stored
 `;
 
 export interface ClosedDeal {
@@ -298,6 +357,7 @@ export interface ClosedDeal {
   latitude: number | null;
   longitude: number | null;
   photo_urls: string[] | null;
+  photos_stored: boolean | null;
   side: "listing" | "buyer";
 }
 
@@ -384,5 +444,10 @@ export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> 
   );
 
   // Sort by price descending
-  return uniqueDeals.sort((a, b) => (b.list_price || 0) - (a.list_price || 0));
+  const sortedDeals = uniqueDeals.sort((a, b) => (b.list_price || 0) - (a.list_price || 0));
+
+  // Trigger background photo downloads for deals without stored photos
+  triggerPhotoDownloads(sortedDeals);
+
+  return sortedDeals;
 }
