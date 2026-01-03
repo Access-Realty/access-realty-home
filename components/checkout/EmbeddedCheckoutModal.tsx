@@ -24,6 +24,15 @@ interface UTMParams {
   utm_content?: string;
 }
 
+// Property specs from get-started flow
+interface PropertySpecs {
+  bedrooms?: string;
+  fullBathrooms?: string;
+  halfBathrooms?: string;
+  yearBuilt?: string;
+  squareFeet?: string;
+}
+
 interface EmbeddedCheckoutModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -33,6 +42,8 @@ interface EmbeddedCheckoutModalProps {
   utmParams?: UTMParams;
   onSuccess?: (sessionId: string) => void;
   onError?: (error: string) => void;
+  leadId?: string;
+  propertySpecs?: PropertySpecs;
 }
 
 export function EmbeddedCheckoutModal({
@@ -44,6 +55,8 @@ export function EmbeddedCheckoutModal({
   utmParams,
   onSuccess,
   onError,
+  leadId,
+  propertySpecs,
 }: EmbeddedCheckoutModalProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -62,6 +75,8 @@ export function EmbeddedCheckoutModal({
           plan,
           source,
           utmParams,
+          leadId,
+          propertySpecs,
         }),
       })
         .then((res) => {
@@ -88,7 +103,7 @@ export function EmbeddedCheckoutModal({
           setLoading(false);
         });
     }
-  }, [isOpen, plan, source, utmParams, clientSecret, loading, onError]);
+  }, [isOpen, plan, source, utmParams, clientSecret, loading, onError, leadId, propertySpecs]);
 
   // Reset state when modal closes
   useEffect(() => {

@@ -1,6 +1,9 @@
 // ABOUTME: DirectList landing page for flat-fee MLS listing service
 // ABOUTME: Showcases savings, process, and pricing comparison
 
+"use client";
+
+import { useState } from "react";
 import {
   HiCheck,
   HiOutlineBanknotes,
@@ -13,13 +16,10 @@ import {
   HiOutlineChatBubbleLeftRight
 } from "react-icons/hi2";
 import Link from "next/link";
-import { TierSelectTrigger } from "@/components/services/TierSelectTrigger";
 import { StyledTierName } from "@/components/services/StyledTierName";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
 import CarouselNav from "@/components/listings/CarouselNav";
-
-// Revalidate every hour for fresh listing data
-export const revalidate = 3600;
+import { SavingsCalculatorModal } from "@/components/direct-list/SavingsCalculatorModal";
 
 // Styled DirectList logo component
 function DirectListLogo({ className = "" }: { className?: string }) {
@@ -47,6 +47,8 @@ function DirectListLogo({ className = "" }: { className?: string }) {
 }
 
 export default function DirectListPage() {
+  const [showSavingsModal, setShowSavingsModal] = useState(false);
+
   return (
     <div className="bg-card">
       {/* Hero Section */}
@@ -72,19 +74,18 @@ export default function DirectListPage() {
 
               {/* CTAs */}
               <div className="flex flex-wrap gap-4 mb-10">
-                <TierSelectTrigger
-                  initialTier="direct-list-plus"
-                  source="direct-list-hero"
+                <Link
+                  href="/direct-list/get-started"
                   className="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-md font-semibold hover:bg-white/10 transition-colors"
                 >
                   Get Started Now
-                </TierSelectTrigger>
-                <Link
-                  href="#pricing"
+                </Link>
+                <button
+                  onClick={() => setShowSavingsModal(true)}
                   className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
                 >
                   Calculate Your Savings
-                </Link>
+                </button>
               </div>
 
               {/* Stats */}
@@ -441,13 +442,12 @@ export default function DirectListPage() {
                 </li>
               </ul>
 
-              <TierSelectTrigger
-                initialTier="direct-list"
-                source="direct-list-page"
+              <Link
+                href="/direct-list/get-started"
                 className="block w-full bg-secondary text-secondary-foreground text-center py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
               >
                 Get Started
-              </TierSelectTrigger>
+              </Link>
             </div>
 
             {/* Direct List Plus - Best Value */}
@@ -487,13 +487,12 @@ export default function DirectListPage() {
                 </li>
               </ul>
 
-              <TierSelectTrigger
-                initialTier="direct-list-plus"
-                source="direct-list-page"
+              <Link
+                href="/direct-list/get-started"
                 className="block w-full bg-primary text-primary-foreground text-center py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
               >
                 Get Started Now
-              </TierSelectTrigger>
+              </Link>
             </div>
 
             {/* Full Service */}
@@ -528,13 +527,12 @@ export default function DirectListPage() {
                 </li>
               </ul>
 
-              <TierSelectTrigger
-                initialTier="full-service"
-                source="direct-list-page"
+              <Link
+                href="/direct-list/get-started"
                 className="block w-full bg-secondary text-secondary-foreground text-center py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
               >
                 Get Started
-              </TierSelectTrigger>
+              </Link>
             </div>
           </div>
 
@@ -560,16 +558,21 @@ export default function DirectListPage() {
           <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
             Get full MLS exposure and keep more money in your pocket.
           </p>
-          <TierSelectTrigger
-            initialTier="direct-list-plus"
-            source="direct-list-cta"
+          <Link
+            href="/direct-list/get-started"
             className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
           >
             List My Home on MLS
             <span aria-hidden="true">&rarr;</span>
-          </TierSelectTrigger>
+          </Link>
         </div>
       </section>
+
+      {/* Savings Calculator Modal */}
+      <SavingsCalculatorModal
+        isOpen={showSavingsModal}
+        onClose={() => setShowSavingsModal(false)}
+      />
     </div>
   );
 }

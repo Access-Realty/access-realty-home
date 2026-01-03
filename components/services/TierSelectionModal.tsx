@@ -236,11 +236,22 @@ function getUTMParams() {
   return utmData;
 }
 
+// Property specs from get-started flow
+interface PropertySpecs {
+  bedrooms?: string;
+  fullBathrooms?: string;
+  halfBathrooms?: string;
+  yearBuilt?: string;
+  squareFeet?: string;
+}
+
 interface TierSelectionModalProps {
   isOpen: boolean;
   onClose: () => void;
   initialTier?: string;
   source?: string;
+  leadId?: string;
+  propertySpecs?: PropertySpecs;
 }
 
 // Generate terms of service with tier-specific values
@@ -322,13 +333,29 @@ function generateTermsOfService(tier: typeof TIERS[0]) {
 export function TierSelectionModal({
   isOpen,
   onClose,
+  initialTier,
   source = "direct-list-page",
+  leadId,
+  propertySpecs,
 }: TierSelectionModalProps) {
   const [error, setError] = useState<string | null>(null);
   const [selectedTier, setSelectedTier] = useState<typeof TIERS[0] | null>(null);
   const [showTerms, setShowTerms] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
+
+  // When modal opens with initialTier, skip tier selection and go directly to terms
+  useEffect(() => {
+    if (isOpen && initialTier) {
+      const tier = TIERS.find((t) => t.id === initialTier);
+      if (tier) {
+        setSelectedTier(tier);
+        setShowTerms(true);
+        setTermsAccepted(false);
+        setError(null);
+      }
+    }
+  }, [isOpen, initialTier]);
 
   useEffect(() => {
     if (isOpen) {
@@ -704,6 +731,8 @@ export function TierSelectionModal({
           source={source}
           utmParams={getUTMParams()}
           onError={handleCheckoutError}
+          leadId={leadId}
+          propertySpecs={propertySpecs}
         />
       )}
     </div>

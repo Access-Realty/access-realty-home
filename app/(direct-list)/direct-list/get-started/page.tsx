@@ -1,0 +1,1284 @@
+// ABOUTME: Get Started wizard page for DirectList onboarding
+// ABOUTME: Multi-step flow: Address → Property Specs → Contact → Service Selection
+
+"use client";
+
+import { useState, useCallback, useEffect } from "react";
+import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
+import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
+import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
+import { TierSelectionModal } from "@/components/services/TierSelectionModal";
+import {
+  HiOutlineArrowRight,
+  HiOutlineArrowLeft,
+  HiOutlinePhone,
+  HiOutlineCheckCircle,
+  HiOutlineExclamationCircle,
+  HiOutlineEnvelope,
+  HiOutlineUser,
+  HiOutlinePencil,
+  HiCheck,
+  HiXMark,
+} from "react-icons/hi2";
+import CalendlyEmbed from "@/components/CalendlyEmbed";
+
+// Define libraries outside component to prevent re-renders
+const libraries: ("places")[] = ["places"];
+
+const mapContainerStyle = {
+  width: "100%",
+  height: "250px",
+};
+
+const mapOptions: google.maps.MapOptions = {
+  disableDefaultUI: true,
+  zoomControl: true,
+  streetViewControl: false,
+  mapTypeControl: false,
+  fullscreenControl: false,
+  styles: [
+    {
+      featureType: "poi",
+      elementType: "labels",
+      stylers: [{ visibility: "off" }],
+    },
+  ],
+};
+
+// Default center (DFW)
+const defaultCenter = { lat: 32.7767, lng: -96.797 };
+
+type Step = "address" | "confirm" | "contact" | "service";
+
+interface ContactForm {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
+const initialContactForm: ContactForm = {
+  firstName: "",
+  lastName: "",
+  email: "",
+  phone: "",
+};
+
+// Editable property specs
+interface EditableSpecs {
+  propertyType: string;
+  bedrooms: string;
+  fullBathrooms: string;
+  halfBathrooms: string;
+  yearBuilt: string;
+  squareFeet: string;
+}
+
+const initialEditableSpecs: EditableSpecs = {
+  propertyType: "",
+  bedrooms: "",
+  fullBathrooms: "",
+  halfBathrooms: "",
+  yearBuilt: "",
+  squareFeet: "",
+};
+
+// Tracking parameters captured from URL
+interface TrackingParams {
+  landingUrl: string;
+  gclid?: string;
+  fbclid?: string;
+  fbAdId?: string;
+  fbAdsetId?: string;
+  fbCampaignId?: string;
+  utmSource?: string;
+  utmMedium?: string;
+  utmCampaign?: string;
+  utmTerm?: string;
+  utmContent?: string;
+}
+
+// Tier configuration for inline selection
+const TIERS = [
+  {
+    id: "direct-list",
+    code: "direct_list",
+    name: "DirectList",
+    totalPrice: "$2,995",
+    upfrontPrice: "$495",
+    badge: null,
+  },
+  {
+    id: "direct-list-plus",
+    code: "direct_list_plus",
+    name: "DirectList+",
+    totalPrice: "$4,495",
+    upfrontPrice: "$995",
+    badge: "BEST VALUE",
+  },
+  {
+    id: "full-service",
+    code: "full_service",
+    name: "Full Service",
+    totalPrice: "3%",
+    upfrontPrice: null,
+    badge: null,
+  },
+];
+
+// Base features included in all plans
+const BASE_FEATURES = [
+  "MLS + Syndication",
+  "Professional Photography",
+  "Guided Pricing Strategy",
+  "Pre-Listing Consultation",
+  "Digital Document Signing",
+  "Lockbox & Yard Sign",
+  "Showings by ShowingTime",
+  "Zillow/Homes Traffic",
+];
+
+// Full comparison table rows - matches modal
+const COMPARISON_ROWS: {
+  feature: string;
+  values: Record<string, string | boolean>;
+}[] = [
+  {
+    feature: "On-Site Evaluation",
+    values: { direct_list: "$199", direct_list_plus: "$199", full_service: true },
+  },
+  {
+    feature: "Market Assessment",
+    values: { direct_list: "Monthly Video", direct_list_plus: "Bi-Weekly Video", full_service: "Weekly Meeting" },
+  },
+  {
+    feature: "On Market Consultation",
+    values: { direct_list: "$99", direct_list_plus: "$99", full_service: true },
+  },
+  {
+    feature: "Feedback Requests",
+    values: { direct_list: false, direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Listing Description",
+    values: { direct_list: "Self-Written", direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Virtual Walkthrough",
+    values: { direct_list: "$99", direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Floor Plan",
+    values: { direct_list: "$49", direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Aerial Photography",
+    values: { direct_list: "$99", direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Amenities Photography",
+    values: { direct_list: "$40", direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Virtual Staging",
+    values: { direct_list: "$99", direct_list_plus: "3 photos", full_service: "Whole House/Yard" },
+  },
+  {
+    feature: "Premium Analytics",
+    values: { direct_list: false, direct_list_plus: true, full_service: true },
+  },
+  {
+    feature: "Mega Open House",
+    values: { direct_list: "$99", direct_list_plus: "1 Included", full_service: "1 Included" },
+  },
+  {
+    feature: "Contract Negotiation",
+    values: { direct_list: "$249", direct_list_plus: "1 Free, then $149", full_service: "Every Offer" },
+  },
+  {
+    feature: "Amendment Negotiation",
+    values: { direct_list: "$249", direct_list_plus: "1 Free, then $149", full_service: "Every Offer" },
+  },
+  {
+    feature: "Leaseback Package",
+    values: { direct_list: "$499", direct_list_plus: "$299", full_service: "If needed" },
+  },
+  {
+    feature: "Repairs Management",
+    values: { direct_list: "Self-Managed", direct_list_plus: "Self-Managed", full_service: true },
+  },
+  {
+    feature: "Preferred Vendors",
+    values: { direct_list: false, direct_list_plus: false, full_service: true },
+  },
+  {
+    feature: "Transaction Coord.",
+    values: { direct_list: "Self-Guided", direct_list_plus: "Self-Guided", full_service: "Hands-off" },
+  },
+];
+
+// Cell value renderer
+function CellValue({ value }: { value: string | boolean | undefined }) {
+  if (value === undefined || value === false) {
+    return <span className="text-muted-foreground">—</span>;
+  }
+  if (value === true) {
+    return <HiCheck className="h-4 w-4 text-green-600 mx-auto" />;
+  }
+  return <span className="text-xs text-foreground">{value}</span>;
+}
+
+// Styled tier name component
+function TierName({ name, inherit = false }: { name: string; inherit?: boolean }) {
+  const textColor = inherit ? "inherit" : "#1f2937";
+  const italicStyle: React.CSSProperties = {
+    fontFamily: "'Times New Roman', serif",
+    fontStyle: "italic",
+    fontWeight: 400,
+    fontSize: "1.05em",
+    color: textColor,
+  };
+  const boldStyle: React.CSSProperties = {
+    fontFamily: "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
+    fontWeight: 700,
+    color: textColor,
+  };
+
+  if (name === "DirectList") {
+    return (
+      <span>
+        <span style={italicStyle}>Direct</span>
+        <span style={boldStyle}>List</span>
+      </span>
+    );
+  }
+  if (name === "DirectList+") {
+    return (
+      <span>
+        <span style={italicStyle}>Direct</span>
+        <span style={boldStyle}>List+</span>
+      </span>
+    );
+  }
+  if (name === "Full Service") {
+    return (
+      <span>
+        <span style={italicStyle}>Full</span>{" "}
+        <span style={boldStyle}>Service</span>
+      </span>
+    );
+  }
+  return <span style={{ color: textColor }}>{name}</span>;
+}
+
+// Editable address fields (for user corrections)
+interface EditableAddress {
+  street: string;
+  unit: string;
+  city: string;
+  state: string;
+  zipCode: string;
+}
+
+const initialEditableAddress: EditableAddress = {
+  street: "",
+  unit: "",
+  city: "",
+  state: "",
+  zipCode: "",
+};
+
+export default function GetStartedPage() {
+  const [step, setStep] = useState<Step>("address");
+  const [addressData, setAddressData] = useState<AddressData | null>(null);
+  const [editableAddress, setEditableAddress] = useState<EditableAddress>(initialEditableAddress);
+  const [showAddressEdit, setShowAddressEdit] = useState(false);
+  const [mapCenter, setMapCenter] = useState(defaultCenter);
+  const [propertySpecs, setPropertySpecs] = useState<PropertySpecs | null>(null);
+  const [editableSpecs, setEditableSpecs] = useState<EditableSpecs>(initialEditableSpecs);
+  const [specsLoading, setSpecsLoading] = useState(false);
+  const [specsError, setSpecsError] = useState<string | null>(null);
+
+  // Contact form state
+  const [contactForm, setContactForm] = useState<ContactForm>(initialContactForm);
+  const [contactErrors, setContactErrors] = useState<Partial<ContactForm>>({});
+  const [contactSubmitting, setContactSubmitting] = useState(false);
+  const [contactSubmitError, setContactSubmitError] = useState<string | null>(null);
+
+  // Service selection state
+  const [showTierModal, setShowTierModal] = useState(false);
+  const [showScheduleModal, setShowScheduleModal] = useState(false);
+  const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
+  const [leadId, setLeadId] = useState<string | null>(null);
+
+  // Tracking params captured on mount
+  const [trackingParams, setTrackingParams] = useState<TrackingParams>({
+    landingUrl: "",
+  });
+
+  // Capture tracking params from URL on mount
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    const params = new URLSearchParams(window.location.search);
+    setTrackingParams({
+      landingUrl: window.location.href,
+      // Google Ads
+      gclid: params.get("gclid") || undefined,
+      // Facebook Ads
+      fbclid: params.get("fbclid") || undefined,
+      fbAdId: params.get("fb_ad_id") || undefined,
+      fbAdsetId: params.get("fb_adset_id") || undefined,
+      fbCampaignId: params.get("fb_campaign_id") || undefined,
+      // UTM parameters
+      utmSource: params.get("utm_source") || undefined,
+      utmMedium: params.get("utm_medium") || undefined,
+      utmCampaign: params.get("utm_campaign") || undefined,
+      utmTerm: params.get("utm_term") || undefined,
+      utmContent: params.get("utm_content") || undefined,
+    });
+  }, []);
+
+  const { isLoaded } = useJsApiLoader({
+    googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries,
+  });
+
+  // Handle address selection from Google Places (no BatchData call yet)
+  const handleAddressSelect = useCallback((data: AddressData) => {
+    setAddressData(data);
+    setMapCenter({ lat: data.lat, lng: data.lng });
+    setShowAddressEdit(false); // Reset edit mode on new selection
+
+    // Populate editable address fields from Google Places data
+    const street = [data.streetNumber, data.streetName].filter(Boolean).join(" ");
+    setEditableAddress({
+      street: street,
+      unit: "",
+      city: data.city || "",
+      state: data.state || "",
+      zipCode: data.zipCode || "",
+    });
+
+    // Reset property specs (will be fetched when user confirms address)
+    setPropertySpecs(null);
+    setEditableSpecs(initialEditableSpecs);
+    setSpecsError(null);
+  }, []);
+
+  // Lookup property data after user confirms address
+  const lookupPropertyData = useCallback(async () => {
+    // Build final address from editable fields
+    const unitPart = editableAddress.unit.trim() ? ` ${editableAddress.unit.trim()}` : "";
+    const fullAddress = `${editableAddress.street}${unitPart}, ${editableAddress.city}, ${editableAddress.state} ${editableAddress.zipCode}`;
+
+    setSpecsLoading(true);
+    setSpecsError(null);
+
+    try {
+      const specs = await lookupProperty(fullAddress);
+      setPropertySpecs(specs);
+      if (specs) {
+        // Initialize editable specs from fetched data
+        setEditableSpecs({
+          propertyType: specs.propertyTypeLabel ?? "Single Family Home",
+          bedrooms: specs.bedrooms?.toString() ?? "",
+          fullBathrooms: specs.fullBathrooms?.toString() ?? "",
+          halfBathrooms: specs.halfBathrooms?.toString() ?? "",
+          yearBuilt: specs.yearBuilt?.toString() ?? "",
+          squareFeet: specs.squareFeet?.toString() ?? "",
+        });
+      } else {
+        setSpecsError("Property data not found. You can still continue.");
+      }
+      // Move to confirm step
+      setStep("confirm");
+    } catch (error) {
+      console.error("Property lookup failed:", error);
+      setSpecsError("Could not load property data. You can still continue.");
+      // Still move to confirm step even if lookup fails
+      setStep("confirm");
+    } finally {
+      setSpecsLoading(false);
+    }
+  }, [editableAddress]);
+
+  const handleContinue = () => {
+    if (step === "address" && addressData) {
+      // Trigger property lookup and move to confirm step
+      lookupPropertyData();
+    } else if (step === "confirm") {
+      setStep("contact");
+    }
+  };
+
+  // Handle editable specs changes
+  const handleSpecsChange = (field: keyof EditableSpecs, value: string, numericOnly = true) => {
+    const processedValue = numericOnly ? value.replace(/\D/g, "") : value;
+    setEditableSpecs((prev) => ({ ...prev, [field]: processedValue }));
+  };
+
+  // Format phone number as user types
+  const formatPhone = (value: string) => {
+    const digits = value.replace(/\D/g, "");
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const handleContactChange = (field: keyof ContactForm, value: string) => {
+    const formattedValue = field === "phone" ? formatPhone(value) : value;
+    setContactForm((prev) => ({ ...prev, [field]: formattedValue }));
+    // Clear error when user starts typing
+    if (contactErrors[field]) {
+      setContactErrors((prev) => ({ ...prev, [field]: undefined }));
+    }
+  };
+
+  const validateContact = (): boolean => {
+    const errors: Partial<ContactForm> = {};
+
+    if (!contactForm.firstName.trim()) {
+      errors.firstName = "First name is required";
+    }
+    if (!contactForm.lastName.trim()) {
+      errors.lastName = "Last name is required";
+    }
+    if (!contactForm.email.trim()) {
+      errors.email = "Email is required";
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactForm.email)) {
+      errors.email = "Please enter a valid email";
+    }
+    if (!contactForm.phone.trim()) {
+      errors.phone = "Phone is required";
+    } else if (contactForm.phone.replace(/\D/g, "").length < 10) {
+      errors.phone = "Please enter a valid phone number";
+    }
+
+    setContactErrors(errors);
+    return Object.keys(errors).length === 0;
+  };
+
+  const handleContactSubmit = async () => {
+    if (!validateContact()) return;
+
+    setContactSubmitting(true);
+    setContactSubmitError(null);
+
+    try {
+      // Build street address from components
+      const street = addressData
+        ? [addressData.streetNumber, addressData.streetName].filter(Boolean).join(" ")
+        : undefined;
+
+      const response = await fetch("/api/leads", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          // Contact info
+          firstName: contactForm.firstName.trim(),
+          lastName: contactForm.lastName.trim(),
+          email: contactForm.email.trim().toLowerCase(),
+          phone: contactForm.phone.replace(/\D/g, ""),
+
+          // Address components (parsed from Google Places)
+          street: street || undefined,
+          city: addressData?.city || undefined,
+          state: addressData?.state || undefined,
+          zip: addressData?.zipCode || undefined,
+
+          // Property FK (from parcel lookup)
+          parcelId: propertySpecs?.parcelId || undefined,
+
+          // Source - determine based on UTM or default
+          source: trackingParams.utmSource === "google" ? "paid_search"
+            : trackingParams.utmSource === "facebook" ? "social_media"
+            : trackingParams.gclid ? "paid_search"
+            : trackingParams.fbclid ? "social_media"
+            : "website",
+
+          // Landing URL
+          landingUrl: trackingParams.landingUrl || undefined,
+
+          // Google tracking
+          gclid: trackingParams.gclid,
+
+          // Facebook tracking
+          fbclid: trackingParams.fbclid,
+          fbAdId: trackingParams.fbAdId,
+          fbAdsetId: trackingParams.fbAdsetId,
+          fbCampaignId: trackingParams.fbCampaignId,
+
+          // UTM parameters
+          utmSource: trackingParams.utmSource,
+          utmMedium: trackingParams.utmMedium,
+          utmCampaign: trackingParams.utmCampaign,
+          utmTerm: trackingParams.utmTerm,
+          utmContent: trackingParams.utmContent,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "Failed to save contact info");
+      }
+
+      // Store leadId for checkout flow
+      if (data.leadId) {
+        setLeadId(data.leadId);
+      }
+
+      // Move to service tier selection step
+      setStep("service");
+    } catch (error) {
+      console.error("Contact submit error:", error);
+      setContactSubmitError(
+        error instanceof Error ? error.message : "Something went wrong. Please try again."
+      );
+    } finally {
+      setContactSubmitting(false);
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-background">
+      {/* Hero Section */}
+      <section className="bg-primary pt-24 pb-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            List Your Home on the MLS
+          </h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Get started in minutes. Save thousands compared to traditional agents.
+          </p>
+        </div>
+      </section>
+
+      {/* Main Content */}
+      <section className="py-12">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Step 1: Address */}
+          {step === "address" && (
+            <div className="space-y-8">
+              <div className="bg-card rounded-xl border border-border p-6 md:p-8">
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                  Where is your property?
+                </h2>
+                <p className="text-muted-foreground mb-6">
+                  Enter your property address to get started with your MLS listing.
+                </p>
+
+                <AddressInput
+                  onAddressSelect={handleAddressSelect}
+                  placeholder="Enter your property address"
+                  defaultValue={addressData?.formattedAddress}
+                  className="mb-6"
+                />
+
+                {/* Map Preview */}
+                {addressData && isLoaded && (
+                  <div className="rounded-lg overflow-hidden border border-border mb-6">
+                    <GoogleMap
+                      mapContainerStyle={mapContainerStyle}
+                      center={mapCenter}
+                      zoom={16}
+                      options={mapOptions}
+                    >
+                      <Marker position={mapCenter} />
+                    </GoogleMap>
+                  </div>
+                )}
+
+                {/* Address Confirmation - shown after autocomplete selection */}
+                {addressData && (
+                  <div className="space-y-4 mb-6">
+                    {/* Display selected address */}
+                    <div className="bg-muted rounded-lg p-4">
+                      <p className="text-sm text-muted-foreground mb-1">Is this address correct?</p>
+                      <p className="font-semibold text-foreground">
+                        {editableAddress.street}
+                        {editableAddress.unit && ` ${editableAddress.unit}`}
+                        {editableAddress.city && `, ${editableAddress.city}`}
+                        {editableAddress.state && `, ${editableAddress.state}`}
+                        {editableAddress.zipCode && ` ${editableAddress.zipCode}`}
+                      </p>
+                    </div>
+
+                    {/* Editable fields - shown when Edit is clicked */}
+                    {showAddressEdit && (
+                      <div className="space-y-4 border border-border rounded-lg p-4">
+                        {/* Street Address */}
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-1.5">
+                            Street Address
+                          </label>
+                          <input
+                            type="text"
+                            value={editableAddress.street}
+                            onChange={(e) => setEditableAddress(prev => ({ ...prev, street: e.target.value }))}
+                            className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          />
+                        </div>
+
+                        {/* Unit Number */}
+                        <div>
+                          <label className="block text-sm font-medium text-foreground mb-1.5">
+                            Unit Number <span className="text-muted-foreground font-normal">(optional)</span>
+                          </label>
+                          <input
+                            type="text"
+                            value={editableAddress.unit}
+                            onChange={(e) => setEditableAddress(prev => ({ ...prev, unit: e.target.value }))}
+                            placeholder="e.g., Unit 204, Apt 3B"
+                            className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                          />
+                        </div>
+
+                        {/* City, State, ZIP in a row */}
+                        <div className="grid grid-cols-6 gap-3">
+                          <div className="col-span-3">
+                            <label className="block text-sm font-medium text-foreground mb-1.5">
+                              City
+                            </label>
+                            <input
+                              type="text"
+                              value={editableAddress.city}
+                              onChange={(e) => setEditableAddress(prev => ({ ...prev, city: e.target.value }))}
+                              className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                          </div>
+                          <div className="col-span-1">
+                            <label className="block text-sm font-medium text-foreground mb-1.5">
+                              State
+                            </label>
+                            <input
+                              type="text"
+                              value={editableAddress.state}
+                              onChange={(e) => setEditableAddress(prev => ({ ...prev, state: e.target.value }))}
+                              className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                          </div>
+                          <div className="col-span-2">
+                            <label className="block text-sm font-medium text-foreground mb-1.5">
+                              ZIP Code
+                            </label>
+                            <input
+                              type="text"
+                              value={editableAddress.zipCode}
+                              onChange={(e) => setEditableAddress(prev => ({ ...prev, zipCode: e.target.value }))}
+                              className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Action buttons */}
+                    <div className="flex gap-3">
+                      {!showAddressEdit ? (
+                        <>
+                          <button
+                            onClick={() => setShowAddressEdit(true)}
+                            className="flex-1 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                          >
+                            Edit Address
+                          </button>
+                          <button
+                            onClick={handleContinue}
+                            disabled={specsLoading}
+                            className="flex-1 flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+                          >
+                            {specsLoading ? "Looking up..." : "Continue"}
+                            {!specsLoading && <HiOutlineArrowRight className="h-4 w-4" />}
+                          </button>
+                        </>
+                      ) : (
+                        <button
+                          onClick={handleContinue}
+                          disabled={specsLoading || !editableAddress.street || !editableAddress.city}
+                          className="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50"
+                        >
+                          {specsLoading ? "Looking up..." : "Continue"}
+                          {!specsLoading && <HiOutlineArrowRight className="h-4 w-4" />}
+                        </button>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
+
+          {/* Step 2: Confirm Details */}
+          {step === "confirm" && (
+            <div className="bg-card rounded-xl border border-border p-6 md:p-8">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                Here&apos;s What We Found
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                This is what our records show for your property. Please adjust if anything looks different.
+              </p>
+
+              {/* Property Address */}
+              <div className="bg-muted rounded-lg p-4 mb-6">
+                <div className="flex items-center gap-3">
+                  <HiOutlineCheckCircle className="h-5 w-5 text-green-600 flex-shrink-0" />
+                  <p className="font-semibold text-foreground">
+                    {editableAddress.street}
+                    {editableAddress.unit && ` ${editableAddress.unit}`}
+                    {editableAddress.city && `, ${editableAddress.city}`}
+                    {editableAddress.state && `, ${editableAddress.state}`}
+                    {editableAddress.zipCode && ` ${editableAddress.zipCode}`}
+                  </p>
+                </div>
+              </div>
+
+              {/* Editable Specs - Borderless with pencil triggers */}
+              <div className="divide-y divide-border mb-6">
+                <div className="flex items-center justify-between py-3">
+                  <span className="text-sm text-muted-foreground">Property Type</span>
+                  <select
+                    value={editableSpecs.propertyType}
+                    onChange={(e) => handleSpecsChange("propertyType", e.target.value, false)}
+                    className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/20"
+                  >
+                    <option value="Single Family Home">Single Family Home</option>
+                    <option value="Condo">Condo</option>
+                    <option value="Townhouse">Townhouse</option>
+                    <option value="Duplex">Duplex</option>
+                    <option value="Half Duplex">Half Duplex</option>
+                    <option value="Land">Land</option>
+                  </select>
+                </div>
+                <div className="flex items-center justify-between py-3">
+                  <span className="text-sm text-muted-foreground">Bedrooms</span>
+                  <label className="flex items-center gap-2 cursor-text">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={editableSpecs.bedrooms}
+                      onChange={(e) => handleSpecsChange("bedrooms", e.target.value)}
+                      placeholder="—"
+                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    />
+                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </label>
+                </div>
+                <div className="flex items-center justify-between py-3">
+                  <span className="text-sm text-muted-foreground">Full Bathrooms</span>
+                  <label className="flex items-center gap-2 cursor-text">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={editableSpecs.fullBathrooms}
+                      onChange={(e) => handleSpecsChange("fullBathrooms", e.target.value)}
+                      placeholder="—"
+                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    />
+                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </label>
+                </div>
+                <div className="flex items-center justify-between py-3">
+                  <span className="text-sm text-muted-foreground">Half Bathrooms</span>
+                  <label className="flex items-center gap-2 cursor-text">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={editableSpecs.halfBathrooms}
+                      onChange={(e) => handleSpecsChange("halfBathrooms", e.target.value)}
+                      placeholder="—"
+                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    />
+                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </label>
+                </div>
+                <div className="flex items-center justify-between py-3">
+                  <span className="text-sm text-muted-foreground">Year Built</span>
+                  <label className="flex items-center gap-2 cursor-text">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={editableSpecs.yearBuilt}
+                      onChange={(e) => handleSpecsChange("yearBuilt", e.target.value)}
+                      placeholder="—"
+                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    />
+                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </label>
+                </div>
+                <div className="flex items-center justify-between py-3">
+                  <span className="text-sm text-muted-foreground">Square Footage</span>
+                  <label className="flex items-center gap-2 cursor-text">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      value={editableSpecs.squareFeet}
+                      onChange={(e) => handleSpecsChange("squareFeet", e.target.value)}
+                      placeholder="—"
+                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-20 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                    />
+                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
+                  </label>
+                </div>
+              </div>
+
+              {/* Navigation */}
+              <div className="flex justify-between pt-2">
+                <button
+                  onClick={() => setStep("address")}
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                >
+                  <HiOutlineArrowLeft className="h-4 w-4" />
+                  Back
+                </button>
+                <button
+                  onClick={handleContinue}
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+                >
+                  Next
+                  <HiOutlineArrowRight className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Step 3: Contact Info */}
+          {step === "contact" && (
+            <div className="bg-card rounded-xl border border-border p-6 md:p-8">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                How Can We Reach You?
+              </h2>
+              <p className="text-muted-foreground mb-6">
+                Enter your contact information to continue with your listing.
+              </p>
+
+              {/* Property Address */}
+              <div className="bg-muted rounded-lg p-4 mb-6">
+                <p className="font-semibold text-foreground text-sm">
+                  {editableAddress.street}
+                  {editableAddress.unit && ` ${editableAddress.unit}`}
+                  {editableAddress.city && `, ${editableAddress.city}`}
+                  {editableAddress.state && `, ${editableAddress.state}`}
+                  {editableAddress.zipCode && ` ${editableAddress.zipCode}`}
+                </p>
+              </div>
+
+              {/* Contact Form */}
+              <div className="space-y-4">
+                {/* Name Row */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
+                      First Name
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <HiOutlineUser className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <input
+                        type="text"
+                        name="firstName"
+                        autoComplete="given-name"
+                        value={contactForm.firstName}
+                        onChange={(e) => handleContactChange("firstName", e.target.value)}
+                        placeholder="John"
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                          contactErrors.firstName ? "border-red-500" : "border-border"
+                        }`}
+                      />
+                    </div>
+                    {contactErrors.firstName && (
+                      <p className="mt-1 text-xs text-red-500">{contactErrors.firstName}</p>
+                    )}
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-foreground mb-1.5">
+                      Last Name
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <HiOutlineUser className="h-5 w-5 text-muted-foreground" />
+                      </div>
+                      <input
+                        type="text"
+                        name="lastName"
+                        autoComplete="family-name"
+                        value={contactForm.lastName}
+                        onChange={(e) => handleContactChange("lastName", e.target.value)}
+                        placeholder="Smith"
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                          contactErrors.lastName ? "border-red-500" : "border-border"
+                        }`}
+                      />
+                    </div>
+                    {contactErrors.lastName && (
+                      <p className="mt-1 text-xs text-red-500">{contactErrors.lastName}</p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Email */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
+                    Email
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <HiOutlineEnvelope className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <input
+                      type="email"
+                      name="email"
+                      autoComplete="email"
+                      value={contactForm.email}
+                      onChange={(e) => handleContactChange("email", e.target.value)}
+                      placeholder="john@example.com"
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                        contactErrors.email ? "border-red-500" : "border-border"
+                      }`}
+                    />
+                  </div>
+                  {contactErrors.email && (
+                    <p className="mt-1 text-xs text-red-500">{contactErrors.email}</p>
+                  )}
+                </div>
+
+                {/* Phone */}
+                <div>
+                  <label className="block text-sm font-medium text-foreground mb-1.5">
+                    Phone
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <HiOutlinePhone className="h-5 w-5 text-muted-foreground" />
+                    </div>
+                    <input
+                      type="tel"
+                      name="phone"
+                      autoComplete="tel"
+                      value={contactForm.phone}
+                      onChange={(e) => handleContactChange("phone", e.target.value)}
+                      placeholder="(972) 555-1234"
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                        contactErrors.phone ? "border-red-500" : "border-border"
+                      }`}
+                    />
+                  </div>
+                  {contactErrors.phone && (
+                    <p className="mt-1 text-xs text-red-500">{contactErrors.phone}</p>
+                  )}
+                </div>
+
+                {/* Submit Error */}
+                {contactSubmitError && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex items-start gap-2">
+                    <HiOutlineExclamationCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                    <p className="text-red-700 text-sm">{contactSubmitError}</p>
+                  </div>
+                )}
+
+                {/* Action Buttons */}
+                <div className="flex justify-between pt-2">
+                  <button
+                    onClick={() => setStep("confirm")}
+                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                  >
+                    <HiOutlineArrowLeft className="h-4 w-4" />
+                    Back
+                  </button>
+                  <button
+                    onClick={handleContactSubmit}
+                    disabled={contactSubmitting}
+                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {contactSubmitting ? "Saving..." : "Next"}
+                    {!contactSubmitting && <HiOutlineArrowRight className="h-4 w-4" />}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Step 4: Service Selection - Full Tier Comparison */}
+          {step === "service" && (
+            <div className="bg-card rounded-xl border border-border p-4 md:p-6">
+              {/* Header */}
+              <div className="text-center mb-6">
+                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+                  Choose Your Service Level
+                </h2>
+                <p className="text-muted-foreground">
+                  All plans include MLS listing, professional photography, and expert support.
+                </p>
+              </div>
+
+              {/* All Plans Include */}
+              <div className="bg-primary/5 border border-primary/50 rounded-lg p-4 mb-6">
+                <h4 className="font-bold text-sm mb-3 text-center text-primary">All Plans Include</h4>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                  {BASE_FEATURES.map((feature, idx) => (
+                    <span key={idx} className="flex items-center gap-1.5">
+                      <HiCheck className="h-3.5 w-3.5 text-green-600 shrink-0" />
+                      <span className="text-foreground">{feature}</span>
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Tier Headers - Desktop */}
+              <div className="hidden md:grid grid-cols-4 gap-2 mb-1">
+                <div /> {/* Empty corner */}
+                {TIERS.map((tier) => (
+                  <div
+                    key={tier.id}
+                    className={`relative text-center p-3 rounded-t-lg border border-b-0 ${
+                      tier.id === "full-service"
+                        ? "border-primary bg-primary/10"
+                        : tier.id === "direct-list-plus"
+                        ? "border-primary/50 bg-primary/5"
+                        : "border-border bg-card"
+                    }`}
+                  >
+                    {tier.badge && (
+                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                        <span className="bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap">
+                          {tier.badge}
+                        </span>
+                      </div>
+                    )}
+                    <div className={tier.badge ? "pt-1" : ""}>
+                      <h3 className="font-semibold text-sm mb-1">
+                        <TierName name={tier.name} />
+                      </h3>
+                      <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                        {tier.id === "full-service" ? "Pay at closing" : "Starting from"}
+                      </div>
+                      <div className="text-xl font-bold text-primary">
+                        {tier.id === "full-service" ? tier.totalPrice : tier.upfrontPrice}
+                      </div>
+                      <div className="text-xs text-muted-foreground">
+                        {tier.id === "full-service" ? "No upfront payment" : `${tier.totalPrice} total`}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Comparison Table - Desktop */}
+              <div className="hidden md:block border border-border rounded-lg overflow-hidden mb-4">
+                <table className="w-full text-xs">
+                  <thead>
+                    <tr className="bg-muted/50 border-b">
+                      <th className="text-left p-2 font-semibold border-r w-1/4">What&apos;s Different</th>
+                      {TIERS.map((tier, idx) => (
+                        <th
+                          key={tier.id}
+                          className={`p-2 font-semibold text-center w-1/4 ${
+                            idx < TIERS.length - 1 ? "border-r" : ""
+                          } ${
+                            tier.id === "direct-list-plus"
+                              ? "bg-primary/5"
+                              : tier.id === "full-service"
+                              ? "bg-primary/10"
+                              : ""
+                          }`}
+                        >
+                          <TierName name={tier.name} />
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {COMPARISON_ROWS.map((row, idx) => (
+                      <tr key={idx} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
+                        <td className="p-2 text-muted-foreground border-r">{row.feature}</td>
+                        {TIERS.map((tier, tierIdx) => (
+                          <td
+                            key={tier.id}
+                            className={`p-2 text-center ${tierIdx < TIERS.length - 1 ? "border-r" : ""} ${
+                              tier.id === "direct-list-plus"
+                                ? "bg-primary/5"
+                                : tier.id === "full-service"
+                                ? "bg-primary/10"
+                                : ""
+                            }`}
+                          >
+                            <CellValue value={row.values[tier.code]} />
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+
+              {/* Select Buttons - Desktop */}
+              <div className="hidden md:grid grid-cols-4 gap-2 mb-6">
+                <div /> {/* Empty corner */}
+                {TIERS.map((tier) => (
+                  <button
+                    key={tier.id}
+                    onClick={() => {
+                      setSelectedTierId(tier.id);
+                      setShowTierModal(true);
+                    }}
+                    className="py-2 px-4 rounded-lg text-sm font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90"
+                  >
+                    Select <TierName name={tier.name} inherit />
+                  </button>
+                ))}
+              </div>
+
+              {/* Mobile Layout - Stacked Cards */}
+              <div className="md:hidden space-y-4">
+                {TIERS.map((tier) => (
+                  <div
+                    key={tier.id}
+                    className={`rounded-lg border-2 overflow-hidden ${
+                      tier.id === "full-service"
+                        ? "border-primary bg-primary/10"
+                        : tier.id === "direct-list-plus"
+                        ? "border-primary/50 bg-primary/5"
+                        : "border-border bg-card"
+                    }`}
+                  >
+                    {/* Card Header */}
+                    <div className="p-4 border-b border-border/50">
+                      <div className="flex justify-between items-start">
+                        <div>
+                          <h3 className="text-lg font-semibold">
+                            <TierName name={tier.name} />
+                          </h3>
+                          {tier.badge && (
+                            <span className="inline-block mt-1 bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-xs font-semibold">
+                              {tier.badge}
+                            </span>
+                          )}
+                        </div>
+                        <div className="text-right">
+                          <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                            {tier.id === "full-service" ? "Pay at closing" : "Starting from"}
+                          </div>
+                          <div className="text-2xl font-bold text-primary">
+                            {tier.id === "full-service" ? tier.totalPrice : tier.upfrontPrice}
+                          </div>
+                          <div className="text-xs text-muted-foreground">
+                            {tier.id === "full-service" ? "No upfront payment" : `${tier.totalPrice} total`}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Card Features */}
+                    <div className="p-4 space-y-2">
+                      {COMPARISON_ROWS.map((row, idx) => {
+                        const value = row.values[tier.code];
+                        if (value === false) return null;
+                        return (
+                          <div
+                            key={idx}
+                            className="flex justify-between items-center py-1 border-b border-border/30 last:border-0 text-sm"
+                          >
+                            <span className="text-muted-foreground">{row.feature}</span>
+                            <span className="font-medium text-foreground">
+                              {value === true ? (
+                                <HiCheck className="h-4 w-4 text-green-600" />
+                              ) : (
+                                value
+                              )}
+                            </span>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                    {/* Card CTA */}
+                    <div className="p-4 pt-0">
+                      <button
+                        onClick={() => {
+                          setSelectedTierId(tier.id);
+                          setShowTierModal(true);
+                        }}
+                        className="block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90"
+                      >
+                        Select <TierName name={tier.name} inherit />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              {/* Back Button */}
+              <div className="pt-4 md:pt-0">
+                <button
+                  onClick={() => setStep("contact")}
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                >
+                  <HiOutlineArrowLeft className="h-4 w-4" />
+                  Back
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      {/* Tier Selection Modal - opens directly to terms for selected tier */}
+      <TierSelectionModal
+        isOpen={showTierModal}
+        onClose={() => {
+          setShowTierModal(false);
+          setSelectedTierId(null);
+        }}
+        initialTier={selectedTierId || undefined}
+        source="get-started"
+        leadId={leadId || undefined}
+        propertySpecs={editableSpecs}
+      />
+
+      {/* Schedule a Call Section */}
+      <section className="py-12 md:py-16 bg-muted/30 border-t border-border">
+        <div className="container mx-auto px-4 max-w-2xl text-center">
+          <h2 className="text-2xl font-semibold text-foreground mb-3">
+            Not ready to get started?
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            Our team can answer your questions and help you choose the right
+            plan.
+          </p>
+          <button
+            onClick={() => setShowScheduleModal(true)}
+            className="bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
+          >
+            Schedule a Free Consultation
+          </button>
+        </div>
+      </section>
+
+      {/* Schedule Call Modal */}
+      {showScheduleModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+            onClick={() => setShowScheduleModal(false)}
+          />
+          <div className="relative bg-background rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden mx-4">
+            <button
+              onClick={() => setShowScheduleModal(false)}
+              className="absolute top-4 right-4 z-10 p-2 rounded-full hover:bg-muted transition-colors"
+            >
+              <HiXMark className="h-6 w-6 text-muted-foreground" />
+            </button>
+            <div className="p-6">
+              <h3 className="text-xl font-semibold text-foreground mb-4">
+                Schedule a Call
+              </h3>
+              <CalendlyEmbed url="https://calendly.com/access-inquiries/sales-call" />
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}

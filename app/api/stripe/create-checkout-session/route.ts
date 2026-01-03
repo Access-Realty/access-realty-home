@@ -71,14 +71,25 @@ interface UTMParams {
   utm_content?: string;
 }
 
+// Property specs from get-started flow
+interface PropertySpecs {
+  bedrooms?: string;
+  fullBathrooms?: string;
+  halfBathrooms?: string;
+  yearBuilt?: string;
+  squareFeet?: string;
+}
+
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { plan, source, utmParams, returnUrl } = body as {
+    const { plan, source, utmParams, returnUrl, leadId, propertySpecs } = body as {
       plan: string;
       source?: string;
       utmParams?: UTMParams;
       returnUrl?: string; // For embedded checkout return
+      leadId?: string;
+      propertySpecs?: PropertySpecs;
     };
 
     // Validate plan
@@ -109,6 +120,7 @@ export async function POST(request: NextRequest) {
       const signupUrl = new URL(appBaseUrl);
       signupUrl.searchParams.set("tier", tier);
       if (source) signupUrl.searchParams.set("ref", source);
+      if (leadId) signupUrl.searchParams.set("lead_id", leadId);
       // Forward UTM params to the app
       if (utmParams) {
         Object.entries(utmParams).forEach(([key, value]) => {
@@ -135,6 +147,9 @@ export async function POST(request: NextRequest) {
     ];
     if (source) {
       queryParams.push(`ref=${encodeURIComponent(source)}`);
+    }
+    if (leadId) {
+      queryParams.push(`lead_id=${encodeURIComponent(leadId)}`);
     }
     // Forward UTM params to the app
     if (utmParams) {
@@ -167,6 +182,14 @@ export async function POST(request: NextRequest) {
         plan,
         source: source || "services-page",
         created_from: "marketing-site",
+        // Lead ID for fetching property data in app
+        ...(leadId && { lead_id: leadId }),
+        // Property specs (user-reported, may differ from parcel data)
+        ...(propertySpecs?.bedrooms && { bedrooms: propertySpecs.bedrooms }),
+        ...(propertySpecs?.fullBathrooms && { full_bathrooms: propertySpecs.fullBathrooms }),
+        ...(propertySpecs?.halfBathrooms && { half_bathrooms: propertySpecs.halfBathrooms }),
+        ...(propertySpecs?.yearBuilt && { year_built: propertySpecs.yearBuilt }),
+        ...(propertySpecs?.squareFeet && { square_feet: propertySpecs.squareFeet }),
         // UTM params for attribution tracking
         ...(utmParams?.utm_source && { utm_source: utmParams.utm_source }),
         ...(utmParams?.utm_medium && { utm_medium: utmParams.utm_medium }),

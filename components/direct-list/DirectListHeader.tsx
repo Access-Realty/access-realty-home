@@ -1,5 +1,5 @@
 // ABOUTME: Header component for DirectList pages
-// ABOUTME: Minimal nav with Compare Plans and Sign In
+// ABOUTME: Minimal nav with Sign In button
 
 import Link from "next/link";
 import Image from "next/image";
@@ -19,13 +19,7 @@ export function DirectListHeader() {
               priority
             />
           </Link>
-          <nav className="flex items-center gap-3 md:gap-8">
-            <Link
-              href="/services"
-              className="text-sm md:text-base text-foreground hover:text-secondary transition-colors"
-            >
-              Compare Plans
-            </Link>
+          <nav className="flex items-center">
             <a
               href="https://app.access.realty"
               className="bg-primary text-primary-foreground px-4 md:px-6 py-2 rounded-md text-sm md:text-base font-semibold hover:bg-primary-dark transition-colors"

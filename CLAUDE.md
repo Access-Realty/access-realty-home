@@ -30,6 +30,15 @@ This is the **marketing site** (Repo 2 of 3) for Access Realty:
 
 All repos share the same Supabase database.
 
+## Marketing → App Handoff
+
+The DirectList get-started wizard collects lead and property data, then hands off to the app after checkout. See **[MARKETING-HANDOFF.md](./MARKETING-HANDOFF.md)** for:
+- Wizard flow and data collected at each step
+- URL parameters passed to app after checkout
+- Stripe session metadata
+- Database tables (`leads`, `parcels`) and their schemas
+- App integration examples
+
 ## Tech Stack
 
 - **Next.js 16** with App Router
