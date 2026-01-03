@@ -40,12 +40,12 @@ const Footer = () => {
                 </Link>
               </li>
               <li>
-                <Link
+                <a
                   href="/direct-list"
                   className="hover:text-secondary transition-colors"
                 >
                   DirectList
-                </Link>
+                </a>
               </li>
               <li>
                 <Link
