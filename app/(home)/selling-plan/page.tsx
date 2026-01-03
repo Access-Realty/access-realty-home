@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
+import { Section } from "@/components/layout";
 import { HiArrowRight, HiArrowLeft, HiCheck } from "react-icons/hi2";
 
 // Question types
@@ -382,33 +383,31 @@ export default function SellingPlanPage() {
   if (!started) {
     return (
       <div className="bg-background min-h-screen">
-        <section className="pt-24 pb-16">
-          <div className="container mx-auto px-4">
-            <div className={`max-w-3xl mx-auto text-center ${contentClasses}`}>
-              <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-                Your Home. Your Best Selling Plan.
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8">
-                Selling a home isn&apos;t one-size-fits-all. Different goals require different
-                strategies, and choosing the wrong one can cost you time, money, or
-                unnecessary stress.
-              </p>
-              <p className="text-lg text-muted-foreground mb-12">
-                Answer 5 quick questions and we&apos;ll create a personalized selling plan that
-                shows you 2–3 realistic ways to reach your goal, so you can decide what works
-                best for you.
-              </p>
-              <button
-                onClick={handleStart}
-                disabled={isTransitioning}
-                className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors"
-              >
-                Get Started
-                <HiArrowRight className="h-5 w-5" />
-              </button>
-            </div>
+        <Section variant="content" maxWidth="3xl" className="pt-24">
+          <div className={`text-center ${contentClasses}`}>
+            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+              Your Home. Your Best Selling Plan.
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Selling a home isn&apos;t one-size-fits-all. Different goals require different
+              strategies, and choosing the wrong one can cost you time, money, or
+              unnecessary stress.
+            </p>
+            <p className="text-lg text-muted-foreground mb-12">
+              Answer 5 quick questions and we&apos;ll create a personalized selling plan that
+              shows you 2–3 realistic ways to reach your goal, so you can decide what works
+              best for you.
+            </p>
+            <button
+              onClick={handleStart}
+              disabled={isTransitioning}
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors"
+            >
+              Get Started
+              <HiArrowRight className="h-5 w-5" />
+            </button>
           </div>
-        </section>
+        </Section>
       </div>
     );
   }
@@ -417,39 +416,37 @@ export default function SellingPlanPage() {
   if (completed) {
     return (
       <div className="bg-background min-h-screen">
-        <section className="pt-24 pb-16">
-          <div className="container mx-auto px-4">
-            <div className={`max-w-3xl mx-auto text-center ${contentClasses}`}>
-              <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-                Your Personalized Plan
-              </h1>
-              <p className="text-xl text-muted-foreground mb-8">
-                Based on your answers, we&apos;re preparing your personalized selling recommendations.
+        <Section variant="content" maxWidth="3xl" className="pt-24">
+          <div className={`text-center ${contentClasses}`}>
+            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+              Your Personalized Plan
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8">
+              Based on your answers, we&apos;re preparing your personalized selling recommendations.
+            </p>
+            <div className="bg-muted rounded-xl p-8 mb-8">
+              <p className="text-2xl font-bold text-primary mb-4">
+                Results Coming Soon
               </p>
-              <div className="bg-muted rounded-xl p-8 mb-8">
-                <p className="text-2xl font-bold text-primary mb-4">
-                  Results Coming Soon
-                </p>
-                <p className="text-muted-foreground mb-6">
-                  We&apos;re building the recommendation engine. In the meantime, give us a call and we&apos;ll walk through your options together.
-                </p>
-                <a
-                  href="tel:+19728207902"
-                  className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors"
-                >
-                  Call (972) 820-7902
-                </a>
-              </div>
-              <button
-                onClick={handleRestart}
-                disabled={isTransitioning}
-                className="text-primary hover:text-secondary transition-colors font-semibold"
+              <p className="text-muted-foreground mb-6">
+                We&apos;re building the recommendation engine. In the meantime, give us a call and we&apos;ll walk through your options together.
+              </p>
+              <a
+                href="tel:+19728207902"
+                className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors"
               >
-                Start Over
-              </button>
+                Call (972) 820-7902
+              </a>
             </div>
+            <button
+              onClick={handleRestart}
+              disabled={isTransitioning}
+              className="text-primary hover:text-secondary transition-colors font-semibold"
+            >
+              Start Over
+            </button>
           </div>
-        </section>
+        </Section>
       </div>
     );
   }
@@ -457,9 +454,8 @@ export default function SellingPlanPage() {
   // Question screen
   return (
     <div className="bg-background min-h-screen">
-      <section className="pt-24 pb-16">
-        <div className="container mx-auto px-4">
-          <div className="max-w-2xl mx-auto">
+      <Section variant="content" maxWidth="2xl" className="pt-24">
+        <div>
             {/* Progress header - always visible */}
             <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
               <span>Question {currentQuestion + 1} of {questions.length}</span>
@@ -606,8 +602,7 @@ export default function SellingPlanPage() {
               )}
             </div>
           </div>
-        </div>
-      </section>
-    </div>
-  );
-}
+        </Section>
+      </div>
+    );
+  }

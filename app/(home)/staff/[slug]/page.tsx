@@ -8,6 +8,7 @@ import ListingsCarousel from "@/components/listings/ListingsCarousel";
 import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
 import ContactSection from "@/components/staff/ContactSection";
 import { getStaffBySlug, getStaffSlugs } from "@/lib/staff";
+import { Section } from "@/components/layout";
 
 // Local avatar fallbacks (DB avatar_url takes precedence)
 const staffAvatarFallbacks: Record<string, string> = {
@@ -73,107 +74,101 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
   return (
     <div className="bg-card">
       {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-muted">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {/* Avatar */}
-          {avatarUrl ? (
-            <div className="h-40 w-40 rounded-full border-4 border-secondary mx-auto mb-6 overflow-hidden">
-              <Image
-                src={avatarUrl}
-                alt={name}
-                width={160}
-                height={160}
-                className="object-cover w-full h-full"
-                priority
-              />
-            </div>
-          ) : (
-            <div className="h-40 w-40 rounded-full border-4 border-secondary bg-primary mx-auto mb-6 flex items-center justify-center">
-              <span className="text-primary-foreground text-5xl font-bold">
-                {staff.initials}
-              </span>
-            </div>
-          )}
-
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">
-            {name}
-          </h1>
-          <p className="text-xl text-secondary font-semibold mb-6">
-            {title}
-          </p>
-
-          <div className="flex flex-wrap justify-center gap-4">
-            <a
-              href={`mailto:${staff.email}`}
-              className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
-            >
-              Contact Me
-            </a>
-            <a
-              href={`tel:+1${telPhone}`}
-              className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
-            >
-              {formattedPhone}
-            </a>
-            {hasCalendly && (
-              <a
-                href={calendlyUrl!}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors inline-flex items-center gap-2"
-              >
-                <HiCalendarDays className="h-5 w-5" />
-                Book Online
-              </a>
-            )}
+      <Section variant="content" maxWidth="4xl" background="muted" className="pt-24 text-center">
+        {/* Avatar */}
+        {avatarUrl ? (
+          <div className="h-40 w-40 rounded-full border-4 border-secondary mx-auto mb-6 overflow-hidden">
+            <Image
+              src={avatarUrl}
+              alt={name}
+              width={160}
+              height={160}
+              className="object-cover w-full h-full"
+              priority
+            />
           </div>
+        ) : (
+          <div className="h-40 w-40 rounded-full border-4 border-secondary bg-primary mx-auto mb-6 flex items-center justify-center">
+            <span className="text-primary-foreground text-5xl font-bold">
+              {staff.initials}
+            </span>
+          </div>
+        )}
+
+        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">
+          {name}
+        </h1>
+        <p className="text-xl text-secondary font-semibold mb-6">
+          {title}
+        </p>
+
+        <div className="flex flex-wrap justify-center gap-4">
+          <a
+            href={`mailto:${staff.email}`}
+            className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
+          >
+            Contact Me
+          </a>
+          <a
+            href={`tel:+1${telPhone}`}
+            className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
+          >
+            {formattedPhone}
+          </a>
+          {hasCalendly && (
+            <a
+              href={calendlyUrl!}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors inline-flex items-center gap-2"
+            >
+              <HiCalendarDays className="h-5 w-5" />
+              Book Online
+            </a>
+          )}
         </div>
-      </section>
+      </Section>
 
       {/* Services Section */}
-      <section className="py-16">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-6">
-            {staff.services.map((service, index) => {
-              const IconComponent = iconMap[service.icon] || HiOutlineHomeModern;
-              return (
-                <div
-                  key={index}
-                  className="bg-muted rounded-xl p-8"
-                >
-                  <IconComponent className="h-10 w-10 text-primary mb-4" />
-                  <h3 className="text-xl font-bold text-foreground mb-3">
-                    {service.title}
-                  </h3>
-                  <p className="text-muted-foreground">
-                    {service.description}
-                  </p>
-                </div>
-              );
-            })}
-          </div>
+      <Section variant="content" maxWidth="6xl" background="card">
+        <div className="grid md:grid-cols-2 gap-6">
+          {staff.services.map((service, index) => {
+            const IconComponent = iconMap[service.icon] || HiOutlineHomeModern;
+            return (
+              <div
+                key={index}
+                className="bg-muted rounded-xl p-8"
+              >
+                <IconComponent className="h-10 w-10 text-primary mb-4" />
+                <h3 className="text-xl font-bold text-foreground mb-3">
+                  {service.title}
+                </h3>
+                <p className="text-muted-foreground">
+                  {service.description}
+                </p>
+              </div>
+            );
+          })}
         </div>
-      </section>
+      </Section>
 
       {/* My Story Section */}
-      <section className="py-16 bg-muted">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
-            MY STORY
-          </p>
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-            More Than Just Transactions
-          </h2>
+      <Section variant="content" maxWidth="4xl" background="muted">
+        <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
+          MY STORY
+        </p>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
+          More Than Just Transactions
+        </h2>
 
-          <div className="space-y-6 text-foreground">
-            {staff.bio.map((paragraph, index) => (
-              <p key={index} className="leading-relaxed">
-                {paragraph}
-              </p>
-            ))}
-          </div>
+        <div className="space-y-6 text-foreground">
+          {staff.bio.map((paragraph, index) => (
+            <p key={index} className="leading-relaxed">
+              {paragraph}
+            </p>
+          ))}
         </div>
-      </section>
+      </Section>
 
       {/* Current Listings Section */}
       {staff.member_key && (

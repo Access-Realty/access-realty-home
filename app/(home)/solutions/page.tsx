@@ -2,6 +2,7 @@
 // ABOUTME: Cards link to individual solution detail pages
 
 import Link from "next/link";
+import { HeroSection, Section } from "@/components/layout";
 
 const solutions = [
   {
@@ -58,21 +59,18 @@ export default function Solutions() {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <section className="pt-24 pb-12 bg-primary">
-        <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
-            Sell Your House Your Way
-          </h1>
-          <p className="text-xl text-primary-foreground/80 max-w-2xl mx-auto">
-            Six flexible solutions to fit your timeline, budget, and goals.
-          </p>
-        </div>
-      </section>
+      <HeroSection>
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
+          Sell Your House Your Way
+        </h1>
+        <p className="text-xl text-primary-foreground/80 max-w-2xl mx-auto">
+          Six flexible solutions to fit your timeline, budget, and goals.
+        </p>
+      </HeroSection>
 
       {/* Solutions Grid */}
-      <section className="py-16">
-        <div className="container mx-auto px-4">
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto">
+      <Section variant="content" maxWidth="6xl">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {solutions.map((solution) => {
               const isExternal = solution.href.startsWith("http");
               const CardWrapper = isExternal ? "a" : Link;
@@ -107,27 +105,24 @@ export default function Solutions() {
                 </CardWrapper>
               );
             })}
-          </div>
         </div>
-      </section>
+      </Section>
 
       {/* Bottom CTA */}
-      <section className="py-16 bg-muted">
-        <div className="container mx-auto px-4 text-center">
-          <h2 className="text-3xl font-bold text-primary mb-4">
-            Not Sure Which Solution Is Right for You?
-          </h2>
-          <p className="text-lg text-foreground mb-8 max-w-2xl mx-auto">
-            Talk to our team and we&apos;ll help you find the best path to sell your home.
-          </p>
-          <a
-            href="tel:+19728207902"
-            className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors text-lg"
-          >
-            Call (972) 820-7902
-          </a>
-        </div>
-      </section>
+      <Section variant="content" background="muted" className="text-center">
+        <h2 className="text-3xl font-bold text-primary mb-4">
+          Not Sure Which Solution Is Right for You?
+        </h2>
+        <p className="text-lg text-foreground mb-8 max-w-2xl mx-auto">
+          Talk to our team and we&apos;ll help you find the best path to sell your home.
+        </p>
+        <a
+          href="tel:+19728207902"
+          className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors text-lg"
+        >
+          Call (972) 820-7902
+        </a>
+      </Section>
     </div>
   );
 }

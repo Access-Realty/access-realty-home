@@ -20,6 +20,7 @@ import { StyledTierName } from "@/components/services/StyledTierName";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
 import CarouselNav from "@/components/listings/CarouselNav";
 import { SavingsCalculatorModal } from "@/components/direct-list/SavingsCalculatorModal";
+import { HeroSection, Section } from "@/components/layout";
 
 // Styled DirectList logo component
 function DirectListLogo({ className = "" }: { className?: string }) {
@@ -52,9 +53,8 @@ export default function DirectListPage() {
   return (
     <div className="bg-card">
       {/* Hero Section */}
-      <section className="bg-primary pt-24 md:pt-28 pb-16 md:pb-20">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+      <HeroSection maxWidth="6xl" centered={false} className="md:pt-28 pb-16 md:pb-20">
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
             <div className="text-white">
               <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-4">
@@ -116,12 +116,10 @@ export default function DirectListPage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+      </HeroSection>
 
       {/* Why Sell Without a Realtor */}
-      <section className="py-20 bg-card">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+      <Section variant="content" maxWidth="6xl" background="card" className="py-20">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why Sell Without a Realtor?
@@ -196,12 +194,10 @@ export default function DirectListPage() {
               </span>
             </div>
           </div>
-        </div>
-      </section>
+      </Section>
 
       {/* Testimonials */}
-      <section className="py-20 bg-muted overflow-hidden">
-        <div className="container mx-auto px-4">
+      <Section variant="content" background="muted" className="py-20 overflow-hidden" maxWidth="full">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
               REAL RESULTS
@@ -312,13 +308,11 @@ export default function DirectListPage() {
               </div>
             </div>
           </CarouselNav>
-        </div>
-      </section>
+      </Section>
 
       {/* How It Works */}
-      <section className="py-20 bg-card">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
+      <Section variant="content" maxWidth="4xl" background="card" className="py-20">
+        <div className="text-center mb-16">
             <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
               SIMPLE PROCESS
             </p>
@@ -391,16 +385,14 @@ export default function DirectListPage() {
               </div>
             </div>
           </div>
-        </div>
-      </section>
+      </Section>
 
       {/* Pricing Section */}
-      <section id="pricing" className="py-20 bg-card">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
-              PRICING
-            </p>
+      <Section variant="content" maxWidth="5xl" background="card" className="py-20" id="pricing">
+        <div className="text-center mb-16">
+          <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
+            PRICING
+          </p>
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Compare Your Options
             </h2>
@@ -536,12 +528,11 @@ export default function DirectListPage() {
             </div>
           </div>
 
-          <p className="text-center text-lg">
-            <span className="font-bold">Save $9,000</span>{" "}
-            <span className="text-muted-foreground">on a $400k home sale compared to traditional realtors</span>
-          </p>
-        </div>
-      </section>
+        <p className="text-center text-lg">
+          <span className="font-bold">Save $9,000</span>{" "}
+          <span className="text-muted-foreground">on a $400k home sale compared to traditional realtors</span>
+        </p>
+      </Section>
 
       {/* Current Listings Section - Social Proof */}
       <ListingsCarousel
@@ -550,23 +541,21 @@ export default function DirectListPage() {
       />
 
       {/* Simplified Final CTA Section */}
-      <section className="py-16 bg-primary text-primary-foreground">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold mb-4">
-            Ready to Save Thousands on Your Home Sale?
-          </h2>
-          <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
-            Get full MLS exposure and keep more money in your pocket.
-          </p>
-          <Link
-            href="/direct-list/get-started"
-            className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
-          >
-            List My Home on MLS
-            <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </div>
-      </section>
+      <Section variant="cta" maxWidth="4xl" background="primary" className="text-center">
+        <h2 className="text-2xl md:text-3xl font-bold mb-4">
+          Ready to Save Thousands on Your Home Sale?
+        </h2>
+        <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
+          Get full MLS exposure and keep more money in your pocket.
+        </p>
+        <Link
+          href="/direct-list/get-started"
+          className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+        >
+          List My Home on MLS
+          <span aria-hidden="true">&rarr;</span>
+        </Link>
+      </Section>
 
       {/* Savings Calculator Modal */}
       <SavingsCalculatorModal

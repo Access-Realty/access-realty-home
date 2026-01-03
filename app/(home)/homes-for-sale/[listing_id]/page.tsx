@@ -16,6 +16,7 @@ import {
   formatSqft,
 } from "@/lib/listings";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
+import { Section } from "@/components/layout";
 
 interface PageProps {
   params: Promise<{ listing_id: string }>;
@@ -194,11 +195,9 @@ export default async function ListingDetail({ params }: PageProps) {
       </section>
 
       {/* Main Content */}
-      <section className="py-8">
-        <div className="container mx-auto px-4">
-          <div>
+      <Section variant="tight" className="!py-8">
             {/* Details */}
-            <div className="space-y-8 max-w-4xl">
+            <div className="space-y-8">
               {/* Price and Address */}
               <div>
                 <p className="text-3xl md:text-4xl font-bold text-foreground">
@@ -295,9 +294,7 @@ export default async function ListingDetail({ params }: PageProps) {
                 </div>
               )}
             </div>
-          </div>
-        </div>
-      </section>
+      </Section>
 
       {/* Similar Listings */}
       <ListingsCarousel
