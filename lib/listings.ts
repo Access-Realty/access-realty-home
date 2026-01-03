@@ -42,8 +42,15 @@ interface ListingWithPhotos {
  * Trigger photo downloads for listings that don't have photos stored locally.
  * Fires edge function calls asynchronously (fire-and-forget) to not block page load.
  * Photos will be available from our CDN on subsequent page loads.
+ *
+ * NOTE: Only runs at runtime, not during static build (SSG).
  */
 function triggerPhotoDownloads(listings: ListingWithPhotos[]): void {
+  // Skip during static generation (build time) - only run at runtime
+  if (process.env.NEXT_PHASE === "phase-production-build") {
+    return;
+  }
+
   // Filter to listings that need photos downloaded
   const needsDownload = listings.filter(
     (listing) => listing.photos_stored !== true && listing.photo_urls?.length
