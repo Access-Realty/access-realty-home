@@ -3,6 +3,15 @@
 
 "use client";
 
+// Calendly global type
+declare global {
+  interface Window {
+    Calendly?: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
+
 import { useState, useCallback, useEffect } from "react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
@@ -18,9 +27,7 @@ import {
   HiOutlineUser,
   HiOutlinePencil,
   HiCheck,
-  HiXMark,
 } from "react-icons/hi2";
-import CalendlyEmbed from "@/components/CalendlyEmbed";
 
 // Define libraries outside component to prevent re-renders
 const libraries: ("places")[] = ["places"];
@@ -307,7 +314,6 @@ export default function GetStartedPage() {
 
   // Service selection state
   const [showTierModal, setShowTierModal] = useState(false);
-  const [showScheduleModal, setShowScheduleModal] = useState(false);
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
   const [leadId, setLeadId] = useState<string | null>(null);
 
@@ -343,6 +349,34 @@ export default function GetStartedPage() {
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries,
   });
+
+  // Open Calendly popup (loads script if needed)
+  const openCalendlyPopup = useCallback(() => {
+    const url = "https://calendly.com/access-inquiries/sales-call";
+
+    // If Calendly is already loaded, open popup
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url });
+      return;
+    }
+
+    // Load Calendly script dynamically
+    const script = document.createElement("script");
+    script.src = "https://assets.calendly.com/assets/external/widget.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.Calendly) {
+        window.Calendly.initPopupWidget({ url });
+      }
+    };
+    document.head.appendChild(script);
+
+    // Also load Calendly CSS
+    const link = document.createElement("link");
+    link.href = "https://assets.calendly.com/assets/external/widget.css";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }, []);
 
   // Handle address selection from Google Places (no BatchData call yet)
   const handleAddressSelect = useCallback((data: AddressData) => {
@@ -1248,35 +1282,13 @@ export default function GetStartedPage() {
             plan.
           </p>
           <button
-            onClick={() => setShowScheduleModal(true)}
+            onClick={openCalendlyPopup}
             className="bg-secondary text-secondary-foreground px-6 py-3 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
           >
             Schedule a Free Consultation
           </button>
         </div>
       </section>
-
-      {/* Schedule Call Modal */}
-      {showScheduleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
-          <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-sm"
-            onClick={() => setShowScheduleModal(false)}
-          />
-          <div className="relative bg-background rounded-xl shadow-2xl w-full max-w-4xl overflow-hidden">
-            <button
-              onClick={() => setShowScheduleModal(false)}
-              className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 hover:bg-muted transition-colors"
-            >
-              <HiXMark className="h-5 w-5 text-muted-foreground" />
-            </button>
-            <CalendlyEmbed
-              url="https://calendly.com/access-inquiries/sales-call"
-              styles={{ height: "calc(100vh - 2rem)", minWidth: "320px" }}
-            />
-          </div>
-        </div>
-      )}
     </div>
   );
 }
