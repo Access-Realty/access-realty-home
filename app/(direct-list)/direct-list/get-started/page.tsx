@@ -1258,22 +1258,24 @@ export default function GetStartedPage() {
 
       {/* Schedule Call Modal */}
       {showScheduleModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-2 md:p-4">
           <div
             className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             onClick={() => setShowScheduleModal(false)}
           />
-          <div className="relative bg-background rounded-xl shadow-2xl w-full max-w-4xl h-[750px]">
+          <div className="relative bg-background rounded-xl shadow-2xl w-full max-w-4xl h-[calc(100vh-1rem)] md:h-[750px] overflow-hidden">
             <button
               onClick={() => setShowScheduleModal(false)}
               className="absolute top-3 right-3 z-10 p-2 rounded-full bg-background/80 hover:bg-muted transition-colors"
             >
               <HiXMark className="h-5 w-5 text-muted-foreground" />
             </button>
-            <CalendlyEmbed
-              url="https://calendly.com/access-inquiries/sales-call"
-              styles={{ height: "750px", minWidth: "320px" }}
-            />
+            <div className="h-full">
+              <CalendlyEmbed
+                url="https://calendly.com/access-inquiries/sales-call"
+                styles={{ height: "100%", minWidth: "320px" }}
+              />
+            </div>
           </div>
         </div>
       )}
