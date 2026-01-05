@@ -28,7 +28,9 @@ import {
   HiOutlineUser,
   HiOutlinePencil,
   HiCheck,
+  HiChevronDown,
 } from "react-icons/hi2";
+import { StyledTierName } from "@/components/services/StyledTierName";
 
 // Define libraries outside component to prevent re-renders
 const libraries: ("places")[] = ["places"];
@@ -106,128 +108,98 @@ interface TrackingParams {
   utmContent?: string;
 }
 
-// Tier configuration for inline selection
-const TIERS = [
+// Service tier definitions with full details
+const SERVICE_TIERS = [
   {
-    id: "direct-list",
-    code: "direct_list",
+    id: "direct_list",
     name: "DirectList",
     totalPrice: "$2,995",
     upfrontPrice: "$495",
     badge: null,
+    tagline: "Everything you need to list on MLS",
+    features: [
+      "MLS Listing + Syndication",
+      "Professional Photography",
+      "Professionally Guided Pricing Strategy",
+      "Digital Document Signing",
+      "Lockbox & Yard Sign",
+      "Showings via ShowingTime",
+      "Monthly Market Assessments",
+      "On Demand Services Available",
+    ],
+    footer: null,
   },
   {
-    id: "direct-list-plus",
-    code: "direct_list_plus",
+    id: "direct_list_plus",
     name: "DirectList+",
     totalPrice: "$4,495",
     upfrontPrice: "$995",
     badge: "BEST VALUE",
+    tagline: "Everything in DirectList, plus:",
+    features: [
+      "Bi-Weekly Market Assessments",
+      "Professionally Written Listing Description",
+      "Virtual Walkthrough (Matterport)",
+      "2D Floor Plan",
+      "Aerial Photography",
+      "Amenities Photography",
+      "Virtual Staging (3 Photos)",
+      "Showing Feedback Requests",
+      "1 Mega Open House",
+      "1 Contract Negotiation",
+      "1 Amendment Negotiation",
+      "Discounted On Demand Services",
+    ],
+    footer: "Most popular for confident sellers",
   },
   {
-    id: "full-service",
-    code: "full_service",
+    id: "full_service",
     name: "Full Service",
     totalPrice: "3%",
     upfrontPrice: null,
     badge: null,
+    tagline: "Everything in DirectList+, and:",
+    features: [
+      "On-Site Evaluation",
+      "Weekly On-Market Reporting",
+      "Virtual Staging (Whole House/Yard)",
+      "Contract Negotiation on Every Offer",
+      "Amendment Negotiations",
+      "Preferred Vendor Access",
+      "Hands-Off Repairs Management",
+      "Hands-Off Transaction Coordination",
+    ],
+    footer: "No upfront cost — pay only when you sell",
   },
 ];
 
-// Base features included in all plans
-const BASE_FEATURES = [
-  "MLS + Syndication",
-  "Professional Photography",
-  "Guided Pricing Strategy",
-  "Pre-Listing Consultation",
-  "Digital Document Signing",
-  "Lockbox & Yard Sign",
-  "Showings by ShowingTime",
-  "Zillow/Homes Traffic",
-];
-
-// Full comparison table rows - matches modal
-const COMPARISON_ROWS: {
-  feature: string;
-  values: Record<string, string | boolean>;
-}[] = [
-  {
-    feature: "On-Site Evaluation",
-    values: { direct_list: "$199", direct_list_plus: "$199", full_service: true },
-  },
-  {
-    feature: "Market Assessment",
-    values: { direct_list: "Monthly Video", direct_list_plus: "Bi-Weekly Video", full_service: "Weekly Meeting" },
-  },
-  {
-    feature: "On Market Consultation",
-    values: { direct_list: "$99", direct_list_plus: "$99", full_service: true },
-  },
-  {
-    feature: "Feedback Requests",
-    values: { direct_list: false, direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Listing Description",
-    values: { direct_list: "Self-Written", direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Virtual Walkthrough",
-    values: { direct_list: "$99", direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Floor Plan",
-    values: { direct_list: "$49", direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Aerial Photography",
-    values: { direct_list: "$99", direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Amenities Photography",
-    values: { direct_list: "$40", direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Virtual Staging",
-    values: { direct_list: "$99", direct_list_plus: "3 photos", full_service: "Whole House/Yard" },
-  },
-  {
-    feature: "Premium Analytics",
-    values: { direct_list: false, direct_list_plus: true, full_service: true },
-  },
-  {
-    feature: "Mega Open House",
-    values: { direct_list: "$99", direct_list_plus: "1 Included", full_service: "1 Included" },
-  },
-  {
-    feature: "Contract Negotiation",
-    values: { direct_list: "$249", direct_list_plus: "1 Free, then $149", full_service: "Every Offer" },
-  },
-  {
-    feature: "Amendment Negotiation",
-    values: { direct_list: "$249", direct_list_plus: "1 Free, then $149", full_service: "Every Offer" },
-  },
-  {
-    feature: "Leaseback Package",
-    values: { direct_list: "$499", direct_list_plus: "$299", full_service: "If needed" },
-  },
-  {
-    feature: "Repairs Management",
-    values: { direct_list: "Self-Managed", direct_list_plus: "Self-Managed", full_service: true },
-  },
-  {
-    feature: "Preferred Vendors",
-    values: { direct_list: false, direct_list_plus: false, full_service: true },
-  },
-  {
-    feature: "Transaction Coord.",
-    values: { direct_list: "Self-Guided", direct_list_plus: "Self-Guided", full_service: "Hands-off" },
-  },
-];
+// On Demand Services by tier
+const ON_DEMAND_SERVICES = {
+  direct_list: [
+    { service: "Virtual Walkthrough", price: "$99" },
+    { service: "2D Floor Plan", price: "$49" },
+    { service: "Aerial Photography", price: "$99" },
+    { service: "Amenities Photography", price: "$40" },
+    { service: "Virtual Staging", price: "$99" },
+    { service: "Mega Open House", price: "$99" },
+    { service: "On-Market Consultation", price: "$99" },
+    { service: "On-Site Evaluation", price: "$199" },
+    { service: "Contract Negotiation", price: "$249" },
+    { service: "Amendment Negotiation", price: "$249" },
+    { service: "Leaseback Package", price: "$499" },
+  ],
+  direct_list_plus: [
+    { service: "On-Market Consultation", price: "$99" },
+    { service: "On-Site Evaluation", price: "$199" },
+    { service: "Addl Contract Negotiation", price: "$149" },
+    { service: "Addl Amendment Negotiation", price: "$149" },
+    { service: "Leaseback Package", price: "$299" },
+  ],
+};
 
 // Generate terms of service content for selected tier
-function generateTermsContent(tier: typeof TIERS[0]) {
-  const isFullService = tier.id === "full-service";
+function generateTermsContent(tier: typeof SERVICE_TIERS[0]) {
+  const isFullService = tier.id === "full_service";
   const paymentTerms = isFullService
     ? "3% of the final sale price, due at closing. No upfront payment required."
     : `${tier.upfrontPrice} due at signup. Remaining balance of ${tier.totalPrice} total due at closing.`;
@@ -259,60 +231,6 @@ function generateTermsContent(tier: typeof TIERS[0]) {
       },
     ],
   };
-}
-
-// Cell value renderer
-function CellValue({ value }: { value: string | boolean | undefined }) {
-  if (value === undefined || value === false) {
-    return <span className="text-muted-foreground">—</span>;
-  }
-  if (value === true) {
-    return <HiCheck className="h-4 w-4 text-green-600 mx-auto" />;
-  }
-  return <span className="text-xs text-foreground">{value}</span>;
-}
-
-// Styled tier name component
-function TierName({ name, inherit = false }: { name: string; inherit?: boolean }) {
-  const textColor = inherit ? "inherit" : "#1f2937";
-  const italicStyle: React.CSSProperties = {
-    fontFamily: "'Times New Roman', serif",
-    fontStyle: "italic",
-    fontWeight: 400,
-    fontSize: "1.05em",
-    color: textColor,
-  };
-  const boldStyle: React.CSSProperties = {
-    fontFamily: "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
-    fontWeight: 700,
-    color: textColor,
-  };
-
-  if (name === "DirectList") {
-    return (
-      <span>
-        <span style={italicStyle}>Direct</span>
-        <span style={boldStyle}>List</span>
-      </span>
-    );
-  }
-  if (name === "DirectList+") {
-    return (
-      <span>
-        <span style={italicStyle}>Direct</span>
-        <span style={boldStyle}>List+</span>
-      </span>
-    );
-  }
-  if (name === "Full Service") {
-    return (
-      <span>
-        <span style={italicStyle}>Full</span>{" "}
-        <span style={boldStyle}>Service</span>
-      </span>
-    );
-  }
-  return <span style={{ color: textColor }}>{name}</span>;
 }
 
 // Editable address fields (for user corrections)
@@ -354,6 +272,19 @@ export default function GetStartedPage() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
+  const [expandedTiers, setExpandedTiers] = useState<Set<string>>(new Set());
+
+  const toggleExpanded = (tierId: string) => {
+    setExpandedTiers((prev) => {
+      const next = new Set(prev);
+      if (next.has(tierId)) {
+        next.delete(tierId);
+      } else {
+        next.add(tierId);
+      }
+      return next;
+    });
+  };
 
   // Tracking params captured on mount
   const [trackingParams, setTrackingParams] = useState<TrackingParams>({
@@ -1073,11 +1004,11 @@ export default function GetStartedPage() {
             </div>
           )}
 
-          {/* Step 4: Service Selection - Simple Tier Cards */}
+          {/* Step 4: Service Selection - Full Tier Cards */}
           {step === "service" && (
-            <div className="bg-card rounded-xl border border-border p-4 md:p-6">
+            <div className="space-y-6">
               {/* Header */}
-              <div className="text-center mb-6">
+              <div className="text-center">
                 <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
                   Choose Your Service Level
                 </h2>
@@ -1087,63 +1018,137 @@ export default function GetStartedPage() {
               </div>
 
               {/* Tier Cards */}
-              <div className="grid md:grid-cols-3 gap-4 mb-6">
-                {TIERS.map((tier) => {
+              <div className="grid md:grid-cols-3 gap-4">
+                {SERVICE_TIERS.map((tier) => {
                   const isSelected = selectedTierId === tier.id;
+                  const hasAddOns = tier.id !== "full_service";
+                  const addOns = ON_DEMAND_SERVICES[tier.id as keyof typeof ON_DEMAND_SERVICES];
+                  const isExpanded = expandedTiers.has(tier.id);
+
                   return (
-                    <button
-                      key={tier.id}
-                      onClick={() => {
-                        setSelectedTierId(tier.id);
-                        setTermsAccepted(false);
-                      }}
-                      className={`relative text-left p-4 rounded-xl border-2 transition-all ${
-                        isSelected
-                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
-                          : tier.id === "direct-list-plus"
-                          ? "border-primary/50 bg-primary/5 hover:border-primary"
-                          : "border-border bg-card hover:border-primary/50"
-                      }`}
-                    >
+                    <div key={tier.id} className="relative pt-3">
+                      {/* Badge - outside card to avoid overflow clipping */}
                       {tier.badge && (
-                        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                          <span className="bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap">
+                        <div className="absolute top-0 left-1/2 -translate-x-1/2 z-10">
+                          <span className="bg-secondary text-secondary-foreground px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap shadow-sm">
                             {tier.badge}
                           </span>
                         </div>
                       )}
-                      <div className={tier.badge ? "pt-2" : ""}>
-                        <h3 className="font-semibold text-lg mb-1">
-                          <TierName name={tier.name} />
-                        </h3>
-                        <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                          {tier.id === "full-service" ? "Pay at closing" : "Upfront"}
-                        </div>
-                        <div className="text-2xl font-bold text-primary">
-                          {tier.id === "full-service" ? tier.totalPrice : tier.upfrontPrice}
-                        </div>
-                        <div className="text-xs text-muted-foreground">
-                          {tier.id === "full-service" ? "No upfront payment" : `${tier.totalPrice} total`}
-                        </div>
-                        {isSelected && (
-                          <div className="mt-2 flex items-center gap-1 text-primary text-sm font-medium">
-                            <HiCheck className="h-4 w-4" />
-                            Selected
+
+                      <div
+                        onClick={() => {
+                          setSelectedTierId(tier.id);
+                          setTermsAccepted(false);
+                        }}
+                        className={`cursor-pointer rounded-xl border-2 overflow-hidden flex flex-col h-full transition-all ${
+                          isSelected
+                            ? "border-primary ring-2 ring-primary/20"
+                            : tier.id === "direct_list_plus"
+                            ? "border-primary shadow-lg hover:ring-2 hover:ring-primary/10"
+                            : "border-border hover:border-primary/50"
+                        }`}
+                      >
+                        {/* Card Header */}
+                        <div className={`p-4 text-center ${tier.badge ? "pt-6" : ""} ${
+                          tier.id === "direct_list_plus" ? "bg-primary/5" : "bg-muted/30"
+                        }`}>
+                          <h3 className="text-xl font-semibold mb-1">
+                            <StyledTierName name={tier.name} />
+                          </h3>
+                          <div className="text-xs text-muted-foreground uppercase tracking-wide">
+                            {tier.upfrontPrice ? "Upfront" : "Pay at closing"}
                           </div>
-                        )}
+                          <div className="text-2xl font-bold text-primary mt-1">
+                            {tier.upfrontPrice || tier.totalPrice}
+                          </div>
+                          {tier.upfrontPrice && (
+                            <div className="text-sm text-muted-foreground">
+                              {tier.totalPrice} total
+                            </div>
+                          )}
+                          {!tier.upfrontPrice && (
+                            <div className="text-sm text-muted-foreground">
+                              No upfront payment
+                            </div>
+                          )}
+                          {isSelected && (
+                            <div className="mt-2 flex items-center justify-center gap-1 text-primary text-sm font-medium">
+                              <HiCheck className="h-4 w-4" />
+                              Selected
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Features */}
+                        <div className="p-4 flex-grow">
+                          <p className="text-sm font-medium text-muted-foreground mb-3">
+                            {tier.tagline}
+                          </p>
+                          <ul className="space-y-2">
+                            {tier.features.map((feature, idx) => (
+                              <li key={idx} className="flex items-start gap-2 text-sm">
+                                <HiCheck className="h-4 w-4 text-green-600 shrink-0 mt-0.5" />
+                                <span>{feature}</span>
+                              </li>
+                            ))}
+                          </ul>
+
+                          {/* On Demand Services Expandable */}
+                          {hasAddOns && addOns && (
+                            <div className="mt-4 border-t border-border pt-3">
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  toggleExpanded(tier.id);
+                                }}
+                                className="flex items-center justify-between w-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                              >
+                                <span>On Demand Services</span>
+                                <HiChevronDown
+                                  className={`h-4 w-4 transition-transform ${
+                                    isExpanded ? "rotate-180" : ""
+                                  }`}
+                                />
+                              </button>
+                              {isExpanded && (
+                                <div className="mt-2 space-y-1">
+                                  {addOns.map((item, idx) => (
+                                    <div
+                                      key={idx}
+                                      className="flex justify-between text-xs py-1 border-b border-border/50 last:border-0"
+                                    >
+                                      <span className="text-muted-foreground">
+                                        {item.service}
+                                      </span>
+                                      <span className="font-medium">{item.price}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              )}
+                            </div>
+                          )}
+
+                          {/* Footer note */}
+                          {tier.footer && (
+                            <p className="text-xs text-muted-foreground text-center mt-3 pt-3 border-t border-border">
+                              {tier.footer}
+                            </p>
+                          )}
+                        </div>
                       </div>
-                    </button>
+                    </div>
                   );
                 })}
               </div>
 
               {/* Terms Section - Shows when tier is selected */}
               {selectedTierId && (() => {
-                const selectedTier = TIERS.find(t => t.id === selectedTierId);
+                const selectedTier = SERVICE_TIERS.find(t => t.id === selectedTierId);
                 if (!selectedTier) return null;
                 const terms = generateTermsContent(selectedTier);
                 return (
-                  <div className="border border-border rounded-lg p-4 mb-6 bg-muted/30">
+                  <div className="bg-card border border-border rounded-xl p-4 md:p-6">
                     <h3 className="font-semibold text-foreground mb-3">{terms.title}</h3>
                     <div className="max-h-48 overflow-y-auto mb-4 text-sm text-muted-foreground space-y-3">
                       {terms.sections.map((section, idx) => (
@@ -1195,7 +1200,7 @@ export default function GetStartedPage() {
 
       {/* Checkout Modal - opens when user accepts terms */}
       {(() => {
-        const selectedTier = TIERS.find(t => t.id === selectedTierId);
+        const selectedTier = SERVICE_TIERS.find(t => t.id === selectedTierId);
         if (!selectedTier) return null;
         return (
           <EmbeddedCheckoutModal
@@ -1203,7 +1208,7 @@ export default function GetStartedPage() {
             onClose={() => {
               setShowCheckout(false);
             }}
-            plan={selectedTier.code}
+            plan={selectedTier.id}
             planName={selectedTier.name}
             source="get-started"
             leadId={leadId || undefined}
