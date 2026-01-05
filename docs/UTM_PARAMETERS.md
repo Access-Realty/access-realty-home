@@ -74,7 +74,7 @@ These short URLs are used in marketing materials. Each serves OG meta tags for l
 |-----------|-------------|----------------|----------|
 | `access.realty/dl` | `/direct-list` | `utm_source=access&utm_medium=yard_sign&utm_campaign=brand` | DirectList yard sign QR code |
 | `access.realty/qr` | `/direct-list` | `utm_source=access&utm_medium=yard_sign&utm_campaign=brand` | Access Realty yard sign QR code |
-| `access.realty/sms` | `/direct-list` | `utm_source=metroplex_homebuyers&utm_medium=sms&utm_campaign=2026_launch&utm_content=drip1` | Metroplex Homebuyers SMS campaign |
+| `direct-list.com/s` | `/direct-list` | `utm_source=metroplex_homebuyers&utm_medium=sms&utm_campaign=2026_launch&utm_content=drip1` | Metroplex Homebuyers SMS campaign |
 
 ### Implementation
 
@@ -141,6 +141,6 @@ https://access.realty/direct-list?utm_source=google&utm_medium=cpc&utm_campaign=
 - `app/api/stripe/create-checkout-session/route.ts` - Forwards UTM params to app
 - `app/dl/` - DirectList yard sign short link redirect
 - `app/qr/` - Access Realty yard sign short link redirect
-- `app/sms/` - Metroplex SMS campaign short link redirect
+- `app/s/` - Metroplex SMS campaign short link redirect (direct-list.com/s)
 - `MARKETING-HANDOFF.md` - Documents lead data flow
 - `docs/STRIPE_MARKETING_INTEGRATION.md` - Stripe checkout UTM forwarding

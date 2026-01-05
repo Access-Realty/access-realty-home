@@ -19,7 +19,7 @@ export const metadata: Metadata = {
       },
     ],
     type: "website",
-    url: "https://access.realty/sms",
+    url: "https://direct-list.com/s",
   },
   twitter: {
     card: "summary_large_image",
