@@ -880,7 +880,7 @@ export default function GetStartedPage() {
               <div className="flex justify-between pt-2">
                 <button
                   onClick={() => setStep("address")}
-                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
                 >
                   <HiOutlineArrowLeft className="h-4 w-4" />
                   Back
@@ -1021,7 +1021,7 @@ export default function GetStartedPage() {
                 <div className="flex justify-between pt-2">
                   <button
                     onClick={() => setStep("confirm")}
-                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
                   >
                     <HiOutlineArrowLeft className="h-4 w-4" />
                     Back
@@ -1155,14 +1155,29 @@ export default function GetStartedPage() {
                         <div className="p-4 pt-0">
                           <button
                             onClick={() => {
-                              setSelectedTierId(tier.id);
-                              setTermsAccepted(false);
-                              setStep("terms");
+                              if (tier.id === "full_service") {
+                                // Full Service has no upfront payment - go to consultation
+                                openCalendlyPopup();
+                              } else {
+                                setSelectedTierId(tier.id);
+                                setTermsAccepted(false);
+                                setStep("terms");
+                              }
                             }}
                             className="w-full py-3 px-4 rounded-lg transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
                           >
-                            <span className="font-normal">Select</span>{" "}
-                            <span className="font-semibold"><StyledTierName name={tier.name} /></span>
+                            {tier.id === "full_service" ? (
+                              <>
+                                <span className="font-normal">Schedule</span>{" "}
+                                <span className="font-semibold"><StyledTierName name={tier.name} /></span>
+                                <span className="font-normal"> Consultation</span>
+                              </>
+                            ) : (
+                              <>
+                                <span className="font-normal">Select</span>{" "}
+                                <span className="font-semibold"><StyledTierName name={tier.name} /></span>
+                              </>
+                            )}
                           </button>
                         </div>
                       </div>
@@ -1175,7 +1190,7 @@ export default function GetStartedPage() {
               <div>
                 <button
                   onClick={() => setStep("contact")}
-                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border border-border text-foreground hover:bg-muted transition-colors"
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
                 >
                   <HiOutlineArrowLeft className="h-4 w-4" />
                   Back
@@ -1253,7 +1268,7 @@ export default function GetStartedPage() {
                       setSelectedTierId(null);
                       setTermsAccepted(false);
                     }}
-                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
                   >
                     <HiOutlineArrowLeft className="h-4 w-4" />
                     Back to Plans
