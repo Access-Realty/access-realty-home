@@ -1069,18 +1069,14 @@ export default function GetStartedPage() {
                       )}
 
                       <div
-                        className={`rounded-xl border-2 overflow-hidden flex flex-col h-full ${
+                        className={`rounded-xl border-2 overflow-hidden flex flex-col h-full bg-white ${
                           tier.id === "direct_list_plus"
                             ? "border-primary/40 shadow-md"
                             : "border-border"
                         }`}
                       >
                         {/* Card Header */}
-                        <div className={`p-4 text-center ${tier.badge ? "pt-6" : ""} ${
-                          tier.id === "direct_list_plus"
-                            ? "bg-primary/5"
-                            : "bg-muted/30"
-                        }`}>
+                        <div className={`p-4 text-center ${tier.badge ? "pt-6" : ""}`}>
                           <h3 className="text-xl font-semibold mb-1">
                             <StyledTierName name={tier.name} />
                           </h3>
