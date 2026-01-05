@@ -99,7 +99,7 @@ function mapParcelToSpecs(parcel: ParcelData): PropertySpecs {
     propertyType: mappedType.value,
     propertyTypeLabel: mappedType.label,
     bedrooms: parcel.bedrooms ?? null,
-    fullBathrooms: parcel.bathrooms_full ?? null,
+    fullBathrooms: parcel.bathrooms_full ?? (parcel.bathrooms_total ? Math.floor(parcel.bathrooms_total) : null),
     halfBathrooms: calculateHalfBaths(parcel.bathrooms_total, parcel.bathrooms_full),
     squareFeet: parcel.living_area_sqft ?? null,
     stories: parcel.stories ?? null,

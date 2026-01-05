@@ -455,7 +455,11 @@ export default function GetStartedPage() {
 
   // Format phone number as user types
   const formatPhone = (value: string) => {
-    const digits = value.replace(/\D/g, "");
+    let digits = value.replace(/\D/g, "");
+    // Strip leading "1" country code if autofill included it
+    if (digits.length === 11 && digits.startsWith("1")) {
+      digits = digits.slice(1);
+    }
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
@@ -749,7 +753,7 @@ export default function GetStartedPage() {
                 Here&apos;s What We Found
               </h2>
               <p className="text-muted-foreground mb-6">
-                This is what our records show for your property. Please adjust if anything looks different.
+                We pulled this from county tax records, which aren't always accurate. Please review and correct anything that's off.
               </p>
 
               {/* Property Address */}
