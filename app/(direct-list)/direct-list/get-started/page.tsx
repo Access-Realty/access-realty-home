@@ -356,6 +356,11 @@ export default function GetStartedPage() {
     });
   }, []);
 
+  // Scroll to top when step changes (prevents content at top being missed on mobile)
+  useEffect(() => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }, [step]);
+
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries,
