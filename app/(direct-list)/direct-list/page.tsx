@@ -495,7 +495,7 @@ export default function DirectListPage() {
       </Section>
 
       {/* Pricing Section */}
-      <Section variant="content" maxWidth="5xl" background="card" className="py-20" id="pricing">
+      <Section variant="content" maxWidth="5xl" background="card" id="pricing">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
             PRICING
@@ -616,28 +616,25 @@ export default function DirectListPage() {
             })}
           </div>
 
-      </Section>
-
-      {/* NOTE: ListingsCarousel removed - see import comment above */}
-
-      {/* Final CTA Section */}
-      <Section variant="cta" maxWidth="4xl" background="primary" className="text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-2">
-          Ready to Save Thousands on Your Home Sale?
-        </h2>
-        <p className="text-xl text-secondary font-semibold mb-2">
-          Save $9,000 on a $400k home sale compared to traditional realtors
-        </p>
-        <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
-          Get full MLS exposure and keep more money in your pocket.
-        </p>
-        <Link
-          href="/direct-list/get-started"
-          className="inline-flex items-center gap-2 bg-white text-primary px-8 py-3 rounded-md font-semibold hover:bg-white/90 transition-colors"
-        >
-          List My Home on MLS
-          <span aria-hidden="true">&rarr;</span>
-        </Link>
+          {/* CTA - inside pricing section to avoid double padding */}
+          <div className="text-center mt-12">
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
+              Ready to Save Thousands on Your Home Sale?
+            </h2>
+            <p className="text-xl text-secondary font-semibold mb-2">
+              Save $9,000 on a $400k home sale compared to traditional realtors
+            </p>
+            <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+              Get full MLS exposure and keep more money in your pocket.
+            </p>
+            <Link
+              href="/direct-list/get-started"
+              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-md font-semibold hover:bg-primary/90 transition-colors"
+            >
+              List My Home on MLS
+              <span aria-hidden="true">&rarr;</span>
+            </Link>
+          </div>
       </Section>
 
       {/* Savings Calculator Modal */}

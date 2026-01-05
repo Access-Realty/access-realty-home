@@ -595,6 +595,49 @@ export default function GetStartedPage() {
     }
   };
 
+  // Handle Full Service selection - open Calendly popup with prefilled data
+  const handleFullServiceSelect = useCallback(() => {
+    // Build Calendly URL with prefilled form data
+    const baseUrl = "https://calendly.com/dfw-agents/new-meeting";
+    const params = new URLSearchParams();
+
+    // Prefill name
+    const fullName = [contactForm.firstName, contactForm.lastName].filter(Boolean).join(" ");
+    if (fullName) params.set("name", fullName);
+
+    // Prefill email
+    if (contactForm.email) params.set("email", contactForm.email);
+
+    // Prefill custom answers (a1 = phone, a2 = address)
+    if (contactForm.phone) params.set("a1", contactForm.phone);
+    if (addressData?.formattedAddress) params.set("a2", addressData.formattedAddress);
+
+    const url = `${baseUrl}?${params.toString()}`;
+
+    // If Calendly is already loaded, open popup
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url });
+      return;
+    }
+
+    // Load Calendly script dynamically
+    const script = document.createElement("script");
+    script.src = "https://assets.calendly.com/assets/external/widget.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.Calendly) {
+        window.Calendly.initPopupWidget({ url });
+      }
+    };
+    document.head.appendChild(script);
+
+    // Also load Calendly CSS
+    const link = document.createElement("link");
+    link.href = "https://assets.calendly.com/assets/external/widget.css";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }, [contactForm, addressData]);
+
   return (
     <div className="bg-background">
       {/* Hero Section - Hidden on mobile after first step to maximize form space */}
@@ -609,8 +652,8 @@ export default function GetStartedPage() {
         </HeroSection>
       </div>
 
-      {/* Main Content - pt-28 on mobile for header clearance when hero hidden, md:pt-12 restores Section spacing */}
-      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-28 md:pt-12"}>
+      {/* Main Content */}
+      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-24 md:pt-6"}>
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">
@@ -1155,29 +1198,19 @@ export default function GetStartedPage() {
                         <div className="p-4 pt-0">
                           <button
                             onClick={() => {
+                              setSelectedTierId(tier.id);
                               if (tier.id === "full_service") {
-                                // Full Service has no upfront payment - go to consultation
-                                openCalendlyPopup();
+                                // Full Service has no upfront payment - redirect directly to app
+                                handleFullServiceSelect();
                               } else {
-                                setSelectedTierId(tier.id);
                                 setTermsAccepted(false);
                                 setStep("terms");
                               }
                             }}
                             className="w-full py-3 px-4 rounded-lg transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
                           >
-                            {tier.id === "full_service" ? (
-                              <>
-                                <span className="font-normal">Schedule</span>{" "}
-                                <span className="font-semibold"><StyledTierName name={tier.name} /></span>
-                                <span className="font-normal"> Consultation</span>
-                              </>
-                            ) : (
-                              <>
-                                <span className="font-normal">Select</span>{" "}
-                                <span className="font-semibold"><StyledTierName name={tier.name} /></span>
-                              </>
-                            )}
+                            <span className="font-normal">Select</span>{" "}
+                            <span className="font-semibold"><StyledTierName name={tier.name} /></span>
                           </button>
                         </div>
                       </div>

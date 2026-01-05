@@ -1,5 +1,5 @@
 // ABOUTME: Standardized section wrapper for consistent vertical spacing
-// ABOUTME: Use variants to enforce site-wide spacing patterns
+// ABOUTME: All variants use same py-6 (24px each) = 48px gaps between sections
 
 import { ReactNode } from "react";
 
@@ -17,10 +17,12 @@ interface SectionProps {
   id?: string;
 }
 
+// GLOBAL SPACING: All sections use py-6 (1.5rem = 24px each direction)
+// This creates consistent 48px gaps between any two sections
 const variantStyles: Record<SectionVariant, string> = {
-  content: "py-16",      // Standard section padding
-  tight: "py-12",        // Secondary/minor sections
-  cta: "py-16",          // CTA sections (same padding, different bg)
+  content: "py-6",
+  tight: "py-6",
+  cta: "py-6",
 };
 
 const maxWidthStyles: Record<MaxWidth, string> = {

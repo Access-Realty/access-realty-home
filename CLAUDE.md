@@ -97,12 +97,14 @@ import { HeroSection, Section } from "@/components/layout";
 
 ### Spacing Values (for reference)
 
-| Element | Spacing | Tailwind |
-|---------|---------|----------|
-| Hero min-height | 200px | min-h-[200px] |
-| Hero header clearance | 4rem | pt-16 |
-| Section padding | 4rem | py-16 |
-| Tight section padding | 3rem | py-12 |
+| Element | Top | Bottom | Tailwind |
+|---------|-----|--------|----------|
+| Hero | 4rem | auto | pt-16 min-h-[200px] flex |
+| Section (content) | 4rem | 2rem | pt-16 pb-8 |
+| Section (tight) | 3rem | 1.5rem | pt-12 pb-6 |
+| Section (cta) | 3rem | 3rem | pt-12 pb-12 |
+
+**Asymmetric padding prevents double gaps** when sections stack. Each section has more top padding than bottom, so consecutive sections don't create excessive whitespace.
 
 **Hero uses flexbox centering** (`flex items-center`) to automatically create equal space above and below content.
 

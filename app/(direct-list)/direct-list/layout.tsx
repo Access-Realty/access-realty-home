@@ -12,7 +12,7 @@ export default function DirectListLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <DirectListHeader />
-      <main className="flex-1">{children}</main>
+      <main>{children}</main>
       <DirectListFooter />
     </div>
   );

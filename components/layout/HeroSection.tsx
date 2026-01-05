@@ -1,5 +1,5 @@
 // ABOUTME: Standardized hero section with fixed header clearance
-// ABOUTME: Uses flexbox centering for equal space above/below content
+// ABOUTME: pb-6 matches Section py-6 for consistent 48px gaps
 
 import { ReactNode } from "react";
 
@@ -42,14 +42,13 @@ export function HeroSection({
     .filter(Boolean)
     .join(" ");
 
-  // pt-16 clears the fixed header (~64px)
-  // min-h-[200px] ensures consistent hero height
-  // flex + items-center vertically centers content with equal space above/below
+  // pt-24 (96px) = header clearance (64px) + 32px visible space above content
+  // pb-6 (24px) = matches Section's py-6 for consistent gaps
   return (
     <section
-      className={`pt-16 min-h-[200px] flex items-center ${backgroundStyles[background]} ${className}`}
+      className={`pt-24 pb-6 ${backgroundStyles[background]} ${className}`}
     >
-      <div className={`w-full py-6 ${containerClasses}`}>{children}</div>
+      <div className={`w-full ${containerClasses}`}>{children}</div>
     </section>
   );
 }
