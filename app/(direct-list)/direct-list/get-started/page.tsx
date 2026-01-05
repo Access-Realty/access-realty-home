@@ -897,23 +897,9 @@ export default function GetStartedPage() {
           {/* Step 3: Contact Info */}
           {step === "contact" && (
             <div className="bg-card rounded-xl border border-border p-6 md:p-8">
-              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+              <h2 className="text-xl md:text-2xl font-bold text-foreground mb-6">
                 How Can We Reach You?
               </h2>
-              <p className="text-muted-foreground mb-6">
-                Enter your contact information to continue with your listing.
-              </p>
-
-              {/* Property Address */}
-              <div className="bg-muted rounded-lg p-4 mb-6">
-                <p className="font-semibold text-foreground text-sm">
-                  {editableAddress.street}
-                  {editableAddress.unit && ` ${editableAddress.unit}`}
-                  {editableAddress.city && `, ${editableAddress.city}`}
-                  {editableAddress.state && `, ${editableAddress.state}`}
-                  {editableAddress.zipCode && ` ${editableAddress.zipCode}`}
-                </p>
-              </div>
 
               {/* Contact Form */}
               <div className="space-y-4">
