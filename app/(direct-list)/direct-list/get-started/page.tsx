@@ -199,35 +199,77 @@ const ON_DEMAND_SERVICES = {
 
 // Generate terms of service content for selected tier
 function generateTermsContent(tier: typeof SERVICE_TIERS[0]) {
-  const isFullService = tier.id === "full_service";
-  const paymentTerms = isFullService
-    ? "3% of the final sale price, due at closing. No upfront payment required."
-    : `${tier.upfrontPrice} due at signup. Remaining balance of ${tier.totalPrice} total due at closing.`;
+  // Calculate remaining balance (total minus upfront)
+  const getRemainingBalance = () => {
+    if (tier.id === "direct_list") return "$2,500";
+    if (tier.id === "direct_list_plus") return "$3,500";
+    return "3% of sale price"; // Full service
+  };
+
+  const upfrontDisplay = tier.upfrontPrice || "No upfront payment";
 
   return {
     title: `${tier.name} Terms of Service`,
     sections: [
       {
-        heading: "Service Agreement",
-        content: `By selecting ${tier.name}, you agree to engage Access Realty to provide listing services for your property. This agreement becomes effective upon payment completion.`,
+        number: 1,
+        heading: "Service Description",
+        content: `Access Realty will provide ${tier.name} real estate listing services including MLS access, professional photography, and additional services for a total fee of ${tier.totalPrice} with ${upfrontDisplay} due upfront.`,
       },
       {
+        number: 2,
         heading: "Payment Terms",
-        content: paymentTerms,
+        content: `The upfront payment of ${upfrontDisplay} is due immediately upon agreement and is processed in real-time. The remaining balance of ${getRemainingBalance()} will be collected from sale proceeds at closing through the title company.`,
       },
       {
-        heading: "Listing Period",
-        content: "Your MLS listing will remain active for up to 12 months from the activation date. You may cancel at any time, though upfront fees are non-refundable.",
+        number: 3,
+        heading: "Payment Authorization",
+        content: `By providing your payment method, you authorize Access Realty to: charge the initial payment immediately, store your payment method securely through Stripe for future authorized charges, process charges for add-on services you request at then-current prices, and process charges for equipment non-return fees or cancellation fees as specified below.`,
       },
       {
-        heading: "Service Inclusions",
-        content: isFullService
-          ? "Full Service includes complete agent representation, negotiations on all offers, repairs management, transaction coordination, and all marketing services."
-          : `${tier.name} includes MLS listing, professional photography, and the features outlined in your selected package. Additional services are available on demand.`,
+        number: 4,
+        heading: "Add-On Services",
+        content: `You authorize charges for any add-on services you request. Add-on pricing is subject to change; final pricing is displayed in the platform at the time of request.`,
       },
       {
-        heading: "Cancellation Policy",
-        content: "You may cancel your listing at any time by providing written notice. Upfront fees are non-refundable. Services rendered prior to cancellation are final.",
+        number: 5,
+        heading: "Inaccessible Property Fee",
+        content: `A $50 trip charge will be assessed if the property is not accessible or not ready when the photographer arrives for a scheduled appointment. This fee covers the photographer's time, travel, and scheduling costs for the missed appointment.`,
+      },
+      {
+        number: 6,
+        heading: "Equipment Fees",
+        content: `Access Realty provides an electronic lockbox during the listing period. You agree to return the lockbox in good working condition within 10 business days of listing expiration, sale closing, or listing withdrawal. Lockbox non-return fee: $95.00.`,
+      },
+      {
+        number: 7,
+        heading: "Seller's Authority & Title",
+        content: `By entering this agreement, you represent and warrant that: you are the legal owner of the property or have been duly authorized to act on behalf of all owners; you have the legal right and authority to list and sell the property; and there are no unresolved legal matters that would prevent the conveyance of clear and marketable title. No refunds will be issued if the transaction fails to close due to: inability to deliver clear and marketable title; unresolved liens, judgments, tax delinquencies, or encumbrances; pending or unresolved divorce proceedings affecting property ownership; incomplete probate or estate administration; lack of required signatures from co-owners, heirs, spouses, or other parties with ownership interest; disputes over property boundaries, easements, or access rights; or any other title defect discovered during the transaction. You are solely responsible for resolving any title issues at your own expense prior to closing. All services rendered by Access Realty remain billable regardless of whether the transaction closes.`,
+      },
+      {
+        number: 8,
+        heading: "Cancellation",
+        content: `A cancellation fee of $395 applies if you withdraw your listing to cover administrative costs, MLS fees, photography, and marketing expenses already incurred.`,
+      },
+      {
+        number: 9,
+        heading: "Refund Policy",
+        content: `The initial payment is non-refundable. Any billing disputes must be reported in writing within 14 days of the charge date.`,
+      },
+      {
+        number: 10,
+        heading: "Liability",
+        content: `Access Realty's liability is limited to the amount of fees paid. We are not responsible for market conditions, buyer behavior, or factors outside our control.`,
+      },
+      {
+        number: 11,
+        heading: "Duration",
+        content: `This agreement remains in effect until services are fully delivered and any outstanding balances are settled.`,
+      },
+      {
+        number: 12,
+        heading: "Governing Law",
+        content: `This agreement shall be governed by the laws of the State of Texas. Any disputes shall first be submitted to mediation before litigation. Any legal action shall be brought exclusively in courts located in Tarrant County, Texas.`,
       },
     ],
   };
@@ -1043,15 +1085,19 @@ export default function GetStartedPage() {
                         }}
                         className={`cursor-pointer rounded-xl border-2 overflow-hidden flex flex-col h-full transition-all ${
                           isSelected
-                            ? "border-primary ring-2 ring-primary/20"
+                            ? "border-green-600 ring-2 ring-green-600/30 shadow-lg"
                             : tier.id === "direct_list_plus"
-                            ? "border-primary shadow-lg hover:ring-2 hover:ring-primary/10"
+                            ? "border-primary/40 shadow-md hover:border-primary"
                             : "border-border hover:border-primary/50"
                         }`}
                       >
                         {/* Card Header */}
                         <div className={`p-4 text-center ${tier.badge ? "pt-6" : ""} ${
-                          tier.id === "direct_list_plus" ? "bg-primary/5" : "bg-muted/30"
+                          isSelected
+                            ? "bg-green-50"
+                            : tier.id === "direct_list_plus"
+                            ? "bg-primary/5"
+                            : "bg-muted/30"
                         }`}>
                           <h3 className="text-xl font-semibold mb-1">
                             <StyledTierName name={tier.name} />
@@ -1073,9 +1119,9 @@ export default function GetStartedPage() {
                             </div>
                           )}
                           {isSelected && (
-                            <div className="mt-2 flex items-center justify-center gap-1 text-primary text-sm font-medium">
+                            <div className="mt-2 inline-flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
                               <HiCheck className="h-4 w-4" />
-                              Selected
+                              Your Choice
                             </div>
                           )}
                         </div>
@@ -1150,11 +1196,13 @@ export default function GetStartedPage() {
                 return (
                   <div className="bg-card border border-border rounded-xl p-4 md:p-6">
                     <h3 className="font-semibold text-foreground mb-3">{terms.title}</h3>
-                    <div className="max-h-48 overflow-y-auto mb-4 text-sm text-muted-foreground space-y-3">
-                      {terms.sections.map((section, idx) => (
-                        <div key={idx}>
-                          <h4 className="font-medium text-foreground">{section.heading}</h4>
-                          <p>{section.content}</p>
+                    <div className="max-h-64 overflow-y-auto mb-4 text-sm space-y-4">
+                      {terms.sections.map((section) => (
+                        <div key={section.number}>
+                          <h4 className="font-semibold text-foreground mb-1">
+                            {section.number}. {section.heading}
+                          </h4>
+                          <p className="text-muted-foreground leading-relaxed">{section.content}</p>
                         </div>
                       ))}
                     </div>
