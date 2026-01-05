@@ -602,8 +602,8 @@ export default function GetStartedPage() {
         </p>
       </HeroSection>
 
-      {/* Main Content - Use tight variant for service/terms steps to reduce dead space */}
-      <Section variant={(step === "service" || step === "terms") ? "tight" : "content"} maxWidth="4xl">
+      {/* Main Content - Use tight variant for all wizard steps to reduce dead space */}
+      <Section variant="tight" maxWidth="4xl">
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">
