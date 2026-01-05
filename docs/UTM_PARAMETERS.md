@@ -49,8 +49,7 @@ Identifies the specific campaign or promotion.
 | `ltfu` | Long-term follow-up nurture campaign |
 | `directlist-launch` | DirectList product launch |
 | `sell-house-fast` | Motivated seller campaign |
-| `direct_list` | DirectList yard sign (/dl) |
-| `access_realty` | Access Realty yard sign (/qr) |
+| `brand` | Yard sign QR codes (/dl, /qr) |
 
 ### utm_term
 
@@ -95,8 +94,8 @@ https://access.realty/direct-list?utm_source=access&utm_medium=email&utm_campaig
 https://access.realty/direct-list?utm_source=access&utm_medium=sms&utm_campaign=ltfu
 
 # Yard sign QR codes
-https://access.realty/dl → DirectList sign → /direct-list?utm_source=access&utm_medium=yard_sign&utm_campaign=direct_list
-https://access.realty/qr → Access Realty sign → /direct-list?utm_source=access&utm_medium=yard_sign&utm_campaign=access_realty
+https://access.realty/dl → /direct-list?utm_source=access&utm_medium=yard_sign&utm_campaign=brand
+https://access.realty/qr → /direct-list?utm_source=access&utm_medium=yard_sign&utm_campaign=brand
 
 # Partner referral
 https://access.realty/direct-list?utm_source=metroplex_homebuyers&utm_medium=referral
