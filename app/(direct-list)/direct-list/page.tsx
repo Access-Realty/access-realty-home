@@ -616,34 +616,24 @@ export default function DirectListPage() {
             })}
           </div>
 
-          {/* Single CTA below pricing cards */}
-          <div className="text-center space-y-4">
-            <p className="text-lg font-semibold text-primary">
-              Save <span className="text-secondary">$9,000</span> on a $400k home sale compared to traditional realtors
-            </p>
-            <Link
-              href="/direct-list/get-started"
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-lg font-semibold hover:bg-primary-dark transition-colors"
-            >
-              Get Started
-              <span aria-hidden="true">&rarr;</span>
-            </Link>
-          </div>
       </Section>
 
       {/* NOTE: ListingsCarousel removed - see import comment above */}
 
-      {/* Simplified Final CTA Section */}
+      {/* Final CTA Section */}
       <Section variant="cta" maxWidth="4xl" background="primary" className="text-center">
-        <h2 className="text-2xl md:text-3xl font-bold mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold mb-2">
           Ready to Save Thousands on Your Home Sale?
         </h2>
+        <p className="text-xl text-secondary font-semibold mb-2">
+          Save $9,000 on a $400k home sale compared to traditional realtors
+        </p>
         <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
           Get full MLS exposure and keep more money in your pocket.
         </p>
         <Link
           href="/direct-list/get-started"
-          className="inline-flex items-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+          className="inline-flex items-center gap-2 bg-white text-primary px-8 py-3 rounded-md font-semibold hover:bg-white/90 transition-colors"
         >
           List My Home on MLS
           <span aria-hidden="true">&rarr;</span>
