@@ -609,8 +609,8 @@ export default function GetStartedPage() {
         </HeroSection>
       </div>
 
-      {/* Main Content - pt-24 on mobile for header clearance when hero hidden */}
-      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-24 md:pt-0"}>
+      {/* Main Content - pt-28 on mobile for header clearance when hero hidden */}
+      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-28 md:pt-0"}>
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">
@@ -1043,13 +1043,10 @@ export default function GetStartedPage() {
           {step === "service" && (
             <div className="space-y-6">
               {/* Header */}
-              <div className="text-center">
-                <h2 className="text-xl md:text-2xl font-bold text-foreground mb-2">
+              <div className="text-center mb-2">
+                <h2 className="text-xl md:text-2xl font-bold text-foreground">
                   Choose Your Service Level
                 </h2>
-                <p className="text-muted-foreground">
-                  Select a plan to continue.
-                </p>
               </div>
 
               {/* Tier Cards */}
@@ -1077,8 +1074,8 @@ export default function GetStartedPage() {
                             : "border-border"
                         }`}
                       >
-                        {/* Card Header */}
-                        <div className={`p-4 text-center ${tier.badge ? "pt-6" : ""}`}>
+                        {/* Card Header - uniform pt-6 for horizontal alignment across all cards */}
+                        <div className="p-4 pt-6 text-center bg-muted/40">
                           <h3 className="text-xl font-semibold mb-1">
                             <StyledTierName name={tier.name} />
                           </h3>
@@ -1162,13 +1159,10 @@ export default function GetStartedPage() {
                               setTermsAccepted(false);
                               setStep("terms");
                             }}
-                            className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
-                              tier.id === "direct_list_plus"
-                                ? "bg-primary text-primary-foreground hover:bg-primary/90"
-                                : "bg-muted text-foreground hover:bg-muted/80 border border-border"
-                            }`}
+                            className="w-full py-3 px-4 rounded-lg transition-colors bg-primary text-primary-foreground hover:bg-primary/90"
                           >
-                            Select <StyledTierName name={tier.name} />
+                            <span className="font-normal">Select</span>{" "}
+                            <span className="font-semibold"><StyledTierName name={tier.name} /></span>
                           </button>
                         </div>
                       </div>
@@ -1181,7 +1175,7 @@ export default function GetStartedPage() {
               <div>
                 <button
                   onClick={() => setStep("contact")}
-                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border border-border text-foreground hover:bg-muted transition-colors"
                 >
                   <HiOutlineArrowLeft className="h-4 w-4" />
                   Back
