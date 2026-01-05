@@ -1,5 +1,5 @@
 // ABOUTME: Get Started wizard page for DirectList onboarding
-// ABOUTME: Multi-step flow: Address → Property Specs → Contact → Service Selection
+// ABOUTME: Multi-step flow: Address → Property Specs → Contact → Service Selection → Terms
 
 "use client";
 
@@ -58,7 +58,7 @@ const mapOptions: google.maps.MapOptions = {
 // Default center (DFW)
 const defaultCenter = { lat: 32.7767, lng: -96.797 };
 
-type Step = "address" | "confirm" | "contact" | "service";
+type Step = "address" | "confirm" | "contact" | "service" | "terms";
 
 interface ContactForm {
   firstName: string;
@@ -602,8 +602,8 @@ export default function GetStartedPage() {
         </p>
       </HeroSection>
 
-      {/* Main Content */}
-      <Section variant="content" maxWidth="4xl">
+      {/* Main Content - Use tight variant for service/terms steps to reduce dead space */}
+      <Section variant={(step === "service" || step === "terms") ? "tight" : "content"} maxWidth="4xl">
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">
@@ -1046,7 +1046,7 @@ export default function GetStartedPage() {
             </div>
           )}
 
-          {/* Step 4: Service Selection - Full Tier Cards */}
+          {/* Step 4: Service Selection - Full Tier Cards with Select Buttons */}
           {step === "service" && (
             <div className="space-y-6">
               {/* Header */}
@@ -1055,14 +1055,13 @@ export default function GetStartedPage() {
                   Choose Your Service Level
                 </h2>
                 <p className="text-muted-foreground">
-                  Select a plan to continue to payment.
+                  Select a plan to continue.
                 </p>
               </div>
 
               {/* Tier Cards */}
               <div className="grid md:grid-cols-3 gap-4">
                 {SERVICE_TIERS.map((tier) => {
-                  const isSelected = selectedTierId === tier.id;
                   const hasAddOns = tier.id !== "full_service";
                   const addOns = ON_DEMAND_SERVICES[tier.id as keyof typeof ON_DEMAND_SERVICES];
                   const isExpanded = expandedTiers.has(tier.id);
@@ -1079,23 +1078,15 @@ export default function GetStartedPage() {
                       )}
 
                       <div
-                        onClick={() => {
-                          setSelectedTierId(tier.id);
-                          setTermsAccepted(false);
-                        }}
-                        className={`cursor-pointer rounded-xl border-2 overflow-hidden flex flex-col h-full transition-all ${
-                          isSelected
-                            ? "border-green-600 ring-2 ring-green-600/30 shadow-lg"
-                            : tier.id === "direct_list_plus"
-                            ? "border-primary/40 shadow-md hover:border-primary"
-                            : "border-border hover:border-primary/50"
+                        className={`rounded-xl border-2 overflow-hidden flex flex-col h-full ${
+                          tier.id === "direct_list_plus"
+                            ? "border-primary/40 shadow-md"
+                            : "border-border"
                         }`}
                       >
                         {/* Card Header */}
                         <div className={`p-4 text-center ${tier.badge ? "pt-6" : ""} ${
-                          isSelected
-                            ? "bg-green-50"
-                            : tier.id === "direct_list_plus"
+                          tier.id === "direct_list_plus"
                             ? "bg-primary/5"
                             : "bg-muted/30"
                         }`}>
@@ -1118,12 +1109,6 @@ export default function GetStartedPage() {
                               No upfront payment
                             </div>
                           )}
-                          {isSelected && (
-                            <div className="mt-2 inline-flex items-center gap-1 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                              <HiCheck className="h-4 w-4" />
-                              Your Choice
-                            </div>
-                          )}
                         </div>
 
                         {/* Features */}
@@ -1144,10 +1129,7 @@ export default function GetStartedPage() {
                           {hasAddOns && addOns && (
                             <div className="mt-4 border-t border-border pt-3">
                               <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleExpanded(tier.id);
-                                }}
+                                onClick={() => toggleExpanded(tier.id)}
                                 className="flex items-center justify-between w-full text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
                               >
                                 <span>On Demand Services</span>
@@ -1182,60 +1164,34 @@ export default function GetStartedPage() {
                             </p>
                           )}
                         </div>
+
+                        {/* Select Button */}
+                        <div className="p-4 pt-0">
+                          <button
+                            onClick={() => {
+                              setSelectedTierId(tier.id);
+                              setTermsAccepted(false);
+                              setStep("terms");
+                            }}
+                            className={`w-full py-3 px-4 rounded-lg font-semibold transition-colors ${
+                              tier.id === "direct_list_plus"
+                                ? "bg-primary text-primary-foreground hover:bg-primary/90"
+                                : "bg-muted text-foreground hover:bg-muted/80 border border-border"
+                            }`}
+                          >
+                            Select {tier.name}
+                          </button>
+                        </div>
                       </div>
                     </div>
                   );
                 })}
               </div>
 
-              {/* Terms Section - Shows when tier is selected */}
-              {selectedTierId && (() => {
-                const selectedTier = SERVICE_TIERS.find(t => t.id === selectedTierId);
-                if (!selectedTier) return null;
-                const terms = generateTermsContent(selectedTier);
-                return (
-                  <div className="bg-card border border-border rounded-xl p-4 md:p-6">
-                    <h3 className="font-semibold text-foreground mb-3">{terms.title}</h3>
-                    <div className="max-h-64 overflow-y-auto mb-4 text-sm space-y-4">
-                      {terms.sections.map((section) => (
-                        <div key={section.number}>
-                          <h4 className="font-semibold text-foreground mb-1">
-                            {section.number}. {section.heading}
-                          </h4>
-                          <p className="text-muted-foreground leading-relaxed">{section.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                    <label className="flex items-start gap-2 mb-4 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={termsAccepted}
-                        onChange={(e) => setTermsAccepted(e.target.checked)}
-                        className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
-                      />
-                      <span className="text-sm text-foreground">
-                        I have read and agree to the Terms of Service
-                      </span>
-                    </label>
-                    <button
-                      onClick={() => setShowCheckout(true)}
-                      disabled={!termsAccepted}
-                      className="w-full py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      Continue to Payment
-                    </button>
-                  </div>
-                );
-              })()}
-
               {/* Back Button */}
               <div>
                 <button
-                  onClick={() => {
-                    setStep("contact");
-                    setSelectedTierId(null);
-                    setTermsAccepted(false);
-                  }}
+                  onClick={() => setStep("contact")}
                   className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
                 >
                   <HiOutlineArrowLeft className="h-4 w-4" />
@@ -1244,6 +1200,85 @@ export default function GetStartedPage() {
               </div>
             </div>
           )}
+
+          {/* Step 5: Terms of Service */}
+          {step === "terms" && selectedTierId && (() => {
+            const selectedTier = SERVICE_TIERS.find(t => t.id === selectedTierId);
+            if (!selectedTier) return null;
+            const terms = generateTermsContent(selectedTier);
+            return (
+              <div className="space-y-6">
+                {/* Selected Plan Summary */}
+                <div className="bg-muted/50 rounded-xl p-4 flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Selected Plan</p>
+                    <p className="text-lg font-semibold">
+                      <StyledTierName name={selectedTier.name} />
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <p className="text-2xl font-bold text-primary">
+                      {selectedTier.upfrontPrice || selectedTier.totalPrice}
+                    </p>
+                    {selectedTier.upfrontPrice && (
+                      <p className="text-sm text-muted-foreground">
+                        {selectedTier.totalPrice} total
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                {/* Terms Card */}
+                <div className="bg-card border border-border rounded-xl p-4 md:p-6">
+                  <h2 className="text-xl font-bold text-foreground mb-4">{terms.title}</h2>
+                  <div className="max-h-80 overflow-y-auto mb-6 text-sm space-y-4 pr-2">
+                    {terms.sections.map((section) => (
+                      <div key={section.number}>
+                        <h4 className="font-semibold text-foreground mb-1">
+                          {section.number}. {section.heading}
+                        </h4>
+                        <p className="text-muted-foreground leading-relaxed">{section.content}</p>
+                      </div>
+                    ))}
+                  </div>
+                  <label className="flex items-start gap-3 mb-6 cursor-pointer p-3 rounded-lg hover:bg-muted/50 transition-colors">
+                    <input
+                      type="checkbox"
+                      checked={termsAccepted}
+                      onChange={(e) => setTermsAccepted(e.target.checked)}
+                      className="mt-0.5 h-5 w-5 rounded border-border text-primary focus:ring-primary"
+                    />
+                    <span className="text-foreground">
+                      I have read and agree to the Terms of Service
+                    </span>
+                  </label>
+                  <button
+                    onClick={() => setShowCheckout(true)}
+                    disabled={!termsAccepted}
+                    className="w-full py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                  >
+                    Continue to Payment
+                    <HiOutlineArrowRight className="h-4 w-4" />
+                  </button>
+                </div>
+
+                {/* Back Button */}
+                <div>
+                  <button
+                    onClick={() => {
+                      setStep("service");
+                      setSelectedTierId(null);
+                      setTermsAccepted(false);
+                    }}
+                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
+                  >
+                    <HiOutlineArrowLeft className="h-4 w-4" />
+                    Back to Plans
+                  </button>
+                </div>
+              </div>
+            );
+          })()}
       </Section>
 
       {/* Checkout Modal - opens when user accepts terms */}
