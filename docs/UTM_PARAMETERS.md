@@ -50,6 +50,7 @@ Identifies the specific campaign or promotion.
 | `directlist-launch` | DirectList product launch |
 | `sell-house-fast` | Motivated seller campaign |
 | `brand` | Yard sign QR codes (/dl, /qr) |
+| `2026_launch` | Metroplex Homebuyers partner campaigns |
 
 ### utm_term
 
@@ -57,7 +58,13 @@ Optional. Used for paid search keywords.
 
 ### utm_content
 
-Optional. Used for A/B testing or ad variations.
+Identifies specific content or drip sequence.
+
+| Value | Description |
+|-------|-------------|
+| `drip1` | Metroplex Homebuyers email drip - message 1 |
+| `drip2` | Metroplex Homebuyers email drip - message 2 |
+| `drip3` | Metroplex Homebuyers email drip - message 3 |
 
 ## Database Storage
 
@@ -97,8 +104,13 @@ https://access.realty/direct-list?utm_source=access&utm_medium=sms&utm_campaign=
 https://access.realty/dl → /direct-list?utm_source=access&utm_medium=yard_sign&utm_campaign=brand
 https://access.realty/qr → /direct-list?utm_source=access&utm_medium=yard_sign&utm_campaign=brand
 
-# Partner referral
-https://access.realty/direct-list?utm_source=metroplex_homebuyers&utm_medium=referral
+# Metroplex Homebuyers email drip campaigns
+https://access.realty/direct-list?utm_source=metroplex_homebuyers&utm_medium=email&utm_campaign=2026_launch&utm_content=drip1
+https://access.realty/direct-list?utm_source=metroplex_homebuyers&utm_medium=email&utm_campaign=2026_launch&utm_content=drip2
+https://access.realty/direct-list?utm_source=metroplex_homebuyers&utm_medium=email&utm_campaign=2026_launch&utm_content=drip3
+
+# Metroplex Homebuyers SMS campaign
+https://access.realty/direct-list?utm_source=metroplex_homebuyers&utm_medium=sms&utm_campaign=2026_launch&utm_content=drip1
 
 # Google Ads
 https://access.realty/direct-list?utm_source=google&utm_medium=cpc&utm_campaign=sell-house-fast&gclid=xxx
