@@ -33,7 +33,7 @@ export function DirectListFooter() {
               </li>
               <li>
                 <Link
-                  href="/services"
+                  href="/direct-list#pricing"
                   className="hover:text-secondary transition-colors"
                 >
                   Compare Plans

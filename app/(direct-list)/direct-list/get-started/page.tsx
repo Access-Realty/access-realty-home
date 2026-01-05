@@ -16,7 +16,7 @@ import { useState, useCallback, useEffect } from "react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
-import { TierSelectionModal } from "@/components/services/TierSelectionModal";
+import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
 import { HeroSection, Section } from "@/components/layout";
 import {
   HiOutlineArrowRight,
@@ -225,6 +225,42 @@ const COMPARISON_ROWS: {
   },
 ];
 
+// Generate terms of service content for selected tier
+function generateTermsContent(tier: typeof TIERS[0]) {
+  const isFullService = tier.id === "full-service";
+  const paymentTerms = isFullService
+    ? "3% of the final sale price, due at closing. No upfront payment required."
+    : `${tier.upfrontPrice} due at signup. Remaining balance of ${tier.totalPrice} total due at closing.`;
+
+  return {
+    title: `${tier.name} Terms of Service`,
+    sections: [
+      {
+        heading: "Service Agreement",
+        content: `By selecting ${tier.name}, you agree to engage Access Realty to provide listing services for your property. This agreement becomes effective upon payment completion.`,
+      },
+      {
+        heading: "Payment Terms",
+        content: paymentTerms,
+      },
+      {
+        heading: "Listing Period",
+        content: "Your MLS listing will remain active for up to 12 months from the activation date. You may cancel at any time, though upfront fees are non-refundable.",
+      },
+      {
+        heading: "Service Inclusions",
+        content: isFullService
+          ? "Full Service includes complete agent representation, negotiations on all offers, repairs management, transaction coordination, and all marketing services."
+          : `${tier.name} includes MLS listing, professional photography, and the features outlined in your selected package. Additional services are available on demand.`,
+      },
+      {
+        heading: "Cancellation Policy",
+        content: "You may cancel your listing at any time by providing written notice. Upfront fees are non-refundable. Services rendered prior to cancellation are final.",
+      },
+    ],
+  };
+}
+
 // Cell value renderer
 function CellValue({ value }: { value: string | boolean | undefined }) {
   if (value === undefined || value === false) {
@@ -314,8 +350,9 @@ export default function GetStartedPage() {
   const [contactSubmitError, setContactSubmitError] = useState<string | null>(null);
 
   // Service selection state
-  const [showTierModal, setShowTierModal] = useState(false);
   const [selectedTierId, setSelectedTierId] = useState<string | null>(null);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [showCheckout, setShowCheckout] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
 
   // Tracking params captured on mount
@@ -1036,7 +1073,7 @@ export default function GetStartedPage() {
             </div>
           )}
 
-          {/* Step 4: Service Selection - Full Tier Comparison */}
+          {/* Step 4: Service Selection - Simple Tier Cards */}
           {step === "service" && (
             <div className="bg-card rounded-xl border border-border p-4 md:p-6">
               {/* Header */}
@@ -1045,210 +1082,107 @@ export default function GetStartedPage() {
                   Choose Your Service Level
                 </h2>
                 <p className="text-muted-foreground">
-                  All plans include MLS listing, professional photography, and expert support.
+                  Select a plan to continue to payment.
                 </p>
               </div>
 
-              {/* All Plans Include */}
-              <div className="bg-primary/5 border border-primary/50 rounded-lg p-4 mb-6">
-                <h4 className="font-bold text-sm mb-3 text-center text-primary">All Plans Include</h4>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
-                  {BASE_FEATURES.map((feature, idx) => (
-                    <span key={idx} className="flex items-center gap-1.5">
-                      <HiCheck className="h-3.5 w-3.5 text-green-600 shrink-0" />
-                      <span className="text-foreground">{feature}</span>
-                    </span>
-                  ))}
-                </div>
-              </div>
-
-              {/* Tier Headers - Desktop */}
-              <div className="hidden md:grid grid-cols-4 gap-2 mb-1">
-                <div /> {/* Empty corner */}
-                {TIERS.map((tier) => (
-                  <div
-                    key={tier.id}
-                    className={`relative text-center p-3 rounded-t-lg border border-b-0 ${
-                      tier.id === "full-service"
-                        ? "border-primary bg-primary/10"
-                        : tier.id === "direct-list-plus"
-                        ? "border-primary/50 bg-primary/5"
-                        : "border-border bg-card"
-                    }`}
-                  >
-                    {tier.badge && (
-                      <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
-                        <span className="bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap">
-                          {tier.badge}
-                        </span>
-                      </div>
-                    )}
-                    <div className={tier.badge ? "pt-1" : ""}>
-                      <h3 className="font-semibold text-sm mb-1">
-                        <TierName name={tier.name} />
-                      </h3>
-                      <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                        {tier.id === "full-service" ? "Pay at closing" : "Starting from"}
-                      </div>
-                      <div className="text-xl font-bold text-primary">
-                        {tier.id === "full-service" ? tier.totalPrice : tier.upfrontPrice}
-                      </div>
-                      <div className="text-xs text-muted-foreground">
-                        {tier.id === "full-service" ? "No upfront payment" : `${tier.totalPrice} total`}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              {/* Comparison Table - Desktop */}
-              <div className="hidden md:block border border-border rounded-lg overflow-hidden mb-4">
-                <table className="w-full text-xs">
-                  <thead>
-                    <tr className="bg-muted/50 border-b">
-                      <th className="text-left p-2 font-semibold border-r w-1/4">What&apos;s Different</th>
-                      {TIERS.map((tier, idx) => (
-                        <th
-                          key={tier.id}
-                          className={`p-2 font-semibold text-center w-1/4 ${
-                            idx < TIERS.length - 1 ? "border-r" : ""
-                          } ${
-                            tier.id === "direct-list-plus"
-                              ? "bg-primary/5"
-                              : tier.id === "full-service"
-                              ? "bg-primary/10"
-                              : ""
-                          }`}
-                        >
+              {/* Tier Cards */}
+              <div className="grid md:grid-cols-3 gap-4 mb-6">
+                {TIERS.map((tier) => {
+                  const isSelected = selectedTierId === tier.id;
+                  return (
+                    <button
+                      key={tier.id}
+                      onClick={() => {
+                        setSelectedTierId(tier.id);
+                        setTermsAccepted(false);
+                      }}
+                      className={`relative text-left p-4 rounded-xl border-2 transition-all ${
+                        isSelected
+                          ? "border-primary bg-primary/5 ring-2 ring-primary/20"
+                          : tier.id === "direct-list-plus"
+                          ? "border-primary/50 bg-primary/5 hover:border-primary"
+                          : "border-border bg-card hover:border-primary/50"
+                      }`}
+                    >
+                      {tier.badge && (
+                        <div className="absolute -top-2.5 left-1/2 -translate-x-1/2">
+                          <span className="bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-[10px] font-semibold whitespace-nowrap">
+                            {tier.badge}
+                          </span>
+                        </div>
+                      )}
+                      <div className={tier.badge ? "pt-2" : ""}>
+                        <h3 className="font-semibold text-lg mb-1">
                           <TierName name={tier.name} />
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {COMPARISON_ROWS.map((row, idx) => (
-                      <tr key={idx} className={idx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
-                        <td className="p-2 text-muted-foreground border-r">{row.feature}</td>
-                        {TIERS.map((tier, tierIdx) => (
-                          <td
-                            key={tier.id}
-                            className={`p-2 text-center ${tierIdx < TIERS.length - 1 ? "border-r" : ""} ${
-                              tier.id === "direct-list-plus"
-                                ? "bg-primary/5"
-                                : tier.id === "full-service"
-                                ? "bg-primary/10"
-                                : ""
-                            }`}
-                          >
-                            <CellValue value={row.values[tier.code]} />
-                          </td>
-                        ))}
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-
-              {/* Select Buttons - Desktop */}
-              <div className="hidden md:grid grid-cols-4 gap-2 mb-6">
-                <div /> {/* Empty corner */}
-                {TIERS.map((tier) => (
-                  <button
-                    key={tier.id}
-                    onClick={() => {
-                      setSelectedTierId(tier.id);
-                      setShowTierModal(true);
-                    }}
-                    className="py-2 px-4 rounded-lg text-sm font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90"
-                  >
-                    Select <TierName name={tier.name} inherit />
-                  </button>
-                ))}
-              </div>
-
-              {/* Mobile Layout - Stacked Cards */}
-              <div className="md:hidden space-y-4">
-                {TIERS.map((tier) => (
-                  <div
-                    key={tier.id}
-                    className={`rounded-lg border-2 overflow-hidden ${
-                      tier.id === "full-service"
-                        ? "border-primary bg-primary/10"
-                        : tier.id === "direct-list-plus"
-                        ? "border-primary/50 bg-primary/5"
-                        : "border-border bg-card"
-                    }`}
-                  >
-                    {/* Card Header */}
-                    <div className="p-4 border-b border-border/50">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="text-lg font-semibold">
-                            <TierName name={tier.name} />
-                          </h3>
-                          {tier.badge && (
-                            <span className="inline-block mt-1 bg-secondary text-secondary-foreground px-2 py-0.5 rounded-full text-xs font-semibold">
-                              {tier.badge}
-                            </span>
-                          )}
+                        </h3>
+                        <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
+                          {tier.id === "full-service" ? "Pay at closing" : "Upfront"}
                         </div>
-                        <div className="text-right">
-                          <div className="text-[10px] text-muted-foreground uppercase tracking-wide">
-                            {tier.id === "full-service" ? "Pay at closing" : "Starting from"}
-                          </div>
-                          <div className="text-2xl font-bold text-primary">
-                            {tier.id === "full-service" ? tier.totalPrice : tier.upfrontPrice}
-                          </div>
-                          <div className="text-xs text-muted-foreground">
-                            {tier.id === "full-service" ? "No upfront payment" : `${tier.totalPrice} total`}
-                          </div>
+                        <div className="text-2xl font-bold text-primary">
+                          {tier.id === "full-service" ? tier.totalPrice : tier.upfrontPrice}
                         </div>
+                        <div className="text-xs text-muted-foreground">
+                          {tier.id === "full-service" ? "No upfront payment" : `${tier.totalPrice} total`}
+                        </div>
+                        {isSelected && (
+                          <div className="mt-2 flex items-center gap-1 text-primary text-sm font-medium">
+                            <HiCheck className="h-4 w-4" />
+                            Selected
+                          </div>
+                        )}
                       </div>
-                    </div>
-
-                    {/* Card Features */}
-                    <div className="p-4 space-y-2">
-                      {COMPARISON_ROWS.map((row, idx) => {
-                        const value = row.values[tier.code];
-                        if (value === false) return null;
-                        return (
-                          <div
-                            key={idx}
-                            className="flex justify-between items-center py-1 border-b border-border/30 last:border-0 text-sm"
-                          >
-                            <span className="text-muted-foreground">{row.feature}</span>
-                            <span className="font-medium text-foreground">
-                              {value === true ? (
-                                <HiCheck className="h-4 w-4 text-green-600" />
-                              ) : (
-                                value
-                              )}
-                            </span>
-                          </div>
-                        );
-                      })}
-                    </div>
-
-                    {/* Card CTA */}
-                    <div className="p-4 pt-0">
-                      <button
-                        onClick={() => {
-                          setSelectedTierId(tier.id);
-                          setShowTierModal(true);
-                        }}
-                        className="block w-full text-center py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90"
-                      >
-                        Select <TierName name={tier.name} inherit />
-                      </button>
-                    </div>
-                  </div>
-                ))}
+                    </button>
+                  );
+                })}
               </div>
+
+              {/* Terms Section - Shows when tier is selected */}
+              {selectedTierId && (() => {
+                const selectedTier = TIERS.find(t => t.id === selectedTierId);
+                if (!selectedTier) return null;
+                const terms = generateTermsContent(selectedTier);
+                return (
+                  <div className="border border-border rounded-lg p-4 mb-6 bg-muted/30">
+                    <h3 className="font-semibold text-foreground mb-3">{terms.title}</h3>
+                    <div className="max-h-48 overflow-y-auto mb-4 text-sm text-muted-foreground space-y-3">
+                      {terms.sections.map((section, idx) => (
+                        <div key={idx}>
+                          <h4 className="font-medium text-foreground">{section.heading}</h4>
+                          <p>{section.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <label className="flex items-start gap-2 mb-4 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={termsAccepted}
+                        onChange={(e) => setTermsAccepted(e.target.checked)}
+                        className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary"
+                      />
+                      <span className="text-sm text-foreground">
+                        I have read and agree to the Terms of Service
+                      </span>
+                    </label>
+                    <button
+                      onClick={() => setShowCheckout(true)}
+                      disabled={!termsAccepted}
+                      className="w-full py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      Continue to Payment
+                    </button>
+                  </div>
+                );
+              })()}
 
               {/* Back Button */}
-              <div className="pt-4 md:pt-0">
+              <div>
                 <button
-                  onClick={() => setStep("contact")}
+                  onClick={() => {
+                    setStep("contact");
+                    setSelectedTierId(null);
+                    setTermsAccepted(false);
+                  }}
                   className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium border border-border text-foreground hover:bg-muted transition-colors"
                 >
                   <HiOutlineArrowLeft className="h-4 w-4" />
@@ -1259,18 +1193,31 @@ export default function GetStartedPage() {
           )}
       </Section>
 
-      {/* Tier Selection Modal - opens directly to terms for selected tier */}
-      <TierSelectionModal
-        isOpen={showTierModal}
-        onClose={() => {
-          setShowTierModal(false);
-          setSelectedTierId(null);
-        }}
-        initialTier={selectedTierId || undefined}
-        source="get-started"
-        leadId={leadId || undefined}
-        propertySpecs={editableSpecs}
-      />
+      {/* Checkout Modal - opens when user accepts terms */}
+      {(() => {
+        const selectedTier = TIERS.find(t => t.id === selectedTierId);
+        if (!selectedTier) return null;
+        return (
+          <EmbeddedCheckoutModal
+            isOpen={showCheckout}
+            onClose={() => {
+              setShowCheckout(false);
+            }}
+            plan={selectedTier.code}
+            planName={selectedTier.name}
+            source="get-started"
+            leadId={leadId || undefined}
+            propertySpecs={editableSpecs}
+            utmParams={{
+              utm_source: trackingParams.utmSource,
+              utm_medium: trackingParams.utmMedium,
+              utm_campaign: trackingParams.utmCampaign,
+              utm_term: trackingParams.utmTerm,
+              utm_content: trackingParams.utmContent,
+            }}
+          />
+        );
+      })()}
 
       {/* Schedule a Call Section */}
       <Section variant="tight" maxWidth="2xl" background="muted" borderTop className="text-center">
