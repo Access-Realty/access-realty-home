@@ -226,7 +226,7 @@ export default function DirectListPage() {
       </HeroSection>
 
       {/* Why Sell Without a Realtor */}
-      <Section variant="content" maxWidth="6xl" background="card" className="py-20">
+      <Section variant="content" maxWidth="6xl" background="card">
           <div className="text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
               Why Sell Without a Realtor?
@@ -304,7 +304,7 @@ export default function DirectListPage() {
       </Section>
 
       {/* Testimonials */}
-      <Section variant="content" background="muted" className="py-20 overflow-hidden" maxWidth="full">
+      <Section variant="content" background="muted" className="overflow-hidden" maxWidth="full">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
               REAL RESULTS
@@ -418,7 +418,7 @@ export default function DirectListPage() {
       </Section>
 
       {/* How It Works */}
-      <Section variant="content" maxWidth="4xl" background="card" className="py-20">
+      <Section variant="content" maxWidth="4xl" background="card">
         <div className="text-center mb-16">
             <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
               SIMPLE PROCESS
