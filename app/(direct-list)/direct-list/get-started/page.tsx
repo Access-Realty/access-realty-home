@@ -597,18 +597,20 @@ export default function GetStartedPage() {
 
   return (
     <div className="bg-background">
-      {/* Hero Section */}
-      <HeroSection maxWidth="4xl">
-        <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
-          List Your Home on the MLS
-        </h1>
-        <p className="text-lg text-white/80 max-w-2xl mx-auto">
-          Get started in minutes. Save thousands compared to traditional agents.
-        </p>
-      </HeroSection>
+      {/* Hero Section - Hidden on mobile after first step to maximize form space */}
+      <div className={step === "address" ? "" : "hidden md:block"}>
+        <HeroSection maxWidth="4xl">
+          <h1 className="text-3xl md:text-4xl font-bold text-white mb-4">
+            List Your Home on the MLS
+          </h1>
+          <p className="text-lg text-white/80 max-w-2xl mx-auto">
+            Get started in minutes. Save thousands compared to traditional agents.
+          </p>
+        </HeroSection>
+      </div>
 
-      {/* Main Content - Use tight variant for all wizard steps to reduce dead space */}
-      <Section variant="tight" maxWidth="4xl">
+      {/* Main Content - pt-20 on mobile for header clearance when hero hidden */}
+      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-20 md:pt-0"}>
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">
