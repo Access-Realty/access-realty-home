@@ -1166,7 +1166,7 @@ export default function GetStartedPage() {
                                 : "bg-muted text-foreground hover:bg-muted/80 border border-border"
                             }`}
                           >
-                            Select {tier.name}
+                            Select <StyledTierName name={tier.name} />
                           </button>
                         </div>
                       </div>
