@@ -66,6 +66,24 @@ Identifies specific content or drip sequence.
 | `drip2` | Metroplex Homebuyers email drip - message 2 |
 | `drip3` | Metroplex Homebuyers email drip - message 3 |
 
+## Short Links & Redirects
+
+These short URLs are used in marketing materials. Each serves OG meta tags for link previews before client-side redirecting.
+
+| Short URL | Destination | UTM Parameters | Use Case |
+|-----------|-------------|----------------|----------|
+| `access.realty/dl` | `/direct-list` | `utm_source=access&utm_medium=yard_sign&utm_campaign=brand` | DirectList yard sign QR code |
+| `access.realty/qr` | `/direct-list` | `utm_source=access&utm_medium=yard_sign&utm_campaign=brand` | Access Realty yard sign QR code |
+| `access.realty/sms` | `/direct-list` | `utm_source=metroplex_homebuyers&utm_medium=sms&utm_campaign=2026_launch&utm_content=drip1` | Metroplex Homebuyers SMS campaign |
+
+### Implementation
+
+Each short link has:
+- `app/{path}/page.tsx` - Server component with OG metadata
+- `app/{path}/redirect-client.tsx` - Client component that redirects after page renders
+
+This pattern ensures social platforms/SMS apps can scrape OG tags before the redirect occurs.
+
 ## Database Storage
 
 ### Marketing Site (`leads` table)
@@ -121,5 +139,8 @@ https://access.realty/direct-list?utm_source=google&utm_medium=cpc&utm_campaign=
 - `app/(direct-list)/direct-list/get-started/page.tsx` - Captures UTM params from URL
 - `app/api/leads/route.ts` - Stores UTM params in database
 - `app/api/stripe/create-checkout-session/route.ts` - Forwards UTM params to app
+- `app/dl/` - DirectList yard sign short link redirect
+- `app/qr/` - Access Realty yard sign short link redirect
+- `app/sms/` - Metroplex SMS campaign short link redirect
 - `MARKETING-HANDOFF.md` - Documents lead data flow
 - `docs/STRIPE_MARKETING_INTEGRATION.md` - Stripe checkout UTM forwarding
