@@ -160,7 +160,7 @@ export default function DirectListPage() {
   return (
     <div className="bg-card">
       {/* Hero Section */}
-      <HeroSection maxWidth="6xl" centered={false} className="md:pt-28 pb-16 md:pb-20">
+      <HeroSection maxWidth="6xl" centered={false}>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
             <div className="text-white">
