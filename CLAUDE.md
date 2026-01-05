@@ -74,7 +74,7 @@ Use classes like `bg-primary`, `text-secondary`, `bg-background`.
 ```tsx
 import { HeroSection, Section } from "@/components/layout";
 
-// Hero with header clearance (pt-24 pb-12)
+// Hero with header clearance (pt-20 pb-16)
 <HeroSection maxWidth="4xl">
   <h1>Page Title</h1>
 </HeroSection>
@@ -99,8 +99,8 @@ import { HeroSection, Section } from "@/components/layout";
 
 | Element | Spacing | Tailwind |
 |---------|---------|----------|
-| Hero top (header clearance) | 6rem | pt-24 |
-| Hero bottom | 3rem | pb-12 |
+| Hero top (header clearance) | 5rem | pt-20 |
+| Hero bottom | 4rem | pb-16 |
 | Section padding | 4rem | py-16 |
 | Tight section padding | 3rem | py-12 |
 
@@ -113,7 +113,7 @@ import { HeroSection, Section } from "@/components/layout";
 | Multi-column layouts | max-w-5xl |
 | Wide hero sections | max-w-6xl |
 
-**Do NOT use:** `py-20`, `pt-28`, `pb-16`, `pb-20` or other non-standard spacing values.
+**Do NOT use:** `py-20`, `pt-24`, `pb-12`, `pb-20` or other non-standard spacing values.
 
 ## Logo Pattern
 

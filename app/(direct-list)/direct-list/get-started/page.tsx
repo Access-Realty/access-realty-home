@@ -609,8 +609,8 @@ export default function GetStartedPage() {
         </HeroSection>
       </div>
 
-      {/* Main Content - pt-28 on mobile for header clearance when hero hidden */}
-      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-28 md:pt-0"}>
+      {/* Main Content - pt-28 on mobile for header clearance when hero hidden, md:pt-12 restores Section spacing */}
+      <Section variant="tight" maxWidth="4xl" className={step === "address" ? "" : "pt-28 md:pt-12"}>
           {/* Step 1: Address */}
           {step === "address" && (
             <div className="space-y-8">

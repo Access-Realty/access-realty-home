@@ -1,5 +1,5 @@
 // ABOUTME: Standardized hero section with fixed header clearance
-// ABOUTME: pt-24 accounts for fixed header, pb-12 is standard gap
+// ABOUTME: pt-20 accounts for fixed header, pb-16 balances vertical spacing
 
 import { ReactNode } from "react";
 
@@ -35,7 +35,7 @@ export function HeroSection({
   centered = true,
 }: HeroSectionProps) {
   const sectionClasses = [
-    "pt-24 pb-12", // Standard hero spacing: header clearance + gap
+    "pt-20 pb-16", // Balanced hero spacing: header clearance + visual balance
     backgroundStyles[background],
     className,
   ]
