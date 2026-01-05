@@ -1043,7 +1043,7 @@ export default function GetStartedPage() {
           {step === "service" && (
             <div className="space-y-6">
               {/* Header */}
-              <div className="text-center mb-2">
+              <div className="text-center py-4">
                 <h2 className="text-xl md:text-2xl font-bold text-foreground">
                   Choose Your Service Level
                 </h2>
