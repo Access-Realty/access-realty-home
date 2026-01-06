@@ -5,7 +5,7 @@ import { ReactNode } from "react";
 
 type SectionVariant = "content" | "tight" | "cta";
 type MaxWidth = "sm" | "md" | "lg" | "xl" | "2xl" | "3xl" | "4xl" | "5xl" | "6xl" | "full";
-type Background = "default" | "muted" | "card" | "primary";
+type Background = "default" | "muted" | "card" | "primary" | "secondary";
 
 interface SectionProps {
   children: ReactNode;
@@ -43,6 +43,7 @@ const backgroundStyles: Record<Background, string> = {
   muted: "bg-muted/30",
   card: "bg-card",
   primary: "bg-primary text-primary-foreground",
+  secondary: "bg-secondary text-secondary-foreground",
 };
 
 export function Section({

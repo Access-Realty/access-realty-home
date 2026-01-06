@@ -41,6 +41,14 @@ export function DirectListFooter() {
               </li>
               <li>
                 <Link
+                  href="/direct-list/faq"
+                  className="hover:text-secondary transition-colors"
+                >
+                  FAQ
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/privacy"
                   className="hover:text-secondary transition-colors"
                 >

@@ -113,7 +113,6 @@ const ON_DEMAND_SERVICES = {
 // NOTE: ListingsCarousel removed - it's a server component that can't be imported into a client component
 // TODO: Add back via a server layout wrapper if needed
 import CarouselNav from "@/components/listings/CarouselNav";
-import { SavingsCalculatorModal } from "@/components/direct-list/SavingsCalculatorModal";
 import { HeroSection, Section } from "@/components/layout";
 
 // Styled DirectList logo component
@@ -142,7 +141,6 @@ function DirectListLogo({ className = "" }: { className?: string }) {
 }
 
 export default function DirectListPage() {
-  const [showSavingsModal, setShowSavingsModal] = useState(false);
   const [expandedTiers, setExpandedTiers] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (tierId: string) => {
@@ -187,12 +185,12 @@ export default function DirectListPage() {
                 >
                   Get Started Now
                 </Link>
-                <button
-                  onClick={() => setShowSavingsModal(true)}
+                <Link
+                  href="/direct-list/savings"
                   className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
                 >
                   Calculate Your Savings
-                </button>
+                </Link>
               </div>
 
               {/* Stats */}
@@ -637,11 +635,6 @@ export default function DirectListPage() {
           </div>
       </Section>
 
-      {/* Savings Calculator Modal */}
-      <SavingsCalculatorModal
-        isOpen={showSavingsModal}
-        onClose={() => setShowSavingsModal(false)}
-      />
     </div>
   );
 }
