@@ -10,7 +10,7 @@ const solutions = [
     name: "Full Service Listing",
     description: "Our top-performing agents handle everything — professional marketing, expert pricing, skilled negotiations, and full support from listing to closing.",
     benefit: "Maximum exposure & support",
-    href: "/staff",
+    href: "/our-team",
     highlights: ["Professional photography & staging", "MLS + syndicated marketing", "Expert price negotiations", "Dedicated agent support"],
   },
   {

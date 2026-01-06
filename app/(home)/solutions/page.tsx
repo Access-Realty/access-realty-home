@@ -51,7 +51,7 @@ const solutions = [
     tagline: "Full-service representation",
     description:
       "Work with one of our experienced team members who handles everything — pricing, marketing, showings, negotiations, and closing.",
-    href: "/staff",
+    href: "/our-team",
   },
 ];
 

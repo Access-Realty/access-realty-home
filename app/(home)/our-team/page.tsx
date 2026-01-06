@@ -39,7 +39,7 @@ export default async function Staff() {
             return (
               <Link
                 key={member.slug}
-                href={`/staff/${member.slug}`}
+                href={`/our-team/${member.slug}`}
                 className="group bg-card border-2 border-border rounded-xl p-8 text-center hover:border-secondary hover:shadow-xl transition-all"
               >
                 {/* Avatar with image or initials fallback */}

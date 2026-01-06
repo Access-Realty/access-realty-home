@@ -33,7 +33,7 @@ export function AccessFooter() {
               </li>
               <li>
                 <Link
-                  href="/staff"
+                  href="/our-team"
                   className="hover:text-secondary transition-colors"
                 >
                   Our Team
