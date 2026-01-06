@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { HiCheck, HiArrowRight, HiBanknotes } from "react-icons/hi2";
-import { Section } from "@/components/layout";
+import { HeroSection, Section } from "@/components/layout";
 
 const benefits = [
   {
@@ -59,20 +59,18 @@ export default function SellerFinancePage() {
   return (
     <div className="bg-background min-h-screen">
       {/* Hero */}
-      <section className="pt-24 pb-12 bg-gradient-to-b from-primary/5 to-background">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-3xl text-center">
-          <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-secondary/20 mb-6">
-            <HiBanknotes className="h-8 w-8 text-secondary" />
-          </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-            Seller Financing
-          </h1>
-          <p className="text-xl text-muted-foreground">
-            Become the bank. Receive monthly payments with interest while providing buyers
-            an alternative to traditional mortgage financing.
-          </p>
+      <HeroSection maxWidth="3xl">
+        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary-foreground/20 mb-6">
+          <HiBanknotes className="h-8 w-8 text-primary-foreground" />
         </div>
-      </section>
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
+          Seller Financing
+        </h1>
+        <p className="text-xl text-primary-foreground/80">
+          Become the bank. Receive monthly payments with interest while providing buyers
+          an alternative to traditional mortgage financing.
+        </p>
+      </HeroSection>
 
       {/* Benefits */}
       <Section variant="content" maxWidth="5xl">

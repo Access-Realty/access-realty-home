@@ -122,17 +122,17 @@ export default function UplistPage() {
   return (
     <div className="bg-background min-h-screen">
       {/* Hero */}
-      <HeroSection maxWidth="3xl" className="bg-gradient-to-b from-primary/5 to-background">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-secondary/20 mb-6">
-          <HiClipboardDocumentList className="h-8 w-8 text-secondary" />
+      <HeroSection maxWidth="3xl">
+        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary-foreground/20 mb-6">
+          <HiClipboardDocumentList className="h-8 w-8 text-primary-foreground" />
         </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
           Uplist
         </h1>
-        <p className="text-xl text-muted-foreground">
+        <p className="text-xl text-primary-foreground/80">
           Get a net-to-seller price without the listing hassle.
         </p>
-        <p className="mt-4 text-muted-foreground">
+        <p className="mt-4 text-primary-foreground/80">
           Stop settling for low investor offers or risking a difficult traditional sale.
           Our Novation &ldquo;Uplist&rdquo; is the stress-free path to a better price.
         </p>
