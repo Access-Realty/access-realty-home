@@ -1,9 +1,8 @@
 // ABOUTME: FAQ page for DirectList flat-fee MLS listing service
 // ABOUTME: Uses Accordion component to display common questions
 
-import Link from "next/link";
 import Accordion from "@/components/ui/Accordion";
-import { HeroSection, Section } from "@/components/layout";
+import { HeroSection, Section, DirectListCTA } from "@/components/layout";
 
 const faqItems = [
   {
@@ -45,7 +44,7 @@ const faqItems = [
 
 export default function FAQPage() {
   return (
-    <div className="bg-background min-h-screen">
+    <>
       {/* Hero */}
       <HeroSection maxWidth="3xl">
         <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">
@@ -57,33 +56,18 @@ export default function FAQPage() {
       </HeroSection>
 
       {/* FAQ Accordion */}
-      <Section variant="content" maxWidth="3xl">
+      <Section variant="content" maxWidth="3xl" background="default">
         <div className="bg-card border border-border rounded-xl p-6 md:p-8">
           <Accordion items={faqItems} />
         </div>
       </Section>
 
-      {/* Get Started CTA */}
-      <Section variant="content" maxWidth="3xl">
-        <div className="text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-2">
-            Ready to Save Thousands on Your Home Sale?
-          </h2>
-          <p className="text-xl text-secondary font-semibold mb-2">
-            Save $9,000 on a $400k home sale compared to traditional realtors
-          </p>
-          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            Get full MLS exposure and keep more money in your pocket.
-          </p>
-          <Link
-            href="/direct-list/get-started"
-            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-md font-semibold hover:bg-primary/90 transition-colors"
-          >
-            List My Home on MLS
-            <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </div>
-      </Section>
-    </div>
+      {/* CTA flows into DirectListFooter */}
+      <DirectListCTA
+        heading="Ready to Save Thousands on Your Home Sale?"
+        subheading="Get full MLS exposure and keep more money in your pocket."
+        buttonText="List My Home on MLS →"
+      />
+    </>
   );
 }

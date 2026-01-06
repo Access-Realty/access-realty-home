@@ -17,21 +17,21 @@ const Hero = () => {
   };
 
   return (
-    <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-card">
+    <section className="pt-32 pb-16 md:pt-40 md:pb-24 bg-primary">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-2 gap-12 items-center">
           <div className="space-y-8 animate-fade-in">
             <div className="space-y-4">
-              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground leading-tight">
+              <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground leading-tight">
                 Sell Your House Your Way
               </h1>
             </div>
 
             <div className="space-y-4">
-              <p className="text-lg text-foreground">
+              <p className="text-lg text-primary-foreground/90">
                 Let&apos;s be honest — traditional real estate can fall short.
               </p>
-              <p className="text-lg text-foreground">
+              <p className="text-lg text-primary-foreground/90">
                 We bring top selling agents, highly rated investors, and self-service listing options
                 together — so selling your home is smarter, faster, and easier.
               </p>
@@ -45,12 +45,12 @@ const Hero = () => {
                   placeholder="Enter Your Address to Get Started"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
-                  className="w-full pl-10 h-14 text-lg border-2 border-border rounded-md focus:border-secondary focus:outline-none bg-card"
+                  className="w-full pl-10 h-14 text-lg border-2 border-border rounded-md focus:border-secondary focus:outline-none bg-card text-foreground"
                 />
               </div>
               <button
                 type="submit"
-                className="h-14 px-8 bg-primary hover:bg-primary-dark text-primary-foreground font-semibold rounded-md transition-colors"
+                className="h-14 px-8 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold rounded-md transition-colors"
               >
                 Get Started
               </button>

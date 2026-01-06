@@ -493,7 +493,7 @@ export default function DirectListPage() {
       </Section>
 
       {/* Pricing Section */}
-      <Section variant="content" maxWidth="5xl" background="card" id="pricing">
+      <Section variant="content" maxWidth="5xl" background="default" id="pricing">
         <div className="text-center mb-16">
           <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
             PRICING
@@ -524,16 +524,14 @@ export default function DirectListPage() {
                   )}
 
                   <div
-                    className={`rounded-xl border-2 overflow-hidden flex flex-col h-full ${
+                    className={`rounded-xl border-2 overflow-hidden flex flex-col h-full bg-card ${
                       tier.id === "direct_list_plus"
-                        ? "border-primary shadow-lg"
-                        : "border-border"
+                        ? "border-primary shadow-xl"
+                        : "border-border shadow-md"
                     }`}
                   >
                     {/* Card Header */}
-                    <div className={`p-6 text-center ${tier.badge ? "pt-8" : ""} ${
-                      tier.id === "direct_list_plus" ? "bg-primary/5" : "bg-muted/30"
-                    }`}>
+                    <div className={`p-6 text-center bg-primary/5 ${tier.badge ? "pt-8" : ""}`}>
                       <h3 className="text-2xl font-semibold mb-2">
                         <StyledTierName name={tier.name} />
                       </h3>

@@ -713,7 +713,7 @@ export default function GetStartedPage() {
                             type="text"
                             value={editableAddress.street}
                             onChange={(e) => setEditableAddress(prev => ({ ...prev, street: e.target.value }))}
-                            className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                           />
                         </div>
 
@@ -727,7 +727,7 @@ export default function GetStartedPage() {
                             value={editableAddress.unit}
                             onChange={(e) => setEditableAddress(prev => ({ ...prev, unit: e.target.value }))}
                             placeholder="e.g., Unit 204, Apt 3B"
-                            className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                            className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                           />
                         </div>
 
@@ -741,7 +741,7 @@ export default function GetStartedPage() {
                               type="text"
                               value={editableAddress.city}
                               onChange={(e) => setEditableAddress(prev => ({ ...prev, city: e.target.value }))}
-                              className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                              className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                           </div>
                           <div className="col-span-1">
@@ -752,7 +752,7 @@ export default function GetStartedPage() {
                               type="text"
                               value={editableAddress.state}
                               onChange={(e) => setEditableAddress(prev => ({ ...prev, state: e.target.value }))}
-                              className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                              className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                           </div>
                           <div className="col-span-2">
@@ -763,7 +763,7 @@ export default function GetStartedPage() {
                               type="text"
                               value={editableAddress.zipCode}
                               onChange={(e) => setEditableAddress(prev => ({ ...prev, zipCode: e.target.value }))}
-                              className="w-full px-3 py-2 border border-border rounded-lg bg-card text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
+                              className="w-full px-3 py-2 border border-border rounded-lg bg-muted text-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent"
                             />
                           </div>
                         </div>
@@ -856,7 +856,7 @@ export default function GetStartedPage() {
                       value={editableSpecs.bedrooms}
                       onChange={(e) => handleSpecsChange("bedrooms", e.target.value)}
                       placeholder="—"
-                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
                     />
                     <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </label>
@@ -870,7 +870,7 @@ export default function GetStartedPage() {
                       value={editableSpecs.fullBathrooms}
                       onChange={(e) => handleSpecsChange("fullBathrooms", e.target.value)}
                       placeholder="—"
-                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
                     />
                     <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </label>
@@ -884,7 +884,7 @@ export default function GetStartedPage() {
                       value={editableSpecs.halfBathrooms}
                       onChange={(e) => handleSpecsChange("halfBathrooms", e.target.value)}
                       placeholder="—"
-                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
                     />
                     <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </label>
@@ -898,7 +898,7 @@ export default function GetStartedPage() {
                       value={editableSpecs.yearBuilt}
                       onChange={(e) => handleSpecsChange("yearBuilt", e.target.value)}
                       placeholder="—"
-                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
                     />
                     <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </label>
@@ -912,7 +912,7 @@ export default function GetStartedPage() {
                       value={editableSpecs.squareFeet}
                       onChange={(e) => handleSpecsChange("squareFeet", e.target.value)}
                       placeholder="—"
-                      className="text-sm font-medium text-foreground bg-transparent hover:bg-muted/50 focus:bg-muted/50 border-0 rounded px-2 py-1 text-right w-20 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/20 placeholder:text-muted-foreground"
+                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-20 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
                     />
                     <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
                   </label>
@@ -965,7 +965,7 @@ export default function GetStartedPage() {
                         value={contactForm.firstName}
                         onChange={(e) => handleContactChange("firstName", e.target.value)}
                         placeholder="John"
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
                           contactErrors.firstName ? "border-red-500" : "border-border"
                         }`}
                       />
@@ -989,7 +989,7 @@ export default function GetStartedPage() {
                         value={contactForm.lastName}
                         onChange={(e) => handleContactChange("lastName", e.target.value)}
                         placeholder="Smith"
-                        className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                        className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
                           contactErrors.lastName ? "border-red-500" : "border-border"
                         }`}
                       />
@@ -1016,7 +1016,7 @@ export default function GetStartedPage() {
                       value={contactForm.email}
                       onChange={(e) => handleContactChange("email", e.target.value)}
                       placeholder="john@example.com"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
                         contactErrors.email ? "border-red-500" : "border-border"
                       }`}
                     />
@@ -1042,7 +1042,7 @@ export default function GetStartedPage() {
                       value={contactForm.phone}
                       onChange={(e) => handleContactChange("phone", e.target.value)}
                       placeholder="(972) 555-1234"
-                      className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-card text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
+                      className={`w-full pl-10 pr-4 py-3 border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${
                         contactErrors.phone ? "border-red-500" : "border-border"
                       }`}
                     />

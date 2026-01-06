@@ -172,13 +172,15 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
 
       {/* Current Listings Section */}
       {staff.member_key && (
-        <ListingsCarousel
-          title={`${staff.first_name}'s Current Listings`}
-          subtitle="Properties I'm currently representing"
-          agentKey={staff.member_key}
-          limit={8}
-          showViewAll={false}
-        />
+        <Section variant="content" maxWidth="6xl" background="default" className="overflow-hidden">
+          <ListingsCarousel
+            title={`${staff.first_name}'s Current Listings`}
+            subtitle="Properties I'm currently representing"
+            agentKey={staff.member_key}
+            limit={8}
+            showViewAll={false}
+          />
+        </Section>
       )}
 
       {/* Closed Deals Map */}

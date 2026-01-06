@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import { HiPaperAirplane, HiCheckCircle, HiExclamationCircle } from "react-icons/hi2";
+import { HeroSection, Section, AccessCTA } from "@/components/layout";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -48,16 +49,15 @@ export default function ContactPage() {
   };
 
   return (
-    <div className="min-h-screen bg-background pt-24 pb-16">
-      <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Header */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl font-bold text-foreground mb-4">Contact Us</h1>
-          <p className="text-lg text-muted-foreground">
-            Have a question about selling your home or our services? We&apos;d love to hear from you.
-            Fill out the form below and we&apos;ll get back to you as soon as possible.
-          </p>
-        </div>
+    <>
+      <HeroSection maxWidth="2xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">Contact Us</h1>
+        <p className="text-lg text-primary-foreground/80">
+          Have a question about selling your home or our services? We&apos;d love to hear from you.
+        </p>
+      </HeroSection>
+
+      <Section variant="content" maxWidth="2xl" background="default">
 
         {/* Success Message */}
         {status === "success" && (
@@ -177,16 +177,15 @@ export default function ContactPage() {
           </div>
         </form>
 
-        {/* Additional Contact Info */}
-        <div className="mt-12 text-center">
-          <p className="text-muted-foreground">
-            Prefer to reach us directly? Call us at{" "}
-            <a href="tel:+19728207902" className="text-primary font-semibold hover:underline">
-              (972) 820-7902
-            </a>
-          </p>
-        </div>
-      </div>
-    </div>
+      </Section>
+
+      <AccessCTA
+        heading="Prefer to Talk?"
+        subheading="Our team is ready to answer your questions and help you explore your options."
+        buttonText="Call Us Now"
+        buttonHref="tel:+19728207902"
+        showPhone
+      />
+    </>
   );
 }

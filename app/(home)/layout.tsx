@@ -1,8 +1,8 @@
-// ABOUTME: Home pages layout with full Header and Footer
+// ABOUTME: Home pages layout with Header and AccessFooter
 // ABOUTME: Used for homepage, solutions, services, privacy, terms, how-it-works, staff
 
 import Header from "@/components/Header";
-import Footer from "@/components/Footer";
+import { AccessFooter } from "@/components/AccessFooter";
 
 export default function HomeLayout({
   children,
@@ -12,8 +12,8 @@ export default function HomeLayout({
   return (
     <div className="min-h-screen flex flex-col bg-background">
       <Header />
-      <main className="flex-1">{children}</main>
-      <Footer />
+      <main className="flex-1 flex flex-col">{children}</main>
+      <AccessFooter />
     </div>
   );
 }

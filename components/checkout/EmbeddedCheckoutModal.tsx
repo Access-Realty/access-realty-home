@@ -162,18 +162,18 @@ export function EmbeddedCheckoutModal({
       />
 
       {/* Modal Content */}
-      <div className="relative bg-white rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="relative bg-card rounded-xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h2 id="checkout-title" className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between p-4 border-b border-border">
+          <h2 id="checkout-title" className="text-lg font-semibold text-foreground">
             Complete Your {planName} Purchase
           </h2>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-2 hover:bg-muted rounded-full transition-colors"
             aria-label="Close checkout"
           >
-            <HiXMark className="h-5 w-5 text-gray-500" />
+            <HiXMark className="h-5 w-5 text-muted-foreground" />
           </button>
         </div>
 
@@ -195,7 +195,7 @@ export function EmbeddedCheckoutModal({
           ) : loading || !clientSecret ? (
             <div className="flex flex-col items-center justify-center py-12">
               <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" />
-              <p className="text-gray-500">Loading checkout...</p>
+              <p className="text-muted-foreground">Loading checkout...</p>
             </div>
           ) : (
             <EmbeddedCheckoutProvider

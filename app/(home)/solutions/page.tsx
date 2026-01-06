@@ -2,7 +2,7 @@
 // ABOUTME: Cards link to individual solution detail pages
 
 import Link from "next/link";
-import { HeroSection, Section } from "@/components/layout";
+import { HeroSection, Section, AccessCTA } from "@/components/layout";
 
 const solutions = [
   {
@@ -108,21 +108,7 @@ export default function Solutions() {
         </div>
       </Section>
 
-      {/* Bottom CTA */}
-      <Section variant="content" background="muted" className="text-center">
-        <h2 className="text-3xl font-bold text-primary mb-4">
-          Not Sure Which Solution Is Right for You?
-        </h2>
-        <p className="text-lg text-foreground mb-8 max-w-2xl mx-auto">
-          Talk to our team and we&apos;ll help you find the best path to sell your home.
-        </p>
-        <a
-          href="tel:+19728207902"
-          className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors text-lg"
-        >
-          Call (972) 820-7902
-        </a>
-      </Section>
+      <AccessCTA />
     </div>
   );
 }

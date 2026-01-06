@@ -1,5 +1,5 @@
 // ABOUTME: Interactive flip cards showing different selling solutions
-// ABOUTME: Cards flip on hover (desktop) or show all content (mobile)
+// ABOUTME: Content-only component - wrap with Section at page level for spacing
 
 "use client";
 
@@ -39,13 +39,12 @@ const cards = [
 
 const FlipCards = () => {
   return (
-    <section className="py-16 md:py-24 bg-card" id="solutions">
-      <div className="container mx-auto px-4">
-        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-foreground mb-16">
-          Your Perfect Selling Solution
-        </h2>
+    <>
+      <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-center text-foreground mb-16">
+        Your Perfect Selling Solution
+      </h2>
 
-        <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+      <div className="grid md:grid-cols-2 gap-8 max-w-6xl mx-auto">
           {cards.map((card, index) => (
             <div
               key={index}
@@ -100,9 +99,8 @@ const FlipCards = () => {
               </div>
             </div>
           ))}
-        </div>
       </div>
-    </section>
+    </>
   );
 };
 

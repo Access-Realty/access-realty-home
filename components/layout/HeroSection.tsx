@@ -1,5 +1,5 @@
 // ABOUTME: Standardized hero section with fixed header clearance
-// ABOUTME: pb-6 matches Section py-6 for consistent 48px gaps
+// ABOUTME: pb-12 matches Section py-12 for consistent gaps
 
 import { ReactNode } from "react";
 
@@ -43,10 +43,10 @@ export function HeroSection({
     .join(" ");
 
   // pt-24 (96px) = header clearance (64px) + 32px visible space above content
-  // pb-6 (24px) = matches Section's py-6 for consistent gaps
+  // pb-12 (48px) = matches Section's py-12 for consistent gaps
   return (
     <section
-      className={`pt-24 pb-6 ${backgroundStyles[background]} ${className}`}
+      className={`pt-24 pb-12 ${backgroundStyles[background]} ${className}`}
     >
       <div className={`w-full ${containerClasses}`}>{children}</div>
     </section>

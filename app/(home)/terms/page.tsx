@@ -2,14 +2,22 @@
 // ABOUTME: Legal terms and conditions for platform use
 
 import Link from "next/link";
+import { HeroSection, Section, AccessCTA } from "@/components/layout";
 
 export default function TermsOfService() {
   return (
-    <article className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-12 bg-card prose prose-lg">
-          <h1 className="text-4xl font-bold mb-2">Terms of Service</h1>
-          <p className="text-gray-600 mb-8">
-            <strong>Last Updated:</strong> October 21, 2025
-          </p>
+    <>
+      <HeroSection maxWidth="4xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-2">
+          Terms of Service
+        </h1>
+        <p className="text-primary-foreground/80">
+          <strong>Last Updated:</strong> October 21, 2025
+        </p>
+      </HeroSection>
+
+      <Section variant="content" maxWidth="4xl" background="default">
+        <article className="bg-card rounded-xl p-6 md:p-10 border border-border prose prose-lg max-w-none">
 
           <hr className="my-6" />
 
@@ -111,12 +119,12 @@ export default function TermsOfService() {
           <hr className="my-6" />
 
           <h2 className="text-2xl font-semibold mt-8 mb-4">17. Contact Information</h2>
-          <div className="bg-gray-50 p-6 rounded-lg">
+          <div className="bg-muted p-6 rounded-lg">
             <p className="font-semibold">Access Realty</p>
             <p>5755 Rufe Snow Dr STE 120</p>
             <p>North Richland Hills, TX 76180</p>
-            <p className="mt-2"><strong>Email:</strong> <a href="mailto:info@access.realty" className="text-[#2C5282] hover:underline">info@access.realty</a></p>
-            <p><strong>Website:</strong> <a href="https://access.realty" className="text-[#2C5282] hover:underline">https://access.realty</a></p>
+            <p className="mt-2"><strong>Email:</strong> <a href="mailto:info@access.realty" className="text-primary hover:underline">info@access.realty</a></p>
+            <p><strong>Website:</strong> <a href="https://access.realty" className="text-primary hover:underline">https://access.realty</a></p>
             <p className="mt-2"><strong>Business Hours:</strong> Monday - Friday, 9:00 AM - 6:00 PM CST</p>
           </div>
 
@@ -124,9 +132,13 @@ export default function TermsOfService() {
 
           <h2 className="text-2xl font-semibold mt-8 mb-4">Acknowledgment</h2>
           <p className="uppercase font-semibold">BY CREATING AN ACCOUNT OR USING OUR SERVICES, YOU ACKNOWLEDGE THAT YOU HAVE READ, UNDERSTOOD, AND AGREE TO BE BOUND BY THESE TERMS OF SERVICE.</p>
+        </article>
+      </Section>
 
-          <hr className="my-8" />
-          <p className="text-sm text-gray-600 text-center">&copy; 2025 Access Realty. All rights reserved.</p>
-    </article>
+      <AccessCTA
+        heading="Have Questions?"
+        subheading="Our team is here to help with any questions about our services."
+      />
+    </>
   );
 }

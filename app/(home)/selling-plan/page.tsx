@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
-import { Section } from "@/components/layout";
+import { Section, AccessCTA } from "@/components/layout";
 import { HiArrowRight, HiArrowLeft, HiCheck } from "react-icons/hi2";
 
 // Question types
@@ -111,18 +111,18 @@ function OptionCard({
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`w-full text-left p-5 rounded-xl border-2 transition-all duration-200 ${
+      className={`w-full text-left p-5 rounded-xl border-2 transition-all duration-200 bg-muted shadow-sm ${
         disabled
           ? "opacity-50 cursor-not-allowed border-border"
           : selected
-          ? "border-primary bg-primary/5"
-          : "border-border hover:border-primary/50 hover:bg-muted/50"
+          ? "border-primary bg-primary/5 shadow-md"
+          : "border-muted-foreground/30 hover:border-primary/50 hover:shadow-md"
       }`}
     >
       <div className="flex items-center gap-4">
         <div
           className={`h-6 w-6 rounded-full border-2 flex items-center justify-center transition-colors duration-200 ${
-            selected ? "border-primary bg-primary" : "border-border"
+            selected ? "border-primary bg-primary" : "border-muted-foreground/50"
           }`}
         >
           {selected && (
@@ -191,7 +191,7 @@ function PriorityCard({
       layoutId={`priority-${option.id}`}
       onClick={onClick}
       disabled={disabled}
-      className="w-full text-left p-5 rounded-xl border-2 border-border hover:border-primary/50 hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-full text-left p-5 rounded-xl border-2 border-muted-foreground/30 bg-muted shadow-sm hover:border-primary/50 hover:shadow-md transition-all disabled:opacity-50 disabled:cursor-not-allowed"
       initial={false}
       whileHover={{ scale: 1.01 }}
       whileTap={{ scale: 0.98 }}
@@ -203,7 +203,7 @@ function PriorityCard({
       }}
     >
       <div className="flex items-center gap-4">
-        <div className="h-6 w-6 rounded-full border-2 border-border flex items-center justify-center" />
+        <div className="h-6 w-6 rounded-full border-2 border-muted-foreground/50 flex items-center justify-center" />
         <div>
           <span className="font-medium text-foreground">{option.label}</span>
           {option.description && (
@@ -382,32 +382,32 @@ export default function SellingPlanPage() {
   // Intro screen
   if (!started) {
     return (
-      <div className="bg-background min-h-screen">
-        <Section variant="content" maxWidth="3xl" className="pt-24">
-          <div className={`text-center ${contentClasses}`}>
-            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-              Your Home. Your Best Selling Plan.
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Selling a home isn&apos;t one-size-fits-all. Different goals require different
-              strategies, and choosing the wrong one can cost you time, money, or
-              unnecessary stress.
-            </p>
-            <p className="text-lg text-muted-foreground mb-12">
-              Answer 5 quick questions and we&apos;ll create a personalized selling plan that
-              shows you 2–3 realistic ways to reach your goal, so you can decide what works
-              best for you.
-            </p>
-            <button
-              onClick={handleStart}
-              disabled={isTransitioning}
-              className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors"
-            >
-              Get Started
-              <HiArrowRight className="h-5 w-5" />
-            </button>
-          </div>
-        </Section>
+      <div className="bg-background flex-1">
+      <Section variant="content" maxWidth="3xl" className="pt-24 pb-12">
+        <div className={`bg-card rounded-xl border border-border p-8 md:p-12 text-center ${contentClasses}`}>
+          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+            Your Home. Your Best Selling Plan.
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8">
+            Selling a home isn&apos;t one-size-fits-all. Different goals require different
+            strategies, and choosing the wrong one can cost you time, money, or
+            unnecessary stress.
+          </p>
+          <p className="text-lg text-muted-foreground mb-12">
+            Answer 5 quick questions and we&apos;ll create a personalized selling plan that
+            shows you 2–3 realistic ways to reach your goal, so you can decide what works
+            best for you.
+          </p>
+          <button
+            onClick={handleStart}
+            disabled={isTransitioning}
+            className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold text-lg hover:bg-primary-dark transition-colors"
+          >
+            Get Started
+            <HiArrowRight className="h-5 w-5" />
+          </button>
+        </div>
+      </Section>
       </div>
     );
   }
@@ -415,47 +415,47 @@ export default function SellingPlanPage() {
   // Completed screen
   if (completed) {
     return (
-      <div className="bg-background min-h-screen">
-        <Section variant="content" maxWidth="3xl" className="pt-24">
-          <div className={`text-center ${contentClasses}`}>
-            <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-              Your Personalized Plan
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8">
-              Based on your answers, we&apos;re preparing your personalized selling recommendations.
+      <div className="bg-background flex-1">
+      <Section variant="content" maxWidth="3xl" className="pt-24 pb-12">
+        <div className={`bg-card rounded-xl border border-border p-8 md:p-12 text-center ${contentClasses}`}>
+          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+            Your Personalized Plan
+          </h1>
+          <p className="text-xl text-muted-foreground mb-8">
+            Based on your answers, we&apos;re preparing your personalized selling recommendations.
+          </p>
+          <div className="bg-muted rounded-xl p-8 mb-8">
+            <p className="text-2xl font-bold text-primary mb-4">
+              Results Coming Soon
             </p>
-            <div className="bg-muted rounded-xl p-8 mb-8">
-              <p className="text-2xl font-bold text-primary mb-4">
-                Results Coming Soon
-              </p>
-              <p className="text-muted-foreground mb-6">
-                We&apos;re building the recommendation engine. In the meantime, give us a call and we&apos;ll walk through your options together.
-              </p>
-              <a
-                href="tel:+19728207902"
-                className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors"
-              >
-                Call (972) 820-7902
-              </a>
-            </div>
-            <button
-              onClick={handleRestart}
-              disabled={isTransitioning}
-              className="text-primary hover:text-secondary transition-colors font-semibold"
+            <p className="text-muted-foreground mb-6">
+              We&apos;re building the recommendation engine. In the meantime, give us a call and we&apos;ll walk through your options together.
+            </p>
+            <a
+              href="tel:+19728207902"
+              className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors"
             >
-              Start Over
-            </button>
+              Call (972) 820-7902
+            </a>
           </div>
-        </Section>
+          <button
+            onClick={handleRestart}
+            disabled={isTransitioning}
+            className="text-primary hover:text-secondary transition-colors font-semibold"
+          >
+            Start Over
+          </button>
+        </div>
+      </Section>
       </div>
     );
   }
 
   // Question screen
   return (
-    <div className="bg-background min-h-screen">
-      <Section variant="content" maxWidth="2xl" className="pt-24">
-        <div>
+    <div className="bg-background flex-1">
+      <Section variant="content" maxWidth="2xl" className="pt-24 pb-12">
+        <div className="bg-card rounded-xl border border-border p-8 md:p-10">
             {/* Progress header - always visible */}
             <div className="flex items-center justify-between mb-2 text-sm text-muted-foreground">
               <span>Question {currentQuestion + 1} of {questions.length}</span>

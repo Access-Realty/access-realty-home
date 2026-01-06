@@ -1,9 +1,9 @@
-// ABOUTME: Site footer with logo, quick links, and contact info
-// ABOUTME: Navy background with light text
+// ABOUTME: Site footer for Access Realty pages (non-DirectList)
+// ABOUTME: Navy background, flows from AccessCTA component
 
 import Link from "next/link";
 
-const Footer = () => {
+export function AccessFooter() {
   return (
     <footer className="bg-primary text-primary-foreground py-8 md:py-12">
       <div className="container mx-auto px-4">
@@ -100,6 +100,4 @@ const Footer = () => {
       </div>
     </footer>
   );
-};
-
-export default Footer;
+}

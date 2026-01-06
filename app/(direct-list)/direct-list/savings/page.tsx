@@ -79,7 +79,7 @@ export default function SavingsPage() {
   };
 
   return (
-    <div className="bg-background min-h-screen">
+    <div className="bg-background">
       {/* Hero */}
       <HeroSection maxWidth="3xl">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">

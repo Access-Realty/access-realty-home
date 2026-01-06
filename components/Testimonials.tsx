@@ -1,5 +1,5 @@
-// ABOUTME: Testimonials section showing customer success stories
-// ABOUTME: Displays avatars with brief success highlights
+// ABOUTME: Testimonials content showing customer success stories
+// ABOUTME: Content-only component - wrap with Section at page level for spacing
 
 import Image from "next/image";
 
@@ -23,32 +23,28 @@ const testimonials = [
 
 const Testimonials = () => {
   return (
-    <section className="py-16 bg-muted">
-      <div className="container mx-auto px-4">
-        <div className="flex flex-wrap justify-center gap-8 md:gap-12">
-          {testimonials.map((testimonial, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-4 animate-fade-in"
-              style={{ animationDelay: `${index * 0.2}s` }}
-            >
-              <div className="h-24 w-24 rounded-full border-4 border-secondary shadow-lg overflow-hidden">
-                <Image
-                  src={testimonial.image}
-                  alt={testimonial.name}
-                  width={96}
-                  height={96}
-                  className="object-cover w-full h-full"
-                />
-              </div>
-              <p className="text-center text-foreground font-semibold max-w-xs">
-                {testimonial.text}
-              </p>
-            </div>
-          ))}
+    <div className="flex flex-wrap justify-center gap-8 md:gap-12">
+      {testimonials.map((testimonial, index) => (
+        <div
+          key={index}
+          className="flex flex-col items-center gap-4 animate-fade-in"
+          style={{ animationDelay: `${index * 0.2}s` }}
+        >
+          <div className="h-24 w-24 rounded-full border-4 border-secondary shadow-lg overflow-hidden">
+            <Image
+              src={testimonial.image}
+              alt={testimonial.name}
+              width={96}
+              height={96}
+              className="object-cover w-full h-full"
+            />
+          </div>
+          <p className="text-center text-foreground font-semibold max-w-xs">
+            {testimonial.text}
+          </p>
         </div>
-      </div>
-    </section>
+      ))}
+    </div>
   );
 };
 

@@ -65,48 +65,91 @@ Colors are defined in `app/globals.css` using the `@theme inline` block - not a 
 
 Use classes like `bg-primary`, `text-secondary`, `bg-background`.
 
-## Spacing Standards
+## Page Structure Pattern
+
+**Every page MUST follow this structure** to ensure visual consistency:
+
+```
+┌─────────────────────────────────────────┐
+│ Header (sticky, from layout)            │
+├─────────────────────────────────────────┤
+│ HeroSection (primary/gradient bg)       │  ← REQUIRED: Always first
+├─────────────────────────────────────────┤
+│ Section (default/muted) - content       │  ← Content sections
+│ Section (default/muted) - as needed     │
+│ ...                                     │
+├─────────────────────────────────────────┤
+│ Section (primary bg) - CTA              │  ← REQUIRED: Always last
+├─────────────────────────────────────────┤
+│ Footer (from layout)                    │
+└─────────────────────────────────────────┘
+```
+
+**The mandatory CTA section before footer** eliminates empty space above the footer and creates a visual anchor for short pages.
+
+## Layout Components
 
 **Use layout components for consistent vertical spacing.** Do NOT use raw `<section>` tags with manual padding.
 
-### Layout Components
-
 ```tsx
-import { HeroSection, Section } from "@/components/layout";
+import { HeroSection, Section, AccessCTA, DirectListCTA } from "@/components/layout";
 
-// Hero with flexbox centering (equal space above/below content)
+// Hero - always first, always primary/gradient
 <HeroSection maxWidth="4xl">
-  <h1>Page Title</h1>
+  <h1 className="text-3xl font-bold text-primary-foreground">Page Title</h1>
+  <p className="text-primary-foreground/80">Subtitle here</p>
 </HeroSection>
 
-// Standard content section (py-16)
-<Section variant="content" maxWidth="4xl">
+// Content sections - use default or muted backgrounds
+<Section variant="content" maxWidth="4xl" background="default">
   ...
 </Section>
 
-// Secondary/minor section (py-12)
-<Section variant="tight" maxWidth="3xl">
-  ...
-</Section>
-
-// CTA section with primary background
-<Section variant="cta" background="primary" maxWidth="4xl">
-  ...
-</Section>
+// CTA section - use the appropriate CTA component (see below)
+<AccessCTA />  // or <DirectListCTA />
 ```
 
-### Spacing Values (for reference)
+### CTA Components
 
-| Element | Top | Bottom | Tailwind |
-|---------|-----|--------|----------|
-| Hero | 4rem | auto | pt-16 min-h-[200px] flex |
-| Section (content) | 4rem | 2rem | pt-16 pb-8 |
-| Section (tight) | 3rem | 1.5rem | pt-12 pb-6 |
-| Section (cta) | 3rem | 3rem | pt-12 pb-12 |
+Two CTA components exist, each designed to flow into its paired footer:
 
-**Asymmetric padding prevents double gaps** when sections stack. Each section has more top padding than bottom, so consecutive sections don't create excessive whitespace.
+| Component | Use On | Flows Into | Default Action |
+|-----------|--------|------------|----------------|
+| `<AccessCTA />` | Pages in `(home)` layout | AccessFooter | Get My Custom Selling Plan |
+| `<DirectListCTA />` | Pages in `(direct-list)` layout | DirectListFooter | Get Started Now |
 
-**Hero uses flexbox centering** (`flex items-center`) to automatically create equal space above and below content.
+```tsx
+// Access pages (solutions, staff, homes-for-sale, etc.)
+<AccessCTA />  // defaults to selling-plan CTA
+
+// Or customize:
+<AccessCTA
+  heading="Custom Heading"
+  subheading="Custom subheading."
+  buttonText="Custom Button"
+  buttonHref="/custom-path"
+  showPhone={true}  // optional: adds phone number button
+/>
+
+// DirectList pages (faq, savings, etc.)
+<DirectListCTA
+  heading="Ready to Save Thousands?"
+  subheading="List your home on MLS for a flat fee."
+  buttonText="Get Started Now"
+  buttonHref="/direct-list/get-started"
+/>
+```
+
+**Important:** The CTA component MUST match the page's layout. Pages in `(home)/` use `AccessCTA`, pages in `(direct-list)/` use `DirectListCTA`.
+
+### Spacing Values (actual implementation)
+
+| Element | Padding | Notes |
+|---------|---------|-------|
+| HeroSection | pt-24 pb-12 | 96px top (header clearance), 48px bottom |
+| Section (content) | py-12 | 48px each direction = 96px gaps |
+| Section (tight) | py-8 | 32px each direction = 64px gaps |
+| Section (cta) | py-12 | 48px each direction = 96px gaps |
 
 ### Container Max-Widths
 
@@ -116,6 +159,47 @@ import { HeroSection, Section } from "@/components/layout";
 | Standard pages | max-w-4xl |
 | Multi-column layouts | max-w-5xl |
 | Wide hero sections | max-w-6xl |
+
+## Background Color System
+
+**Three background colors for sections, used purposefully:**
+
+| Background | Tailwind | Hex | Use When |
+|------------|----------|-----|----------|
+| **default** (cream) | `bg-background` | #f8f4ef | Standard content sections |
+| **muted** (light gray) | `bg-muted/30` | #f9fafb | Feature grids, testimonials, grouped items |
+| **card** (white) | `bg-card` | #ffffff | Rarely - only when content needs max emphasis |
+| **primary** (navy) | `bg-primary` | #284b70 | Hero sections, CTA sections |
+
+### Background Rules
+
+1. **Cards are always white** (`bg-card`) - they sit ON section backgrounds
+2. **Cream sections** → white cards contrast naturally (no border needed)
+3. **Muted sections** → white cards contrast naturally (no border needed)
+4. **White sections** → white cards NEED `border border-border`
+5. **Inputs always have borders** - never use `bg-transparent border-0`
+
+### Preventing Same-Color-on-Same-Color
+
+```tsx
+// ✅ GOOD: White card on cream background
+<Section background="default">
+  <div className="bg-card rounded-lg p-6">Content</div>
+</Section>
+
+// ✅ GOOD: White card on white section WITH border
+<Section background="card">
+  <div className="bg-card border border-border rounded-lg p-6">Content</div>
+</Section>
+
+// ❌ BAD: White card on white section without border
+<Section background="card">
+  <div className="bg-card rounded-lg p-6">Content</div>  {/* Invisible! */}
+</Section>
+
+// ❌ BAD: Transparent input without border
+<input className="bg-transparent border-0" />  {/* Invisible! */}
+```
 
 **Do NOT use:** `py-20`, `pt-24`, `pb-20` or other non-standard spacing values.
 

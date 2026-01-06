@@ -4,7 +4,7 @@
 import { Metadata } from "next";
 import ListingsGrid from "@/components/listings/ListingsGrid";
 import { getListings } from "@/lib/listings";
-import { HeroSection, Section } from "@/components/layout";
+import { HeroSection, Section, AccessCTA } from "@/components/layout";
 
 export const metadata: Metadata = {
   title: "Homes for Sale | Access Realty",
@@ -33,22 +33,19 @@ export default async function HomesForSale() {
   const { listings, total, hasMore } = await getListings({}, ITEMS_PER_PAGE, 0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <>
       {/* Hero Section */}
-      <HeroSection
-        maxWidth="4xl"
-        className="!bg-gradient-to-b from-primary/5 to-background pt-28"
-      >
-        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-foreground">
+      <HeroSection maxWidth="4xl">
+        <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground">
           Homes for Sale
         </h1>
-        <p className="text-lg md:text-xl text-muted-foreground mt-4 max-w-2xl mx-auto">
+        <p className="text-lg md:text-xl text-primary-foreground/80 mt-4 max-w-2xl mx-auto">
           Explore our current listings in the Dallas-Fort Worth area
         </p>
       </HeroSection>
 
       {/* Listings Section */}
-      <Section variant="tight" maxWidth="6xl">
+      <Section variant="content" maxWidth="6xl" background="default">
         <ListingsGrid
           initialListings={listings}
           initialTotal={total}
@@ -56,6 +53,13 @@ export default async function HomesForSale() {
           loadMoreAction={loadMoreListings}
         />
       </Section>
-    </div>
+
+      <AccessCTA
+        heading="Looking to Sell Your Home?"
+        subheading="List your home on MLS for a flat fee and save thousands in commissions."
+        buttonText="Learn About DirectList"
+        buttonHref="/direct-list"
+      />
+    </>
   );
 }
