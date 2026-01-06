@@ -158,7 +158,7 @@ export default function DirectListPage() {
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <HeroSection maxWidth="6xl" centered={false}>
+      <HeroSection maxWidth="6xl" centered={false} className="pt-28">
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             {/* Left Content */}
             <div className="text-white">
@@ -181,13 +181,13 @@ export default function DirectListPage() {
               <div className="flex flex-wrap gap-4 mb-10">
                 <Link
                   href="/direct-list/get-started"
-                  className="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-md font-semibold hover:bg-white/10 transition-colors"
+                  className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
                 >
                   Get Started Now
                 </Link>
                 <Link
                   href="/direct-list/savings"
-                  className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+                  className="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-md font-semibold hover:bg-white/10 transition-colors"
                 >
                   Calculate Your Savings
                 </Link>
