@@ -1,0 +1,26 @@
+{
+  "redirects": [
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "direct-list.com"
+        }
+      ],
+      "destination": "https://access.realty/direct-list",
+      "permanent": true
+    },
+    {
+      "source": "/:path*",
+      "has": [
+        {
+          "type": "host",
+          "value": "www.direct-list.com"
+        }
+      ],
+      "destination": "https://access.realty/direct-list",
+      "permanent": true
+    }
+  ]
+}
