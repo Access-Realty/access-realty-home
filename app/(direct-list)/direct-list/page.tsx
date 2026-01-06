@@ -156,7 +156,7 @@ export default function DirectListPage() {
   };
 
   return (
-    <div className="bg-card">
+    <div className="bg-background">
       {/* Hero Section */}
       <HeroSection maxWidth="6xl" centered={false}>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -302,7 +302,7 @@ export default function DirectListPage() {
       </Section>
 
       {/* Testimonials */}
-      <Section variant="content" background="muted" className="overflow-hidden" maxWidth="full">
+      <Section variant="content" background="default" className="overflow-hidden" maxWidth="full">
           <div className="text-center mb-12">
             <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
               REAL RESULTS

@@ -72,9 +72,9 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
   const calendlyUrl = staff.calendly_phone_url || staff.calendly_remote_url;
 
   return (
-    <div className="bg-card">
+    <div className="bg-background">
       {/* Hero Section */}
-      <Section variant="content" maxWidth="4xl" background="muted" className="pt-24 text-center">
+      <Section variant="content" maxWidth="4xl" background="default" className="pt-24 text-center">
         {/* Avatar */}
         {avatarUrl ? (
           <div className="h-40 w-40 rounded-full border-4 border-secondary mx-auto mb-6 overflow-hidden">
@@ -153,7 +153,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
       </Section>
 
       {/* My Story Section */}
-      <Section variant="content" maxWidth="4xl" background="muted">
+      <Section variant="content" maxWidth="4xl" background="default">
         <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
           MY STORY
         </p>

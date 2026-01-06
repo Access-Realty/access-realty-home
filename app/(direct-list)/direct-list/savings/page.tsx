@@ -91,7 +91,7 @@ export default function SavingsPage() {
       </HeroSection>
 
       {/* Calculator Section */}
-      <Section variant="content" maxWidth="4xl" background="muted">
+      <Section variant="content" maxWidth="4xl" background="default">
         <div className="text-center mb-8">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground">
             Enter The Estimated Sales Price
@@ -184,7 +184,7 @@ export default function SavingsPage() {
       </Section>
 
       {/* CTA Section */}
-      <Section variant="cta" background="muted" maxWidth="3xl" className="text-center">
+      <Section variant="cta" background="default" maxWidth="3xl" className="text-center">
         <h2 className="text-2xl md:text-3xl font-bold text-primary mb-4">
           See If DirectList Is a Fit for You
         </h2>

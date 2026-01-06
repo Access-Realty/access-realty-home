@@ -1339,7 +1339,7 @@ export default function GetStartedPage() {
       })()}
 
       {/* Schedule a Call Section */}
-      <Section variant="tight" maxWidth="2xl" background="muted" borderTop className="text-center">
+      <Section variant="tight" maxWidth="2xl" background="default" borderTop className="text-center">
         <h2 className="text-xl font-semibold text-foreground mb-2">
           Not ready to get started?
         </h2>
