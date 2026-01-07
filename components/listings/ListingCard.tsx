@@ -56,7 +56,7 @@ export default function ListingCard({ listing }: ListingCardProps) {
   return (
     <Link
       href={detailUrl}
-      className="group block rounded-xl overflow-hidden bg-card transition-all duration-300 hover:shadow-xl"
+      className="group block rounded-xl overflow-hidden bg-card border border-border transition-all duration-300 hover:shadow-xl"
     >
       {/* Photo container - 4:3 aspect like Zillow */}
       <div className="relative aspect-[4/3] overflow-hidden bg-muted">
