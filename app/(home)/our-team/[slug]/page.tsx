@@ -3,7 +3,8 @@
 
 import { notFound } from "next/navigation";
 import Image from "next/image";
-import { HiOutlineHomeModern, HiArrowTrendingUp, HiMapPin, HiBuildingOffice2, HiCalendarDays } from "react-icons/hi2";
+import { HiOutlineHomeModern, HiArrowTrendingUp, HiMapPin, HiBuildingOffice2 } from "react-icons/hi2";
+import { BookOnlineButton } from "@/components/staff/BookOnlineButton";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
 import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
 import ContactSection from "@/components/staff/ContactSection";
@@ -115,16 +116,11 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
           >
             {formattedPhone}
           </a>
-          {hasCalendly && (
-            <a
-              href={calendlyUrl!}
-              target="_blank"
-              rel="noopener noreferrer"
+          {hasCalendly && calendlyUrl && (
+            <BookOnlineButton
+              calendlyUrl={calendlyUrl}
               className="border-2 border-primary-foreground text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-foreground/10 transition-colors inline-flex items-center gap-2"
-            >
-              <HiCalendarDays className="h-5 w-5" />
-              Book Online
-            </a>
+            />
           )}
         </div>
       </HeroSection>

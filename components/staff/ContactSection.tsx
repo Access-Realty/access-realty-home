@@ -1,11 +1,19 @@
 // ABOUTME: Staff contact section with 3-card layout
-// ABOUTME: Book Online card opens modal with embedded Calendly
+// ABOUTME: Book Online card opens Calendly's native popup (no scrolling issues)
 
 "use client";
 
-import { useState, useEffect } from "react";
-import { HiPhone, HiEnvelope, HiCalendarDays, HiVideoCamera, HiXMark } from "react-icons/hi2";
-import CalendlyEmbed from "@/components/CalendlyEmbed";
+import { useCallback } from "react";
+import { HiPhone, HiEnvelope, HiCalendarDays } from "react-icons/hi2";
+
+// Calendly global type
+declare global {
+  interface Window {
+    Calendly?: {
+      initPopupWidget: (options: { url: string }) => void;
+    };
+  }
+}
 
 interface ContactSectionProps {
   agentName: string;
@@ -31,8 +39,6 @@ function formatPhoneTel(phone: string): string {
   return digits.length === 10 ? `+1${digits}` : `+${digits}`;
 }
 
-type MeetingType = "phone" | "video";
-
 export default function ContactSection({
   agentName,
   phone,
@@ -44,207 +50,125 @@ export default function ContactSection({
   const telPhone = phone ? formatPhoneTel(phone) : "+19728207902";
 
   const hasCalendly = calendlyPhoneUrl || calendlyRemoteUrl;
-  const hasBothCalendly = calendlyPhoneUrl && calendlyRemoteUrl;
-  const defaultMeetingType: MeetingType = calendlyPhoneUrl ? "phone" : "video";
+  const calendlyUrl = calendlyPhoneUrl || calendlyRemoteUrl;
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [meetingType, setMeetingType] = useState<MeetingType>(defaultMeetingType);
+  // Open Calendly's native popup widget (no scrolling issues)
+  const openCalendlyPopup = useCallback(() => {
+    if (!calendlyUrl) return;
 
-  const currentCalendlyUrl = meetingType === "phone" ? calendlyPhoneUrl : calendlyRemoteUrl;
+    // Build URL with GDPR banner hidden
+    const fullUrl = calendlyUrl.startsWith("http") ? calendlyUrl : `https://${calendlyUrl}`;
+    const popupUrl = `${fullUrl}${fullUrl.includes("?") ? "&" : "?"}hide_gdpr_banner=1`;
 
-  // Lock body scroll when modal is open
-  useEffect(() => {
-    if (isModalOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
+    // If Calendly is already loaded, open popup
+    if (window.Calendly) {
+      window.Calendly.initPopupWidget({ url: popupUrl });
+      return;
     }
-    return () => {
-      document.body.style.overflow = "";
+
+    // Load Calendly script dynamically
+    const script = document.createElement("script");
+    script.src = "https://assets.calendly.com/assets/external/widget.js";
+    script.async = true;
+    script.onload = () => {
+      if (window.Calendly) {
+        window.Calendly.initPopupWidget({ url: popupUrl });
+      }
     };
-  }, [isModalOpen]);
+    document.head.appendChild(script);
+
+    // Also load Calendly CSS
+    const link = document.createElement("link");
+    link.href = "https://assets.calendly.com/assets/external/widget.css";
+    link.rel = "stylesheet";
+    document.head.appendChild(link);
+  }, [calendlyUrl]);
 
   return (
-    <>
-      <section className="py-16 bg-primary">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header */}
-          <div className="text-center mb-12">
-            <p className="text-sm font-semibold text-primary-foreground/70 tracking-widest mb-2">
-              LET&apos;S CONNECT
-            </p>
-            <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
-              Ready to Get Started?
-            </h2>
-            <p className="text-primary-foreground/80 max-w-2xl mx-auto">
-              Whether you&apos;re ready to buy, sell, or simply want to explore your options, I&apos;m here
-              to help. Reach out today for a no-obligation consultation.
-            </p>
-          </div>
+    <section id="contact" className="py-16 bg-primary">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <p className="text-sm font-semibold text-primary-foreground/70 tracking-widest mb-2">
+            LET&apos;S CONNECT
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-4">
+            Ready to Get Started?
+          </h2>
+          <p className="text-primary-foreground/80 max-w-2xl mx-auto">
+            Whether you&apos;re ready to buy, sell, or simply want to explore your options, I&apos;m here
+            to help. Reach out today for a no-obligation consultation.
+          </p>
+        </div>
 
-          {/* 3 Contact Cards */}
-          <div className="grid md:grid-cols-3 gap-6">
-            {/* Call Me Card */}
-            <a
-              href={`tel:${telPhone}`}
-              className="group bg-primary-foreground/10 hover:bg-card rounded-xl p-8 text-center transition-all duration-300 border border-primary-foreground/20 hover:border-transparent hover:shadow-xl"
+        {/* 3 Contact Cards */}
+        <div className="grid md:grid-cols-3 gap-6">
+          {/* Call Me Card */}
+          <a
+            href={`tel:${telPhone}`}
+            className="group bg-primary-foreground/10 hover:bg-card rounded-xl p-8 text-center transition-all duration-300 border border-primary-foreground/20 hover:border-transparent hover:shadow-xl"
+          >
+            <div className="w-16 h-16 rounded-full bg-primary-foreground/20 group-hover:bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-colors">
+              <HiPhone className="h-7 w-7 text-primary-foreground group-hover:text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-primary-foreground/70 group-hover:text-muted-foreground tracking-widest mb-2">
+              CALL ME
+            </p>
+            <p className="text-xl font-bold text-primary-foreground group-hover:text-foreground">
+              {formattedPhone}
+            </p>
+          </a>
+
+          {/* Email Me Card */}
+          <a
+            href={`mailto:${email}`}
+            className="group bg-primary-foreground/10 hover:bg-card rounded-xl p-8 text-center transition-all duration-300 border border-primary-foreground/20 hover:border-transparent hover:shadow-xl"
+          >
+            <div className="w-16 h-16 rounded-full bg-primary-foreground/20 group-hover:bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-colors">
+              <HiEnvelope className="h-7 w-7 text-primary-foreground group-hover:text-primary" />
+            </div>
+            <p className="text-sm font-semibold text-primary-foreground/70 group-hover:text-muted-foreground tracking-widest mb-2">
+              EMAIL ME
+            </p>
+            <p className="text-xl font-bold text-primary-foreground group-hover:text-foreground break-all">
+              {email}
+            </p>
+          </a>
+
+          {/* Book Online Card - opens Calendly popup */}
+          {hasCalendly ? (
+            <button
+              onClick={openCalendlyPopup}
+              className="group bg-primary-foreground/10 hover:bg-card rounded-xl p-8 text-center transition-all duration-300 border border-primary-foreground/20 hover:border-transparent hover:shadow-xl cursor-pointer"
             >
               <div className="w-16 h-16 rounded-full bg-primary-foreground/20 group-hover:bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-colors">
-                <HiPhone className="h-7 w-7 text-primary-foreground group-hover:text-primary" />
+                <HiCalendarDays className="h-7 w-7 text-primary-foreground group-hover:text-primary" />
               </div>
               <p className="text-sm font-semibold text-primary-foreground/70 group-hover:text-muted-foreground tracking-widest mb-2">
-                CALL ME
+                BOOK ONLINE
               </p>
               <p className="text-xl font-bold text-primary-foreground group-hover:text-foreground">
-                {formattedPhone}
+                Schedule a Call
               </p>
-            </a>
-
-            {/* Email Me Card */}
+            </button>
+          ) : (
             <a
-              href={`mailto:${email}`}
+              href={`mailto:${email}?subject=Consultation Request`}
               className="group bg-primary-foreground/10 hover:bg-card rounded-xl p-8 text-center transition-all duration-300 border border-primary-foreground/20 hover:border-transparent hover:shadow-xl"
             >
               <div className="w-16 h-16 rounded-full bg-primary-foreground/20 group-hover:bg-primary/10 flex items-center justify-center mx-auto mb-4 transition-colors">
-                <HiEnvelope className="h-7 w-7 text-primary-foreground group-hover:text-primary" />
+                <HiCalendarDays className="h-7 w-7 text-primary-foreground group-hover:text-primary" />
               </div>
               <p className="text-sm font-semibold text-primary-foreground/70 group-hover:text-muted-foreground tracking-widest mb-2">
-                EMAIL ME
+                BOOK ONLINE
               </p>
-              <p className="text-xl font-bold text-primary-foreground group-hover:text-foreground break-all">
-                {email}
+              <p className="text-xl font-bold text-primary-foreground group-hover:text-foreground">
+                Schedule a Call
               </p>
             </a>
-
-            {/* Book Online Card - opens modal */}
-            {hasCalendly ? (
-              <button
-                onClick={() => setIsModalOpen(true)}
-                className="group bg-card rounded-xl p-8 text-center transition-all duration-300 border border-transparent shadow-xl cursor-pointer"
-              >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <HiCalendarDays className="h-7 w-7 text-primary" />
-                </div>
-                <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
-                  BOOK ONLINE
-                </p>
-                <p className="text-xl font-bold text-foreground">
-                  Schedule a Call
-                </p>
-              </button>
-            ) : (
-              <a
-                href={`mailto:${email}?subject=Consultation Request`}
-                className="group bg-card rounded-xl p-8 text-center transition-all duration-300 border border-transparent shadow-xl"
-              >
-                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                  <HiCalendarDays className="h-7 w-7 text-primary" />
-                </div>
-                <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
-                  BOOK ONLINE
-                </p>
-                <p className="text-xl font-bold text-foreground">
-                  Schedule a Call
-                </p>
-              </a>
-            )}
-          </div>
+          )}
         </div>
-      </section>
-
-      {/* Calendly Modal - Full screen on mobile, centered modal on desktop */}
-      {isModalOpen && hasCalendly && (
-        <div
-          className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm"
-          onClick={() => setIsModalOpen(false)}
-        >
-          <div
-            className="relative bg-card shadow-2xl w-full h-[100dvh] md:h-auto md:max-h-[85vh] md:max-w-3xl md:mx-4 md:rounded-2xl overflow-hidden flex flex-col"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Modal Header - Compact with inline tabs on desktop */}
-            <div className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-border bg-card">
-              <div className="flex items-center gap-4 min-w-0">
-                <h3 className="text-lg md:text-xl font-bold text-foreground truncate">
-                  Book with {agentName}
-                </h3>
-                {/* Inline tabs on desktop */}
-                {hasBothCalendly && (
-                  <div className="hidden md:flex gap-2">
-                    <button
-                      onClick={() => setMeetingType("phone")}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-sm transition-colors ${
-                        meetingType === "phone"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground hover:bg-muted/80"
-                      }`}
-                    >
-                      <HiPhone className="h-4 w-4" />
-                      Phone
-                    </button>
-                    <button
-                      onClick={() => setMeetingType("video")}
-                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-sm transition-colors ${
-                        meetingType === "video"
-                          ? "bg-primary text-primary-foreground"
-                          : "bg-muted text-foreground hover:bg-muted/80"
-                      }`}
-                    >
-                      <HiVideoCamera className="h-4 w-4" />
-                      Video
-                    </button>
-                  </div>
-                )}
-              </div>
-              <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-shrink-0 p-2 -mr-2 rounded-full hover:bg-muted transition-colors"
-                aria-label="Close modal"
-              >
-                <HiXMark className="h-6 w-6 text-foreground" />
-              </button>
-            </div>
-
-            {/* Mobile tabs - below header */}
-            {hasBothCalendly && (
-              <div className="flex-shrink-0 flex gap-2 px-4 py-3 border-b border-border md:hidden">
-                <button
-                  onClick={() => setMeetingType("phone")}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
-                    meetingType === "phone"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground"
-                  }`}
-                >
-                  <HiPhone className="h-4 w-4" />
-                  Phone Call
-                </button>
-                <button
-                  onClick={() => setMeetingType("video")}
-                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
-                    meetingType === "video"
-                      ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground"
-                  }`}
-                >
-                  <HiVideoCamera className="h-4 w-4" />
-                  Video Call
-                </button>
-              </div>
-            )}
-
-            {/* Calendly embed - fills remaining space */}
-            <div className="flex-1 min-h-0 overflow-hidden">
-              {currentCalendlyUrl && (
-                <CalendlyEmbed
-                  url={currentCalendlyUrl}
-                  styles={{ height: "100%", minHeight: "500px" }}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
-    </>
+      </div>
+    </section>
   );
 }

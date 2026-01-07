@@ -10,6 +10,7 @@ interface CalendlyEmbedProps {
   styles?: {
     height?: string;
     minWidth?: string;
+    minHeight?: string;
   };
 }
 

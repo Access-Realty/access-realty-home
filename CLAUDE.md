@@ -21,6 +21,25 @@ npm run lint     # ESLint
 
 Vercel auto-deploys on push to main - broken builds affect production immediately.
 
+## UI Visual Review
+
+**ALWAYS capture and review screenshots before presenting UI changes to the user.**
+
+Use headless Chrome to screenshot your work:
+```bash
+"/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --headless --disable-gpu --screenshot=/tmp/review.png --window-size=1400,900 "http://localhost:4000/page-path"
+```
+
+Then read the image to visually verify:
+- Layout looks correct (no double headers, proper spacing)
+- Colors match site guidelines (navy hero, cream content, etc.)
+- Components render as expected
+
+### Image Cleanup
+
+- **Your screenshots:** Only save to Desktop when user specifically asks for comparison options. Delete after user has reviewed.
+- **User-provided images:** When the user drops images into conversation for UI feedback, delete them from Desktop once you've addressed the issue (after approval or once you've seen what's needed).
+
 ## Architecture
 
 This is the **marketing site** (Repo 2 of 3) for Access Realty:
