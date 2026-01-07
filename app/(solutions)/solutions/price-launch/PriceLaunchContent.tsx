@@ -215,6 +215,13 @@ export default function PriceLaunchContent() {
   const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
 
+  const scrollToSection = (sectionId: string) => {
+    const element = document.getElementById(sectionId);
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  };
+
   const focusAddressInput = () => {
     // Focus the hero address input
     const input = document.querySelector<HTMLInputElement>('#hero-address-input input');
@@ -238,6 +245,51 @@ export default function PriceLaunchContent() {
 
   return (
     <div className="bg-background min-h-screen">
+      {/* Price Launch Branded Header */}
+      <nav className="sticky top-0 z-50 bg-white border-b border-border">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <div className="flex items-center">
+              <span className="text-xl font-semibold text-primary">
+                <span className="font-serif italic">Price</span>{" "}
+                <span className="font-sans font-bold">Launch</span>
+              </span>
+            </div>
+
+            {/* Nav Links */}
+            <div className="hidden md:flex items-center gap-8">
+              <button
+                onClick={() => scrollToSection("how-it-works")}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                How It Works
+              </button>
+              <button
+                onClick={() => scrollToSection("benefits")}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                Benefits
+              </button>
+              <button
+                onClick={() => scrollToSection("faq")}
+                className="text-foreground hover:text-primary transition-colors"
+              >
+                FAQ
+              </button>
+            </div>
+
+            {/* CTA Button */}
+            <button
+              onClick={focusAddressInput}
+              className="px-4 py-2 border-2 border-primary text-primary rounded-lg font-semibold hover:bg-primary hover:text-white transition-colors"
+            >
+              Check Eligibility
+            </button>
+          </div>
+        </div>
+      </nav>
+
       {/* Hero Section */}
       <HeroSection maxWidth="6xl" centered={false}>
         <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -343,7 +395,7 @@ export default function PriceLaunchContent() {
       </Section>
 
       {/* How It Works Timeline */}
-      <Section variant="content" maxWidth="4xl" id="how-it-works" background="muted">
+      <Section variant="content" maxWidth="4xl" id="how-it-works">
         <div className="text-center mb-12">
           <p className="text-primary font-semibold uppercase tracking-wide mb-2">
             How It Works
@@ -528,16 +580,25 @@ export default function PriceLaunchContent() {
             Enter your address to receive a no-obligation Price Launch evaluation.
           </p>
 
-          <button
-            onClick={focusAddressInput}
-            className="inline-flex items-center justify-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
-          >
-            See If You Qualify
-            <HiArrowRight className="h-5 w-5" />
-          </button>
+          {/* Address Input - same as hero */}
+          <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-6">
+            <div className="relative flex-1">
+              <AddressInput
+                onAddressSelect={handleAddressSelect}
+                placeholder="Enter Your Address to Get Started"
+                className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
+              />
+            </div>
+            <button
+              onClick={handleQualifyClick}
+              className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors whitespace-nowrap"
+            >
+              Get Started
+            </button>
+          </div>
 
           {/* Trust badges */}
-          <div className="flex justify-center gap-6 mt-6">
+          <div className="flex justify-center gap-6">
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <HiCheck className="h-5 w-5 text-primary" />
               No pressure
