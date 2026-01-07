@@ -8,7 +8,7 @@ import ListingsCarousel from "@/components/listings/ListingsCarousel";
 import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
 import ContactSection from "@/components/staff/ContactSection";
 import { getStaffBySlug, getStaffSlugs } from "@/lib/staff";
-import { Section } from "@/components/layout";
+import { HeroSection, Section } from "@/components/layout";
 
 // Local avatar fallbacks (DB avatar_url takes precedence)
 const staffAvatarFallbacks: Record<string, string> = {
@@ -74,7 +74,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <Section variant="content" maxWidth="4xl" className="pt-24 text-center">
+      <HeroSection maxWidth="4xl">
         {/* Avatar */}
         {avatarUrl ? (
           <div className="h-40 w-40 rounded-full border-4 border-secondary mx-auto mb-6 overflow-hidden">
@@ -88,14 +88,14 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
             />
           </div>
         ) : (
-          <div className="h-40 w-40 rounded-full border-4 border-secondary bg-primary mx-auto mb-6 flex items-center justify-center">
-            <span className="text-primary-foreground text-5xl font-bold">
+          <div className="h-40 w-40 rounded-full border-4 border-secondary bg-primary-foreground mx-auto mb-6 flex items-center justify-center">
+            <span className="text-primary text-5xl font-bold">
               {staff.initials}
             </span>
           </div>
         )}
 
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-2">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-2">
           {name}
         </h1>
         <p className="text-xl text-secondary font-semibold mb-6">
@@ -105,13 +105,13 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href={`mailto:${staff.email}`}
-            className="bg-primary text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-dark transition-colors"
+            className="bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:bg-secondary-light transition-colors"
           >
             Contact Me
           </a>
           <a
             href={`tel:+1${telPhone}`}
-            className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors"
+            className="border-2 border-primary-foreground text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-foreground/10 transition-colors"
           >
             {formattedPhone}
           </a>
@@ -120,14 +120,14 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
               href={calendlyUrl!}
               target="_blank"
               rel="noopener noreferrer"
-              className="border-2 border-primary text-primary px-6 py-3 rounded-md font-semibold hover:bg-primary hover:text-primary-foreground transition-colors inline-flex items-center gap-2"
+              className="border-2 border-primary-foreground text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-foreground/10 transition-colors inline-flex items-center gap-2"
             >
               <HiCalendarDays className="h-5 w-5" />
               Book Online
             </a>
           )}
         </div>
-      </Section>
+      </HeroSection>
 
       {/* Services Section */}
       <Section variant="content" maxWidth="6xl">
@@ -154,19 +154,21 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
 
       {/* My Story Section */}
       <Section variant="content" maxWidth="4xl">
-        <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
-          MY STORY
-        </p>
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
-          More Than Just Transactions
-        </h2>
+        <div className="bg-card border border-border rounded-xl p-6 md:p-10">
+          <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
+            MY STORY
+          </p>
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-8">
+            More Than Just Transactions
+          </h2>
 
-        <div className="space-y-6 text-foreground">
-          {staff.bio.map((paragraph, index) => (
-            <p key={index} className="leading-relaxed">
-              {paragraph}
-            </p>
-          ))}
+          <div className="space-y-6 text-foreground">
+            {staff.bio.map((paragraph, index) => (
+              <p key={index} className="leading-relaxed">
+                {paragraph}
+              </p>
+            ))}
+          </div>
         </div>
       </Section>
 
