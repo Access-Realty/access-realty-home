@@ -71,7 +71,7 @@ export default function AvoidShowingsNegotiationsPage() {
       </Section>
 
       {/* Solutions */}
-      <Section variant="content" background="card">
+      <Section variant="content">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           Stress-Free Selling Options
         </h2>
@@ -80,7 +80,7 @@ export default function AvoidShowingsNegotiationsPage() {
           {solutions.map((solution) => (
             <div
               key={solution.name}
-              className="bg-background border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center md:justify-between gap-4"
+              className="bg-card border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow flex flex-col md:flex-row md:items-center md:justify-between gap-4"
             >
               <div className="flex-grow">
                 <h3 className="text-lg font-bold text-primary mb-1">{solution.name}</h3>

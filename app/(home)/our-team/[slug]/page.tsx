@@ -74,7 +74,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
   return (
     <div className="bg-background">
       {/* Hero Section */}
-      <Section variant="content" maxWidth="4xl" background="default" className="pt-24 text-center">
+      <Section variant="content" maxWidth="4xl" className="pt-24 text-center">
         {/* Avatar */}
         {avatarUrl ? (
           <div className="h-40 w-40 rounded-full border-4 border-secondary mx-auto mb-6 overflow-hidden">
@@ -130,14 +130,14 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
       </Section>
 
       {/* Services Section */}
-      <Section variant="content" maxWidth="6xl" background="card">
+      <Section variant="content" maxWidth="6xl">
         <div className="grid md:grid-cols-2 gap-6">
           {staff.services.map((service, index) => {
             const IconComponent = iconMap[service.icon] || HiOutlineHomeModern;
             return (
               <div
                 key={index}
-                className="bg-muted rounded-xl p-8"
+                className="bg-card border border-border rounded-xl p-8"
               >
                 <IconComponent className="h-10 w-10 text-primary mb-4" />
                 <h3 className="text-xl font-bold text-foreground mb-3">
@@ -153,7 +153,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
       </Section>
 
       {/* My Story Section */}
-      <Section variant="content" maxWidth="4xl" background="default">
+      <Section variant="content" maxWidth="4xl">
         <p className="text-sm font-semibold text-muted-foreground tracking-widest mb-2">
           MY STORY
         </p>
@@ -172,7 +172,7 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
 
       {/* Current Listings Section */}
       {staff.member_key && (
-        <Section variant="content" maxWidth="6xl" background="default" className="overflow-hidden">
+        <Section variant="content" maxWidth="6xl" className="overflow-hidden">
           <ListingsCarousel
             title={`${staff.first_name}'s Current Listings`}
             subtitle="Properties I'm currently representing"
