@@ -154,7 +154,7 @@ export default function UplistPage() {
       </Section>
 
       {/* Comparison */}
-      <Section variant="content" maxWidth="4xl" background="card">
+      <Section variant="content" maxWidth="4xl">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           Why Uplist Beats the Alternatives
         </h2>
@@ -164,7 +164,7 @@ export default function UplistPage() {
               key={item.option}
               className={`rounded-xl p-6 ${
                 item.uplistBetter
-                  ? "bg-background border border-border"
+                  ? "bg-card border border-border"
                   : "bg-primary text-primary-foreground"
               }`}
             >
@@ -217,7 +217,7 @@ export default function UplistPage() {
       </Section>
 
       {/* How It Works */}
-      <Section variant="content" maxWidth="3xl" background="card">
+      <Section variant="content" maxWidth="3xl">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           How Uplist Works
         </h2>
@@ -226,7 +226,7 @@ export default function UplistPage() {
           {howItWorks.map((item) => (
             <div
               key={item.step}
-              className="flex gap-4 bg-background border border-border rounded-xl p-6"
+              className="flex gap-4 bg-card border border-border rounded-xl p-6"
             >
               <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
                 {item.step}

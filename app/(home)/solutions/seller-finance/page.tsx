@@ -92,7 +92,7 @@ export default function SellerFinancePage() {
       </Section>
 
       {/* How It Works */}
-      <Section variant="content" maxWidth="3xl" background="card">
+      <Section variant="content" maxWidth="3xl">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           How It Works
         </h2>
@@ -101,7 +101,7 @@ export default function SellerFinancePage() {
           {howItWorks.map((item) => (
             <div
               key={item.step}
-              className="flex gap-4 bg-background border border-border rounded-xl p-6"
+              className="flex gap-4 bg-card border border-border rounded-xl p-6"
             >
               <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
                 {item.step}
