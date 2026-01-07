@@ -330,7 +330,7 @@ export default function PriceLaunchContent() {
           <div className="hidden md:block">
             <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
               <img
-                src="/hero-house-new.jpg"
+                src="/price-launch-hero.jpg"
                 alt="Beautifully renovated home"
                 className="w-full h-auto object-cover"
               />
