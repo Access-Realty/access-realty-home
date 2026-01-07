@@ -56,7 +56,7 @@ export default function FAQPage() {
       </HeroSection>
 
       {/* FAQ Accordion */}
-      <Section variant="content" maxWidth="3xl" background="default">
+      <Section variant="content" maxWidth="3xl">
         <div className="bg-card border border-border rounded-xl p-6 md:p-8">
           <Accordion items={faqItems} />
         </div>

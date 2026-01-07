@@ -57,7 +57,7 @@ export default function ContactPage() {
         </p>
       </HeroSection>
 
-      <Section variant="content" maxWidth="2xl" background="default">
+      <Section variant="content" maxWidth="2xl">
 
         {/* Success Message */}
         {status === "success" && (

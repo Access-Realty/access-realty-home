@@ -16,7 +16,7 @@ export default function TermsOfService() {
         </p>
       </HeroSection>
 
-      <Section variant="content" maxWidth="4xl" background="default">
+      <Section variant="content" maxWidth="4xl">
         <article className="bg-card rounded-xl p-6 md:p-10 border border-border prose prose-lg max-w-none">
 
           <hr className="my-6" />

@@ -29,7 +29,7 @@ export default async function Staff() {
         </p>
       </HeroSection>
 
-      <Section variant="content" maxWidth="6xl" background="default">
+      <Section variant="content" maxWidth="6xl">
         <div className="grid md:grid-cols-3 gap-8">
           {teamMembers.map((member) => {
             const name = member.full_name || `${member.first_name} ${member.last_name}`;

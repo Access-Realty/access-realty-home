@@ -45,7 +45,7 @@ export default async function HomesForSale() {
       </HeroSection>
 
       {/* Listings Section */}
-      <Section variant="content" maxWidth="6xl" background="default">
+      <Section variant="content" maxWidth="6xl">
         <ListingsGrid
           initialListings={listings}
           initialTotal={total}
