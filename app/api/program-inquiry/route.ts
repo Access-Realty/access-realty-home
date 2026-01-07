@@ -10,6 +10,10 @@ interface ProgramInquiryData {
   phone: string;
   programName: string;
   address: string;
+  attribution?: {
+    firstTouch: string | null;
+    latestTouch: string | null;
+  };
 }
 
 async function sendSlackNotification(data: ProgramInquiryData) {
@@ -67,6 +71,31 @@ async function sendSlackNotification(data: ProgramInquiryData) {
             },
           ]
         : []),
+      // Attribution info (if available)
+      ...(data.attribution?.firstTouch || data.attribution?.latestTouch
+        ? [
+            {
+              type: "section",
+              text: {
+                type: "mrkdwn",
+                text: `*Attribution:*\n${
+                  data.attribution.firstTouch
+                    ? `First touch: ${data.attribution.firstTouch}`
+                    : ""
+                }${
+                  data.attribution.firstTouch && data.attribution.latestTouch
+                    ? "\n"
+                    : ""
+                }${
+                  data.attribution.latestTouch &&
+                  data.attribution.latestTouch !== data.attribution.firstTouch
+                    ? `Latest touch: ${data.attribution.latestTouch}`
+                    : ""
+                }`,
+              },
+            },
+          ]
+        : []),
       {
         type: "context",
         elements: [
@@ -97,7 +126,7 @@ async function sendSlackNotification(data: ProgramInquiryData) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, email, phone, programName, address } = body as ProgramInquiryData;
+    const { firstName, lastName, email, phone, programName, address, attribution } = body as ProgramInquiryData;
 
     // Validate required fields
     if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !phone?.trim() || !programName?.trim()) {
@@ -124,6 +153,7 @@ export async function POST(request: NextRequest) {
       phone: phone.trim(),
       programName: programName.trim(),
       address: address?.trim() || "",
+      attribution,
     });
 
     return NextResponse.json({ success: true });

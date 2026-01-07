@@ -6,6 +6,7 @@
 import { useState, useCallback } from "react";
 import { HiXMark } from "react-icons/hi2";
 import type { AddressData } from "@/components/direct-list/AddressInput";
+import { useTrackingParams } from "@/lib/useTrackingParams";
 
 // Calendly global type
 declare global {
@@ -47,6 +48,9 @@ export function ProgramInquiryModal({
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState("");
 
+  // Multi-touch attribution tracking
+  const { firstTouch, latestTouch } = useTrackingParams();
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
@@ -82,7 +86,7 @@ export function ProgramInquiryModal({
     setError("");
 
     try {
-      // Send to Slack via API
+      // Send to Slack via API with tracking attribution
       const response = await fetch("/api/program-inquiry", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -90,6 +94,15 @@ export function ProgramInquiryModal({
           ...formData,
           programName,
           address: addressData?.formattedAddress || "",
+          // Include attribution for Slack notification
+          attribution: {
+            firstTouch: firstTouch?.utm_source
+              ? `${firstTouch.utm_source}/${firstTouch.utm_medium || ""}/${firstTouch.utm_campaign || ""}`
+              : null,
+            latestTouch: latestTouch?.utm_source
+              ? `${latestTouch.utm_source}/${latestTouch.utm_medium || ""}/${latestTouch.utm_campaign || ""}`
+              : null,
+          },
         }),
       });
 
@@ -99,26 +112,30 @@ export function ProgramInquiryModal({
       }
 
       // Build Calendly URL with prefilled data
+      // Using encodeURIComponent (not URLSearchParams) to encode spaces as %20 instead of +
       const baseUrl = "https://calendly.com/dfw-experts/inquires";
-      const params = new URLSearchParams();
+      const queryParts: string[] = [];
 
       // Prefill name
       const fullName = [formData.firstName, formData.lastName].filter(Boolean).join(" ");
-      if (fullName) params.set("name", fullName);
+      if (fullName) queryParts.push(`name=${encodeURIComponent(fullName)}`);
 
       // Prefill email
-      if (formData.email) params.set("email", formData.email);
+      if (formData.email) queryParts.push(`email=${encodeURIComponent(formData.email)}`);
 
       // Prefill custom answers (a1 = phone, a2 = meeting notes with program + address)
-      if (formData.phone) params.set("a1", formData.phone);
+      if (formData.phone) queryParts.push(`a1=${encodeURIComponent(formData.phone)}`);
 
       // Build a2 with program interest and address
       const meetingNotes = addressData?.formattedAddress
         ? `${programMessage} My property is at ${addressData.formattedAddress}`
         : programMessage;
-      params.set("a2", meetingNotes);
+      queryParts.push(`a2=${encodeURIComponent(meetingNotes)}`);
 
-      const calendlyUrl = `${baseUrl}?${params.toString()}`;
+      // Hide GDPR banner for cleaner look
+      queryParts.push("hide_gdpr_banner=1");
+
+      const calendlyUrl = `${baseUrl}?${queryParts.join("&")}`;
 
       // Close modal and open Calendly
       onClose();

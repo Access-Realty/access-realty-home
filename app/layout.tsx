@@ -2,8 +2,10 @@
 // ABOUTME: Sets up fonts, metadata, and global styles (no Header/Footer - handled by route groups)
 
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Be_Vietnam_Pro, Cormorant_Garamond } from "next/font/google";
 import Script from "next/script";
+import { TrackingCapture } from "@/components/TrackingCapture";
 import "./globals.css";
 
 const GA_MEASUREMENT_ID = "G-15NH3BVL2Q";
@@ -85,6 +87,9 @@ export default function RootLayout({
         </Script>
       </head>
       <body className={`${beVietnamPro.variable} ${cormorantGaramond.variable} antialiased`}>
+        <Suspense fallback={null}>
+          <TrackingCapture />
+        </Suspense>
         {children}
       </body>
     </html>

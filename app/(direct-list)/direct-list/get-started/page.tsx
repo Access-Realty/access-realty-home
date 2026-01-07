@@ -18,6 +18,7 @@ import { AddressInput, AddressData } from "@/components/direct-list/AddressInput
 import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
 import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
 import { HeroSection, Section } from "@/components/layout";
+import { useTrackingParams } from "@/lib/useTrackingParams";
 import {
   HiOutlineArrowRight,
   HiOutlineArrowLeft,
@@ -92,21 +93,6 @@ const initialEditableSpecs: EditableSpecs = {
   yearBuilt: "",
   squareFeet: "",
 };
-
-// Tracking parameters captured from URL
-interface TrackingParams {
-  landingUrl: string;
-  gclid?: string;
-  fbclid?: string;
-  fbAdId?: string;
-  fbAdsetId?: string;
-  fbCampaignId?: string;
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  utmTerm?: string;
-  utmContent?: string;
-}
 
 // Service tier definitions with full details
 const SERVICE_TIERS = [
@@ -328,33 +314,8 @@ export default function GetStartedPage() {
     });
   };
 
-  // Tracking params captured on mount
-  const [trackingParams, setTrackingParams] = useState<TrackingParams>({
-    landingUrl: "",
-  });
-
-  // Capture tracking params from URL on mount
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    const params = new URLSearchParams(window.location.search);
-    setTrackingParams({
-      landingUrl: window.location.href,
-      // Google Ads
-      gclid: params.get("gclid") || undefined,
-      // Facebook Ads
-      fbclid: params.get("fbclid") || undefined,
-      fbAdId: params.get("fb_ad_id") || undefined,
-      fbAdsetId: params.get("fb_adset_id") || undefined,
-      fbCampaignId: params.get("fb_campaign_id") || undefined,
-      // UTM parameters
-      utmSource: params.get("utm_source") || undefined,
-      utmMedium: params.get("utm_medium") || undefined,
-      utmCampaign: params.get("utm_campaign") || undefined,
-      utmTerm: params.get("utm_term") || undefined,
-      utmContent: params.get("utm_content") || undefined,
-    });
-  }, []);
+  // Multi-touch attribution tracking from localStorage
+  const { firstTouch, latestTouch, currentParams } = useTrackingParams();
 
   // Scroll to top when step changes (prevents content at top being missed on mobile)
   useEffect(() => {
@@ -525,6 +486,11 @@ export default function GetStartedPage() {
         ? [addressData.streetNumber, addressData.streetName].filter(Boolean).join(" ")
         : undefined;
 
+      // Determine source from first touch (acquisition) or current params
+      const sourceUtm = firstTouch?.utm_source || currentParams.utm_source;
+      const sourceGclid = firstTouch?.gclid || currentParams.gclid;
+      const sourceFbclid = firstTouch?.fbclid || currentParams.fbclid;
+
       const response = await fetch("/api/leads", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -544,31 +510,20 @@ export default function GetStartedPage() {
           // Property FK (from parcel lookup)
           parcelId: propertySpecs?.parcelId || undefined,
 
-          // Source - determine based on UTM or default
-          source: trackingParams.utmSource === "google" ? "paid_search"
-            : trackingParams.utmSource === "facebook" ? "social_media"
-            : trackingParams.gclid ? "paid_search"
-            : trackingParams.fbclid ? "social_media"
+          // Source - determine based on first touch attribution
+          source: sourceUtm === "google" ? "paid_search"
+            : sourceUtm === "facebook" ? "social_media"
+            : sourceGclid ? "paid_search"
+            : sourceFbclid ? "social_media"
             : "website",
 
-          // Landing URL
-          landingUrl: trackingParams.landingUrl || undefined,
+          // Multi-touch attribution
+          firstTouch,
+          latestTouch,
+          convertingTouch: currentParams,
 
-          // Google tracking
-          gclid: trackingParams.gclid,
-
-          // Facebook tracking
-          fbclid: trackingParams.fbclid,
-          fbAdId: trackingParams.fbAdId,
-          fbAdsetId: trackingParams.fbAdsetId,
-          fbCampaignId: trackingParams.fbCampaignId,
-
-          // UTM parameters
-          utmSource: trackingParams.utmSource,
-          utmMedium: trackingParams.utmMedium,
-          utmCampaign: trackingParams.utmCampaign,
-          utmTerm: trackingParams.utmTerm,
-          utmContent: trackingParams.utmContent,
+          // Landing URL (from current params)
+          landingUrl: currentParams.landing_url || undefined,
         }),
       });
 
@@ -1330,11 +1285,11 @@ export default function GetStartedPage() {
             leadId={leadId || undefined}
             propertySpecs={editableSpecs}
             utmParams={{
-              utm_source: trackingParams.utmSource,
-              utm_medium: trackingParams.utmMedium,
-              utm_campaign: trackingParams.utmCampaign,
-              utm_term: trackingParams.utmTerm,
-              utm_content: trackingParams.utmContent,
+              utm_source: latestTouch?.utm_source || currentParams.utm_source,
+              utm_medium: latestTouch?.utm_medium || currentParams.utm_medium,
+              utm_campaign: latestTouch?.utm_campaign || currentParams.utm_campaign,
+              utm_term: latestTouch?.utm_term || currentParams.utm_term,
+              utm_content: latestTouch?.utm_content || currentParams.utm_content,
             }}
           />
         );

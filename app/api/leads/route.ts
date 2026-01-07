@@ -1,5 +1,6 @@
 // ABOUTME: API route for capturing leads from DirectList get-started flow
 // ABOUTME: Uses service role to bypass RLS, stores lead with parcel FK
+// ABOUTME: Supports multi-touch attribution (first touch, latest touch, converting touch)
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -16,6 +17,19 @@ type LeadSource =
   | "zillow"
   | "realtor_com"
   | "other";
+
+// Tracking params for multi-touch attribution
+interface TouchParams {
+  utm_source?: string;
+  utm_medium?: string;
+  utm_campaign?: string;
+  utm_term?: string;
+  utm_content?: string;
+  gclid?: string;
+  fbclid?: string;
+  landing_url?: string;
+  captured_at?: string;
+}
 
 interface LeadPayload {
   // Contact info
@@ -37,26 +51,10 @@ interface LeadPayload {
   source?: LeadSource;
   landingUrl?: string;
 
-  // Google tracking
-  gclid?: string;
-  ga4ClientId?: string;
-  ga4SessionId?: string;
-
-  // Facebook tracking
-  fbclid?: string;
-  fbAdId?: string;
-  fbAdsetId?: string;
-  fbCampaignId?: string;
-
-  // UTM parameters
-  utmSource?: string;
-  utmMedium?: string;
-  utmCampaign?: string;
-  utmTerm?: string;
-  utmContent?: string;
-
-  // Analytics
-  hotjarRecordingUrl?: string;
+  // Multi-touch attribution
+  firstTouch?: TouchParams;
+  latestTouch?: TouchParams;
+  convertingTouch?: TouchParams;
 }
 
 export async function POST(request: NextRequest) {
@@ -74,19 +72,9 @@ export async function POST(request: NextRequest) {
       parcelId,
       source,
       landingUrl,
-      gclid,
-      ga4ClientId,
-      ga4SessionId,
-      fbclid,
-      fbAdId,
-      fbAdsetId,
-      fbCampaignId,
-      utmSource,
-      utmMedium,
-      utmCampaign,
-      utmTerm,
-      utmContent,
-      hotjarRecordingUrl,
+      firstTouch,
+      latestTouch,
+      convertingTouch,
     } = body;
 
     // Validate required fields
@@ -111,53 +99,64 @@ export async function POST(request: NextRequest) {
     // Get admin client (bypasses RLS)
     const supabaseAdmin = getSupabaseAdmin();
 
-    // Insert lead with correct schema
+    const now = new Date().toISOString();
+
+    // Build insert payload
+    const leadData = {
+      // Contact info
+      first_name: firstName.trim(),
+      last_name: lastName.trim(),
+      email: email.trim().toLowerCase(),
+      phone_1: phone.replace(/\D/g, ""),
+
+      // Address
+      street: street || null,
+      city: city || null,
+      state: state || null,
+      zip: zip || null,
+
+      // Property FK
+      parcel_id: parcelId || null,
+
+      // Status & source
+      source: validSource,
+      status: "new_untouched",
+
+      // Landing URL
+      landing_url: landingUrl || convertingTouch?.landing_url || null,
+
+      // First touch attribution
+      first_touch_source: firstTouch?.utm_source || null,
+      first_touch_medium: firstTouch?.utm_medium || null,
+      first_touch_campaign: firstTouch?.utm_campaign || null,
+      first_touch_term: firstTouch?.utm_term || null,
+      first_touch_content: firstTouch?.utm_content || null,
+      first_touch_at: firstTouch?.captured_at || null,
+
+      // Latest touch attribution
+      latest_touch_source: latestTouch?.utm_source || null,
+      latest_touch_medium: latestTouch?.utm_medium || null,
+      latest_touch_campaign: latestTouch?.utm_campaign || null,
+      latest_touch_term: latestTouch?.utm_term || null,
+      latest_touch_content: latestTouch?.utm_content || null,
+      latest_touch_at: latestTouch?.captured_at || null,
+
+      // Converting touch (at form submission)
+      converting_source: convertingTouch?.utm_source || null,
+      converting_medium: convertingTouch?.utm_medium || null,
+      converting_campaign: convertingTouch?.utm_campaign || null,
+      converting_term: convertingTouch?.utm_term || null,
+      converted_at: now,
+
+      // Click IDs (prefer first touch for attribution)
+      gclid: firstTouch?.gclid || convertingTouch?.gclid || null,
+      fbclid: firstTouch?.fbclid || convertingTouch?.fbclid || null,
+    };
+
+    // Insert lead
     const { data, error } = await supabaseAdmin
       .from("leads")
-      .insert({
-        // Contact info
-        first_name: firstName.trim(),
-        last_name: lastName.trim(),
-        email: email.trim().toLowerCase(),
-        phone_1: phone.replace(/\D/g, ""), // Store digits only
-
-        // Address (parsed components)
-        street: street || null,
-        city: city || null,
-        state: state || null,
-        zip: zip || null,
-
-        // Property FK (links to parcels table)
-        parcel_id: parcelId || null,
-
-        // Status & source
-        source: validSource,
-        status: "new_untouched",
-
-        // Landing/referrer
-        landing_url: landingUrl || null,
-
-        // Google tracking
-        gclid: gclid || null,
-        ga4_client_id: ga4ClientId || null,
-        ga4_session_id: ga4SessionId || null,
-
-        // Facebook tracking
-        fbclid: fbclid || null,
-        fb_ad_id: fbAdId || null,
-        fb_adset_id: fbAdsetId || null,
-        fb_campaign_id: fbCampaignId || null,
-
-        // UTM parameters
-        utm_source: utmSource || null,
-        utm_medium: utmMedium || null,
-        utm_campaign: utmCampaign || null,
-        utm_term: utmTerm || null,
-        utm_content: utmContent || null,
-
-        // Analytics
-        hotjar_recording_url: hotjarRecordingUrl || null,
-      })
+      .insert(leadData)
       .select("id, email")
       .single();
 
@@ -178,33 +177,7 @@ export async function POST(request: NextRequest) {
         // Retry without parcel_id
         const { data: retryData, error: retryError } = await supabaseAdmin
           .from("leads")
-          .insert({
-            first_name: firstName.trim(),
-            last_name: lastName.trim(),
-            email: email.trim().toLowerCase(),
-            phone_1: phone.replace(/\D/g, ""),
-            street: street || null,
-            city: city || null,
-            state: state || null,
-            zip: zip || null,
-            parcel_id: null, // Skip invalid parcel
-            source: validSource,
-            status: "new_untouched",
-            landing_url: landingUrl || null,
-            gclid: gclid || null,
-            ga4_client_id: ga4ClientId || null,
-            ga4_session_id: ga4SessionId || null,
-            fbclid: fbclid || null,
-            fb_ad_id: fbAdId || null,
-            fb_adset_id: fbAdsetId || null,
-            fb_campaign_id: fbCampaignId || null,
-            utm_source: utmSource || null,
-            utm_medium: utmMedium || null,
-            utm_campaign: utmCampaign || null,
-            utm_term: utmTerm || null,
-            utm_content: utmContent || null,
-            hotjar_recording_url: hotjarRecordingUrl || null,
-          })
+          .insert({ ...leadData, parcel_id: null })
           .select("id, email")
           .single();
 
