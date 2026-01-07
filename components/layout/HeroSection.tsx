@@ -44,11 +44,11 @@ export function HeroSection({
 
   // min-h-[280px] = minimum hero height for visual presence
   // pt-20 = header clearance (80px for fixed header)
-  // pb-12 = bottom padding for spacing to next section
+  // pb-20 = symmetric bottom padding for true visual centering
   // flex items-center = vertically center content in available space
   return (
     <section
-      className={`min-h-[280px] pt-20 pb-12 flex items-center ${backgroundStyles[background]} ${className}`}
+      className={`min-h-[280px] pt-20 pb-20 flex items-center ${backgroundStyles[background]} ${className}`}
     >
       <div className={`w-full ${containerClasses}`}>{children}</div>
     </section>
