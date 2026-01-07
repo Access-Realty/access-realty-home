@@ -32,7 +32,7 @@ export default function Home() {
       <Section maxWidth="4xl" id="how-it-works">
         <Benefits />
       </Section>
-      <Section background="primary" maxWidth="4xl" id="contact">
+      <Section maxWidth="4xl" id="contact">
         <FinalCTA />
       </Section>
     </div>

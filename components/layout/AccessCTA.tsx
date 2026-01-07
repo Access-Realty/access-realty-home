@@ -1,5 +1,5 @@
 // ABOUTME: Reusable CTA section for general Access Realty pages
-// ABOUTME: Flows directly into Footer (both use bg-primary)
+// ABOUTME: Uses cream background to match page content sections
 
 import Link from "next/link";
 
@@ -19,28 +19,26 @@ export function AccessCTA({
   buttonHref = "/selling-plan",
   showPhone = false,
 }: AccessCTAProps) {
-  // Uses custom styling instead of Section component to flow seamlessly into Footer
-  // Both use bg-primary - flex-grow fills remaining space, no gap before footer
   return (
-    <section className="bg-primary py-12 flex-grow flex flex-col justify-center">
+    <section className="bg-background py-12 flex-grow flex flex-col justify-center">
       <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-        <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-4">
+        <h2 className="text-2xl md:text-3xl font-bold text-primary mb-4">
           {heading}
         </h2>
-        <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
+        <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
           {subheading}
         </p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
           <Link
             href={buttonHref}
-            className="inline-block px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+            className="inline-block px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
           >
             {buttonText}
           </Link>
           {showPhone && (
             <a
               href="tel:+19728207902"
-              className="inline-flex items-center gap-2 px-8 py-3 border-2 border-primary-foreground/30 text-primary-foreground font-semibold rounded-lg hover:border-primary-foreground/60 transition-colors"
+              className="inline-flex items-center gap-2 px-8 py-3 border-2 border-primary/30 text-primary font-semibold rounded-lg hover:border-primary/60 transition-colors"
             >
               <svg
                 className="h-5 w-5"

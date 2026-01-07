@@ -5,7 +5,7 @@
 
 import { useState } from "react";
 import { HiPaperAirplane, HiCheckCircle, HiExclamationCircle } from "react-icons/hi2";
-import { HeroSection, Section, AccessCTA } from "@/components/layout";
+import { HeroSection, Section } from "@/components/layout";
 
 type FormStatus = "idle" | "submitting" | "success" | "error";
 
@@ -177,15 +177,18 @@ export default function ContactPage() {
           </div>
         </form>
 
-      </Section>
+        {/* Phone alternative */}
+        <p className="text-center text-muted-foreground mt-8">
+          Prefer to call?{" "}
+          <a
+            href="tel:+19728207902"
+            className="text-primary font-semibold hover:underline"
+          >
+            (972) 820-7902
+          </a>
+        </p>
 
-      <AccessCTA
-        heading="Prefer to Talk?"
-        subheading="Our team is ready to answer your questions and help you explore your options."
-        buttonText="Call Us Now"
-        buttonHref="tel:+19728207902"
-        showPhone
-      />
+      </Section>
     </>
   );
 }
