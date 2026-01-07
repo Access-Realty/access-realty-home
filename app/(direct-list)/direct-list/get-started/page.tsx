@@ -368,7 +368,7 @@ export default function GetStartedPage() {
 
   // Open Calendly popup (loads script if needed)
   const openCalendlyPopup = useCallback(() => {
-    const url = "https://calendly.com/access-inquiries/sales-call";
+    const url = "https://calendly.com/dfw-experts/inquires";
 
     // If Calendly is already loaded, open popup
     if (window.Calendly) {
@@ -598,7 +598,7 @@ export default function GetStartedPage() {
   // Handle Full Service selection - open Calendly popup with prefilled data
   const handleFullServiceSelect = useCallback(() => {
     // Build Calendly URL with prefilled form data
-    const baseUrl = "https://calendly.com/dfw-agents/new-meeting";
+    const baseUrl = "https://calendly.com/dfw-experts/inquires";
     const params = new URLSearchParams();
 
     // Prefill name
@@ -608,9 +608,11 @@ export default function GetStartedPage() {
     // Prefill email
     if (contactForm.email) params.set("email", contactForm.email);
 
-    // Prefill custom answers (a1 = phone, a2 = address)
+    // Prefill custom answers (a1 = phone, a2 = meeting notes with address)
     if (contactForm.phone) params.set("a1", contactForm.phone);
-    if (addressData?.formattedAddress) params.set("a2", addressData.formattedAddress);
+    if (addressData?.formattedAddress) {
+      params.set("a2", `I'm interested in Full Service listing. My property is at ${addressData.formattedAddress}`);
+    }
 
     const url = `${baseUrl}?${params.toString()}`;
 

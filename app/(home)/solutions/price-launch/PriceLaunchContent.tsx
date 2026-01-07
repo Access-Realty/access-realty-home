@@ -333,7 +333,7 @@ export default function PriceLaunchContent() {
                   />
                 </div>
                 <button
-                  onClick={() => {/* TODO: Submit address */}}
+                  onClick={handleQualifyClick}
                   className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
                 >
                   See If You Qualify
@@ -663,6 +663,15 @@ export default function PriceLaunchContent() {
           </div>
         </div>
       </footer>
+
+      {/* Inquiry Modal */}
+      <ProgramInquiryModal
+        isOpen={showInquiryModal}
+        onClose={() => setShowInquiryModal(false)}
+        programName="Price Launch"
+        programMessage="I'm interested in your Price Launch Program."
+        addressData={addressData}
+      />
     </div>
   );
 }
