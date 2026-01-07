@@ -49,7 +49,7 @@ export function ProgramInquiryModal({
   const [error, setError] = useState("");
 
   // Multi-touch attribution tracking
-  const { firstTouch, latestTouch } = useTrackingParams();
+  const { originalTouch, latestTouch } = useTrackingParams();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -96,8 +96,8 @@ export function ProgramInquiryModal({
           address: addressData?.formattedAddress || "",
           // Include attribution for Slack notification
           attribution: {
-            firstTouch: firstTouch?.utm_source
-              ? `${firstTouch.utm_source}/${firstTouch.utm_medium || ""}/${firstTouch.utm_campaign || ""}`
+            originalTouch: originalTouch?.utm_source
+              ? `${originalTouch.utm_source}/${originalTouch.utm_medium || ""}/${originalTouch.utm_campaign || ""}`
               : null,
             latestTouch: latestTouch?.utm_source
               ? `${latestTouch.utm_source}/${latestTouch.utm_medium || ""}/${latestTouch.utm_campaign || ""}`

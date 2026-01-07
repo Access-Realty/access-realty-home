@@ -1,5 +1,5 @@
 // ABOUTME: React hook for forms to consume stored tracking data
-// ABOUTME: Returns first_touch, latest_touch for multi-touch attribution
+// ABOUTME: Returns original_touch, latest_touch for multi-touch attribution
 
 "use client";
 
@@ -13,7 +13,7 @@ import {
 
 export interface UseTrackingResult {
   // Attribution touches from localStorage
-  firstTouch: TrackingParams | undefined;
+  originalTouch: TrackingParams | undefined;
   latestTouch: TrackingParams | undefined;
   // Current URL params (for converting touch at form submit)
   currentParams: TrackingParams;
@@ -26,13 +26,13 @@ export interface UseTrackingResult {
  *
  * Usage:
  * ```tsx
- * const { firstTouch, latestTouch, currentParams, isReady } = useTrackingParams();
+ * const { originalTouch, latestTouch, currentParams, isReady } = useTrackingParams();
  *
  * // When submitting form:
  * await fetch('/api/leads', {
  *   body: JSON.stringify({
  *     ...formData,
- *     firstTouch,
+ *     originalTouch,
  *     latestTouch,
  *     convertingTouch: currentParams,
  *   })
@@ -57,7 +57,7 @@ export function useTrackingParams(): UseTrackingResult {
   }, []);
 
   return {
-    firstTouch: stored.first_touch,
+    originalTouch: stored.original_touch,
     latestTouch: stored.latest_touch,
     currentParams,
     isReady,

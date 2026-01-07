@@ -52,7 +52,7 @@ interface LeadPayload {
   landingUrl?: string;
 
   // Multi-touch attribution
-  firstTouch?: TouchParams;
+  originalTouch?: TouchParams;
   latestTouch?: TouchParams;
   convertingTouch?: TouchParams;
 }
@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
       parcelId,
       source,
       landingUrl,
-      firstTouch,
+      originalTouch,
       latestTouch,
       convertingTouch,
     } = body;
@@ -125,21 +125,20 @@ export async function POST(request: NextRequest) {
       // Landing URL
       landing_url: landingUrl || convertingTouch?.landing_url || null,
 
-      // First touch attribution
-      first_touch_source: firstTouch?.utm_source || null,
-      first_touch_medium: firstTouch?.utm_medium || null,
-      first_touch_campaign: firstTouch?.utm_campaign || null,
-      first_touch_term: firstTouch?.utm_term || null,
-      first_touch_content: firstTouch?.utm_content || null,
-      first_touch_at: firstTouch?.captured_at || null,
+      // Original touch attribution (first touch, protected from remarketing/nurture)
+      original_source: originalTouch?.utm_source || null,
+      original_medium: originalTouch?.utm_medium || null,
+      original_campaign: originalTouch?.utm_campaign || null,
+      original_term: originalTouch?.utm_term || null,
+      original_content: originalTouch?.utm_content || null,
+      original_touch_at: originalTouch?.captured_at || null,
 
-      // Latest touch attribution
-      latest_touch_source: latestTouch?.utm_source || null,
-      latest_touch_medium: latestTouch?.utm_medium || null,
-      latest_touch_campaign: latestTouch?.utm_campaign || null,
-      latest_touch_term: latestTouch?.utm_term || null,
-      latest_touch_content: latestTouch?.utm_content || null,
-      latest_touch_at: latestTouch?.captured_at || null,
+      // Latest touch attribution (uses existing utm_* columns)
+      utm_source: latestTouch?.utm_source || null,
+      utm_medium: latestTouch?.utm_medium || null,
+      utm_campaign: latestTouch?.utm_campaign || null,
+      utm_term: latestTouch?.utm_term || null,
+      utm_content: latestTouch?.utm_content || null,
 
       // Converting touch (at form submission)
       converting_source: convertingTouch?.utm_source || null,
@@ -148,9 +147,9 @@ export async function POST(request: NextRequest) {
       converting_term: convertingTouch?.utm_term || null,
       converted_at: now,
 
-      // Click IDs (prefer first touch for attribution)
-      gclid: firstTouch?.gclid || convertingTouch?.gclid || null,
-      fbclid: firstTouch?.fbclid || convertingTouch?.fbclid || null,
+      // Click IDs (prefer original touch for attribution)
+      gclid: originalTouch?.gclid || convertingTouch?.gclid || null,
+      fbclid: originalTouch?.fbclid || convertingTouch?.fbclid || null,
     };
 
     // Insert lead

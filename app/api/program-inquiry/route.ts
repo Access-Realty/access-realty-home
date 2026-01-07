@@ -11,7 +11,7 @@ interface ProgramInquiryData {
   programName: string;
   address: string;
   attribution?: {
-    firstTouch: string | null;
+    originalTouch: string | null;
     latestTouch: string | null;
   };
 }
@@ -72,24 +72,24 @@ async function sendSlackNotification(data: ProgramInquiryData) {
           ]
         : []),
       // Attribution info (if available)
-      ...(data.attribution?.firstTouch || data.attribution?.latestTouch
+      ...(data.attribution?.originalTouch || data.attribution?.latestTouch
         ? [
             {
               type: "section",
               text: {
                 type: "mrkdwn",
                 text: `*Attribution:*\n${
-                  data.attribution.firstTouch
-                    ? `First touch: ${data.attribution.firstTouch}`
+                  data.attribution.originalTouch
+                    ? `Original: ${data.attribution.originalTouch}`
                     : ""
                 }${
-                  data.attribution.firstTouch && data.attribution.latestTouch
+                  data.attribution.originalTouch && data.attribution.latestTouch
                     ? "\n"
                     : ""
                 }${
                   data.attribution.latestTouch &&
-                  data.attribution.latestTouch !== data.attribution.firstTouch
-                    ? `Latest touch: ${data.attribution.latestTouch}`
+                  data.attribution.latestTouch !== data.attribution.originalTouch
+                    ? `Latest: ${data.attribution.latestTouch}`
                     : ""
                 }`,
               },

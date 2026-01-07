@@ -315,7 +315,7 @@ export default function GetStartedPage() {
   };
 
   // Multi-touch attribution tracking from localStorage
-  const { firstTouch, latestTouch, currentParams } = useTrackingParams();
+  const { originalTouch, latestTouch, currentParams } = useTrackingParams();
 
   // Scroll to top when step changes (prevents content at top being missed on mobile)
   useEffect(() => {
@@ -486,10 +486,10 @@ export default function GetStartedPage() {
         ? [addressData.streetNumber, addressData.streetName].filter(Boolean).join(" ")
         : undefined;
 
-      // Determine source from first touch (acquisition) or current params
-      const sourceUtm = firstTouch?.utm_source || currentParams.utm_source;
-      const sourceGclid = firstTouch?.gclid || currentParams.gclid;
-      const sourceFbclid = firstTouch?.fbclid || currentParams.fbclid;
+      // Determine source from original touch (acquisition) or current params
+      const sourceUtm = originalTouch?.utm_source || currentParams.utm_source;
+      const sourceGclid = originalTouch?.gclid || currentParams.gclid;
+      const sourceFbclid = originalTouch?.fbclid || currentParams.fbclid;
 
       const response = await fetch("/api/leads", {
         method: "POST",
@@ -510,7 +510,7 @@ export default function GetStartedPage() {
           // Property FK (from parcel lookup)
           parcelId: propertySpecs?.parcelId || undefined,
 
-          // Source - determine based on first touch attribution
+          // Source - determine based on original touch attribution
           source: sourceUtm === "google" ? "paid_search"
             : sourceUtm === "facebook" ? "social_media"
             : sourceGclid ? "paid_search"
@@ -518,7 +518,7 @@ export default function GetStartedPage() {
             : "website",
 
           // Multi-touch attribution
-          firstTouch,
+          originalTouch,
           latestTouch,
           convertingTouch: currentParams,
 

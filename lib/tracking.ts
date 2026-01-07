@@ -16,9 +16,9 @@ export interface TrackingParams {
   captured_at?: string;
 }
 
-// Stored tracking data with first and latest touch
+// Stored tracking data with original (first) and latest touch
 export interface StoredTracking {
-  first_touch?: TrackingParams;
+  original_touch?: TrackingParams;
   latest_touch?: TrackingParams;
 }
 
@@ -100,9 +100,9 @@ export function saveToStorage(params: TrackingParams): void {
 
   const stored = getStoredTracking();
 
-  // First touch: only set if eligible AND not already set
-  if (isFirstTouchEligible(params) && !stored.first_touch) {
-    stored.first_touch = paramsWithTimestamp;
+  // Original touch (first): only set if eligible AND not already set
+  if (isFirstTouchEligible(params) && !stored.original_touch) {
+    stored.original_touch = paramsWithTimestamp;
   }
 
   // Latest touch: always update when we have tracking params

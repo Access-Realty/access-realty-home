@@ -7,10 +7,9 @@ This document tracks UTM parameter usage across Access Realty marketing campaign
 UTM parameters are captured from landing page URLs and stored with lead records for attribution tracking. They flow through the system as follows:
 
 1. User lands on marketing page with UTM params in URL
-2. Params captured in localStorage via `TrackingCapture` component
-3. On form submission, both first-touch and latest-touch are sent to API
-4. Forwarded through Stripe checkout to app
-5. Used for analytics and lead source reporting
+2. Params captured and stored in `leads` table
+3. Forwarded through Stripe checkout to app
+4. Used for analytics and lead source reporting
 
 ## Attribution Model
 
@@ -30,24 +29,25 @@ Every campaign falls into one of three types, identified by `utm_term`:
 
 ```javascript
 // When processing UTM params on lead record
-const isNurtureOrRemarketing = ['nurture', 'remarketing'].includes(utm_term)
+const campaignType = utm_term // 'prospecting', 'remarketing', 'nurture', or keyword
+const isNurtureOrRemarketing = ['nurture', 'remarketing'].includes(campaignType)
 
-if (!lead.first_touch_source && !isNurtureOrRemarketing) {
+if (!lead.original_source && !isNurtureOrRemarketing) {
   // Only set first touch for prospecting traffic on new leads
-  lead.first_touch_source = utm_source
-  lead.first_touch_medium = utm_medium
-  lead.first_touch_campaign = utm_campaign
-  lead.first_touch_term = utm_term
-  lead.first_touch_at = now()
+  lead.original_source = utm_source
+  lead.original_medium = utm_medium
+  lead.original_campaign = utm_campaign
+  lead.original_term = utm_term
+  lead.original_content = utm_content
+  lead.original_touch_at = now()
 }
 
-// Always track latest touch for journey analysis
-lead.latest_touch_source = utm_source
-lead.latest_touch_medium = utm_medium
-lead.latest_touch_campaign = utm_campaign
-lead.latest_touch_term = utm_term
-lead.latest_touch_content = utm_content
-lead.latest_touch_at = now()
+// Always update current UTM fields (latest touch)
+lead.utm_source = utm_source
+lead.utm_medium = utm_medium
+lead.utm_campaign = utm_campaign
+lead.utm_term = utm_term
+lead.utm_content = utm_content
 
 // Track converting touch when they actually convert
 if (is_conversion_event) {
@@ -64,6 +64,16 @@ if (is_conversion_event) {
 - **Remarketing** only exists because a prospecting channel got someone to the site first. Credit goes to the originator.
 - **Nurture sequences** work on leads you already have. They measure sales effectiveness, not marketing acquisition.
 - **First-touch protection** ensures email/SMS follow-ups don't steal credit from the campaigns that actually generated the lead.
+
+### Field Naming Convention
+
+Following industry standards (HubSpot, Marketo, Salesforce), attribution fields use the *concept* name (`source`, `medium`, `campaign`) rather than the URL parameter name (`utm_source`, `utm_medium`, `utm_campaign`):
+
+| Touchpoint | Field Prefix | Example |
+|------------|--------------|---------|
+| First touch | `original_` | `original_source`, `original_medium` |
+| Latest touch | `utm_` | `utm_source`, `utm_medium` (existing fields) |
+| Converting touch | `converting_` | `converting_source`, `converting_medium` |
 
 ## Parameter Values
 
@@ -197,28 +207,28 @@ Each short link has:
 
 This pattern ensures social platforms/SMS apps can scrape OG tags before the redirect occurs.
 
-## Database Storage
+## Database Schema
 
 ### Marketing Site (`leads` table)
 
 ```sql
--- First touch (set once, never overwritten)
-first_touch_source    TEXT
-first_touch_medium    TEXT
-first_touch_campaign  TEXT
-first_touch_term      TEXT
-first_touch_content   TEXT
-first_touch_at        TIMESTAMPTZ
+-- First touch (set once, protected from overwrite)
+-- Named without utm_ prefix per industry convention (HubSpot, Marketo, Salesforce)
+original_source       TEXT
+original_medium       TEXT
+original_campaign     TEXT
+original_term         TEXT
+original_content      TEXT
+original_touch_at     TIMESTAMPTZ
 
--- Latest touch (updated on every visit)
-latest_touch_source   TEXT
-latest_touch_medium   TEXT
-latest_touch_campaign TEXT
-latest_touch_term     TEXT
-latest_touch_content  TEXT
-latest_touch_at       TIMESTAMPTZ
+-- Latest touch (existing fields, updated on every visit)
+utm_source            TEXT
+utm_medium            TEXT
+utm_campaign          TEXT
+utm_term              TEXT
+utm_content           TEXT
 
--- Converting touch (set when lead converts)
+-- Converting touch (set when lead converts to client)
 converting_source     TEXT
 converting_medium     TEXT
 converting_campaign   TEXT
@@ -231,6 +241,40 @@ fbclid                TEXT  -- Facebook click ID
 
 -- Context
 landing_url           TEXT  -- Full landing URL with params
+```
+
+### Migration
+
+To add attribution fields to existing schema:
+
+```sql
+-- Add first-touch fields
+ALTER TABLE leads
+  ADD COLUMN original_source TEXT,
+  ADD COLUMN original_medium TEXT,
+  ADD COLUMN original_campaign TEXT,
+  ADD COLUMN original_term TEXT,
+  ADD COLUMN original_content TEXT,
+  ADD COLUMN original_touch_at TIMESTAMPTZ;
+
+-- Add converting-touch fields
+ALTER TABLE leads
+  ADD COLUMN converting_source TEXT,
+  ADD COLUMN converting_medium TEXT,
+  ADD COLUMN converting_campaign TEXT,
+  ADD COLUMN converting_term TEXT,
+  ADD COLUMN converted_at TIMESTAMPTZ;
+
+-- Backfill original_* from utm_* for existing leads (one-time)
+UPDATE leads
+SET
+  original_source = utm_source,
+  original_medium = utm_medium,
+  original_campaign = utm_campaign,
+  original_term = utm_term,
+  original_content = utm_content,
+  original_touch_at = created_at
+WHERE original_source IS NULL;
 ```
 
 ### App (`leads` table)
@@ -248,7 +292,7 @@ utm_content           TEXT
 
 ### Attribution Report (Marketing Spend Decisions)
 
-Groups by `first_touch_source` and `first_touch_medium`:
+Groups by `original_source` and `original_medium`:
 
 | Source | Medium | Leads | Clients | Conv Rate | Remarketing Dependency |
 |--------|--------|-------|---------|-----------|------------------------|
