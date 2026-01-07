@@ -317,7 +317,7 @@ export default function DirectListPage() {
             <div className="flex-shrink-0 w-[320px] sm:w-[360px] snap-start">
               <div className="bg-card rounded-xl p-6 border border-border h-full">
                 <p className="text-foreground mb-4">
-                  &quot;Traditional agents wanted 6% of our sale price. We used DirectList instead, got the same MLS exposure, and kept most of that money. The listing looked just as professional as our neighbor&apos;s who paid full commission. I don&apos;t know why everyone doesn&apos;t do this.&quot;
+                  &quot;Agents were quoting us a 6% commission, which felt hard to justify. We went with DirectList, still got full MLS exposure, and kept most of that money. Our listing looked just as professional as others in the neighborhood. It worked out really well for us.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
                   <img
@@ -357,7 +357,7 @@ export default function DirectListPage() {
             <div className="flex-shrink-0 w-[320px] sm:w-[360px] snap-start">
               <div className="bg-card rounded-xl p-6 border border-border h-full">
                 <p className="text-foreground mb-4">
-                  &quot;This was my third home sale. I know how to price, I know how to show, I know how to negotiate. What I needed was MLS access — not a 3% babysitter. DirectList gave me exactly that. Listed, sold in two weeks, saved $9,000. Perfect for anyone who&apos;s done this before.&quot;
+                  &quot;This was my third home sale, so I was comfortable handling pricing, showings, and negotiations myself. What I really needed was MLS access, not a 3% commission for someone to list it. DirectList delivered exactly that. We listed, sold in two weeks, and saved $9,000. A great option for sellers that know what they are doing.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
                   <img
@@ -377,7 +377,7 @@ export default function DirectListPage() {
             <div className="flex-shrink-0 w-[320px] sm:w-[360px] snap-start">
               <div className="bg-card rounded-xl p-6 border border-border h-full">
                 <p className="text-foreground mb-4">
-                  &quot;I was fine until the offer came in $20k under asking. I had no idea how to respond. My DirectList agent reviewed the buyer&apos;s terms, helped me write a counter, and coached me through two rounds of back-and-forth. Closed $8,000 higher than that first offer. That support alone was worth it.&quot;
+                  &quot;I felt confident at first, but the initial offer came in under asking and I needed guidance. My DirectList agent reviewed everything with me and helped me navigate the negotiations. We ended up closing higher than the original offer.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
                   <img
@@ -387,7 +387,7 @@ export default function DirectListPage() {
                   />
                   <div>
                     <p className="font-semibold text-foreground">Angela R.</p>
-                    <p className="text-sm text-muted-foreground">Lewisville · Sold $8k over initial offer</p>
+                    <p className="text-sm text-muted-foreground">Lewisville · Negotiated above initial offer</p>
                   </div>
                 </div>
               </div>
@@ -397,7 +397,7 @@ export default function DirectListPage() {
             <div className="flex-shrink-0 w-[320px] sm:w-[360px] snap-start">
               <div className="bg-card rounded-xl p-6 border border-border h-full">
                 <p className="text-foreground mb-4">
-                  &quot;In 2025 I sold five flips through DirectList — ranged from $285k to $465k. If I&apos;d paid 3% on each of those, that&apos;s $56,000 in listing commissions. Instead I paid under $15,000 total. Same MLS, same Zillow exposure, same buyer pool. I kept $41,000 that would&apos;ve gone to agents. Flat fee beats percentage every time.&quot;
+                  &quot;As an investor, I&apos;ve sold several homes using DirectList. The listings looked professional, had full MLS exposure, and reached the same buyers as traditional listings. The flat-fee structure saved me tens of thousands across multiple sales.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
                   <img
