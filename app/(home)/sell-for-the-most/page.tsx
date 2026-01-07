@@ -2,7 +2,7 @@
 // ABOUTME: Highlights Full Service Listing, DirectList, and Price Launch solutions
 
 import Link from "next/link";
-import { HiArrowTrendingUp, HiCheck, HiArrowRight } from "react-icons/hi2";
+import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
 
 const solutions = [
@@ -33,14 +33,11 @@ export default function PriceMaximizationPage() {
   return (
     <div className="bg-background min-h-screen">
       {/* Hero */}
-      <HeroSection maxWidth="3xl" className="bg-gradient-to-b from-primary/5 to-background !bg-transparent">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-secondary/20 mb-6">
-          <HiArrowTrendingUp className="h-8 w-8 text-secondary" />
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+      <HeroSection maxWidth="3xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
           Want to Maximize Your Price?
         </h1>
-        <p className="text-xl text-muted-foreground">
+        <p className="text-xl text-primary-foreground/80">
           Your home is likely your biggest asset. We have multiple strategies to help you get
           top dollar — through expert representation, strategic timing, or cost-saving flat-fee options.
         </p>

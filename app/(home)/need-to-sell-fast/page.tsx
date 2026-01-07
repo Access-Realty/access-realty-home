@@ -2,7 +2,7 @@
 // ABOUTME: Highlights Cash Offer, 2 Payment, and Seller Finance solutions
 
 import Link from "next/link";
-import { HiOutlineClock, HiCheck, HiArrowRight } from "react-icons/hi2";
+import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
 
 const solutions = [
@@ -36,14 +36,11 @@ export default function NeedToSellFastPage() {
   return (
     <div className="bg-background min-h-screen">
       {/* Hero */}
-      <HeroSection maxWidth="3xl" className="!bg-gradient-to-b !from-primary/5 !to-background">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-secondary/20 mb-6">
-          <HiOutlineClock className="h-8 w-8 text-secondary" />
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+      <HeroSection maxWidth="3xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
           Need to Sell Fast?
         </h1>
-        <p className="text-xl text-muted-foreground">
+        <p className="text-xl text-primary-foreground/80">
           Whether you&apos;re relocating, facing financial challenges, or simply ready to move on quickly,
           we have solutions that can get your home sold in days — not months.
         </p>

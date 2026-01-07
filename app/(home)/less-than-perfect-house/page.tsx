@@ -2,7 +2,7 @@
 // ABOUTME: Highlights Cash, 2 Payment, Price Launch, Uplist, and Seller Finance solutions
 
 import Link from "next/link";
-import { HiWrenchScrewdriver, HiCheck, HiArrowRight } from "react-icons/hi2";
+import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
 
 const solutions = [
@@ -51,14 +51,11 @@ export default function LessThanPerfectHousePage() {
   return (
     <div className="bg-background min-h-screen">
       {/* Hero */}
-      <HeroSection maxWidth="3xl" className="!bg-gradient-to-b !from-primary/5 !to-background">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-secondary/20 mb-6">
-          <HiWrenchScrewdriver className="h-8 w-8 text-secondary" />
-        </div>
-        <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
+      <HeroSection maxWidth="3xl">
+        <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
           House Less Than Perfect?
         </h1>
-        <p className="text-xl text-muted-foreground">
+        <p className="text-xl text-primary-foreground/80">
           Whether your home needs minor updates or major repairs, we have options that work.
           You don&apos;t have to fix everything yourself — or fix anything at all.
         </p>
