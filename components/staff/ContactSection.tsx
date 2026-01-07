@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { HiPhone, HiEnvelope, HiCalendarDays, HiVideoCamera, HiXMark } from "react-icons/hi2";
 import CalendlyEmbed from "@/components/CalendlyEmbed";
 
@@ -51,6 +51,18 @@ export default function ContactSection({
   const [meetingType, setMeetingType] = useState<MeetingType>(defaultMeetingType);
 
   const currentCalendlyUrl = meetingType === "phone" ? calendlyPhoneUrl : calendlyRemoteUrl;
+
+  // Lock body scroll when modal is open
+  useEffect(() => {
+    if (isModalOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isModalOpen]);
 
   return (
     <>
@@ -140,46 +152,68 @@ export default function ContactSection({
         </div>
       </section>
 
-      {/* Calendly Modal */}
+      {/* Calendly Modal - Full screen on mobile, centered modal on desktop */}
       {isModalOpen && hasCalendly && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
+          className="fixed inset-0 z-50 flex items-end md:items-center justify-center bg-black/60 backdrop-blur-sm"
           onClick={() => setIsModalOpen(false)}
         >
           <div
-            className="relative bg-card rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden"
+            className="relative bg-card shadow-2xl w-full h-[100dvh] md:h-auto md:max-h-[85vh] md:max-w-3xl md:mx-4 md:rounded-2xl overflow-hidden flex flex-col"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-              <div>
-                <h3 className="text-xl font-bold text-foreground">
-                  Schedule a Call with {agentName}
+            {/* Modal Header - Compact with inline tabs on desktop */}
+            <div className="flex-shrink-0 flex items-center justify-between px-4 md:px-6 py-3 md:py-4 border-b border-border bg-card">
+              <div className="flex items-center gap-4 min-w-0">
+                <h3 className="text-lg md:text-xl font-bold text-foreground truncate">
+                  Book with {agentName}
                 </h3>
+                {/* Inline tabs on desktop */}
                 {hasBothCalendly && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    Choose your preferred meeting type
-                  </p>
+                  <div className="hidden md:flex gap-2">
+                    <button
+                      onClick={() => setMeetingType("phone")}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-sm transition-colors ${
+                        meetingType === "phone"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground hover:bg-muted/80"
+                      }`}
+                    >
+                      <HiPhone className="h-4 w-4" />
+                      Phone
+                    </button>
+                    <button
+                      onClick={() => setMeetingType("video")}
+                      className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md font-medium text-sm transition-colors ${
+                        meetingType === "video"
+                          ? "bg-primary text-primary-foreground"
+                          : "bg-muted text-foreground hover:bg-muted/80"
+                      }`}
+                    >
+                      <HiVideoCamera className="h-4 w-4" />
+                      Video
+                    </button>
+                  </div>
                 )}
               </div>
               <button
                 onClick={() => setIsModalOpen(false)}
-                className="p-2 rounded-full hover:bg-muted transition-colors"
+                className="flex-shrink-0 p-2 -mr-2 rounded-full hover:bg-muted transition-colors"
                 aria-label="Close modal"
               >
-                <HiXMark className="h-6 w-6 text-muted-foreground" />
+                <HiXMark className="h-6 w-6 text-foreground" />
               </button>
             </div>
 
-            {/* Meeting type tabs */}
+            {/* Mobile tabs - below header */}
             {hasBothCalendly && (
-              <div className="flex gap-2 px-6 pt-4">
+              <div className="flex-shrink-0 flex gap-2 px-4 py-3 border-b border-border md:hidden">
                 <button
                   onClick={() => setMeetingType("phone")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md font-semibold text-sm transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
                     meetingType === "phone"
                       ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground hover:bg-muted/80"
+                      : "bg-muted text-foreground"
                   }`}
                 >
                   <HiPhone className="h-4 w-4" />
@@ -187,10 +221,10 @@ export default function ContactSection({
                 </button>
                 <button
                   onClick={() => setMeetingType("video")}
-                  className={`flex items-center gap-2 px-4 py-2 rounded-md font-semibold text-sm transition-colors ${
+                  className={`flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-lg font-semibold text-sm transition-colors ${
                     meetingType === "video"
                       ? "bg-primary text-primary-foreground"
-                      : "bg-muted text-foreground hover:bg-muted/80"
+                      : "bg-muted text-foreground"
                   }`}
                 >
                   <HiVideoCamera className="h-4 w-4" />
@@ -199,12 +233,12 @@ export default function ContactSection({
               </div>
             )}
 
-            {/* Calendly embed */}
-            <div className="p-4">
+            {/* Calendly embed - fills remaining space */}
+            <div className="flex-1 min-h-0 overflow-hidden">
               {currentCalendlyUrl && (
                 <CalendlyEmbed
                   url={currentCalendlyUrl}
-                  styles={{ height: "500px" }}
+                  styles={{ height: "100%", minHeight: "500px" }}
                 />
               )}
             </div>

@@ -12,6 +12,7 @@ const solutions = [
     description:
       "Get a competitive cash offer on your home. Skip showings, repairs, and uncertainty. Ideal for sellers who need speed and simplicity.",
     href: "https://metroplexhomebuyers.com",
+    isPartner: true,
   },
   {
     id: "price-launch",
@@ -20,6 +21,7 @@ const solutions = [
     description:
       "We handle the entire renovation — design, contractors, materials — so your home sells for top dollar. You pay nothing until closing.",
     href: "/solutions/price-launch",
+    isPartner: true,
   },
   {
     id: "2-payment",
@@ -28,6 +30,7 @@ const solutions = [
     description:
       "Split your fees into two payments — a small amount upfront, the rest at closing. Keep more cash in your pocket until you sell.",
     href: "/solutions/2-payment",
+    isPartner: true,
   },
   {
     id: "uplist",
@@ -36,6 +39,7 @@ const solutions = [
     description:
       "Your home is loanable and livable but you won't accept a low investor offer. We cover your mortgage while it sells on the open market — you get a net-to-seller price.",
     href: "/solutions/uplist",
+    isPartner: true,
   },
   {
     id: "direct-list",
@@ -44,6 +48,7 @@ const solutions = [
     description:
       "Get on the MLS and all major sites for a flat fee. You handle showings and negotiations, we handle the paperwork.",
     href: "/direct-list",
+    isPartner: false,
   },
   {
     id: "agent",
@@ -52,6 +57,7 @@ const solutions = [
     description:
       "Work with one of our experienced team members who handles everything — pricing, marketing, showings, negotiations, and closing.",
     href: "/our-team",
+    isPartner: false,
   },
 ];
 
@@ -82,9 +88,14 @@ export default function Solutions() {
                 <CardWrapper
                   key={solution.id}
                   href={solution.href}
-                  className="group bg-card border-2 border-border rounded-xl p-8 hover:border-secondary hover:shadow-xl transition-all"
+                  className="group relative bg-card border-2 border-border rounded-xl p-8 hover:border-secondary hover:shadow-xl transition-all"
                   {...extraProps}
                 >
+                  {solution.isPartner && (
+                    <span className="absolute top-4 right-4 px-2 py-1 text-xs font-medium bg-primary/10 text-primary rounded-full">
+                      via Accredited Partner
+                    </span>
+                  )}
                   <h2 className="text-2xl font-bold text-foreground mb-2">
                     {solution.name}
                   </h2>
