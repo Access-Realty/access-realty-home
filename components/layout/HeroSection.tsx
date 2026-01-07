@@ -42,15 +42,15 @@ export function HeroSection({
     .filter(Boolean)
     .join(" ");
 
-  // min-h-[280px] = minimum hero height for visual presence
+  // min-h-[300px] = minimum hero height for visual presence
   // pt-20 = header clearance (80px for fixed header)
-  // pb-20 = symmetric bottom padding for true visual centering
-  // flex items-center = vertically center content in available space
+  // flex items-center = centers content in remaining space (below header)
+  // No bottom padding - let flex handle vertical centering naturally
   return (
     <section
-      className={`min-h-[280px] pt-20 pb-20 flex items-center ${backgroundStyles[background]} ${className}`}
+      className={`min-h-[300px] pt-20 flex items-center ${backgroundStyles[background]} ${className}`}
     >
-      <div className={`w-full ${containerClasses}`}>{children}</div>
+      <div className={`w-full py-8 ${containerClasses}`}>{children}</div>
     </section>
   );
 }

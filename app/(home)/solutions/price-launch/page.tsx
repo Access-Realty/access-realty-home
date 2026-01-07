@@ -184,13 +184,15 @@ export default function PriceLaunchPage() {
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           Why Price Launch Works
         </h2>
-        <div className="grid sm:grid-cols-2 gap-4">
-          {whyItWorks.map((item) => (
-            <div key={item} className="flex items-start gap-3">
-              <HiCheck className="h-5 w-5 text-secondary flex-shrink-0 mt-0.5" />
-              <span className="text-foreground">{item}</span>
-            </div>
-          ))}
+        <div className="bg-card border border-border rounded-xl p-6">
+          <div className="grid sm:grid-cols-2 gap-4">
+            {whyItWorks.map((item) => (
+              <div key={item} className="flex items-start gap-3">
+                <HiCheck className="h-5 w-5 text-secondary flex-shrink-0 mt-0.5" />
+                <span className="text-foreground">{item}</span>
+              </div>
+            ))}
+          </div>
         </div>
       </Section>
 
@@ -231,7 +233,7 @@ export default function PriceLaunchPage() {
           {howItWorks.map((item) => (
             <div
               key={item.step}
-              className="flex gap-4 bg-background border border-border rounded-xl p-6"
+              className="flex gap-4 bg-card border border-border rounded-xl p-6"
             >
               <div className="flex-shrink-0 h-10 w-10 rounded-full bg-primary flex items-center justify-center text-primary-foreground font-bold">
                 {item.step}
@@ -315,7 +317,7 @@ export default function PriceLaunchPage() {
           {faqs.map((faq, index) => (
             <div
               key={index}
-              className="bg-background border border-border rounded-xl p-6"
+              className="bg-card border border-border rounded-xl p-6"
             >
               <h3 className="font-bold text-foreground mb-2">{faq.question}</h3>
               <p className="text-muted-foreground">

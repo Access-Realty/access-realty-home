@@ -61,6 +61,31 @@ function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
+// Styled DirectList brand name component
+function DirectListStyled() {
+  return (
+    <>
+      <span
+        style={{
+          fontFamily: "'Times New Roman', serif",
+          fontStyle: "italic",
+          fontWeight: 400,
+        }}
+      >
+        Direct
+      </span>
+      <span
+        style={{
+          fontFamily: "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
+          fontWeight: 700,
+        }}
+      >
+        List
+      </span>
+    </>
+  );
+}
+
 export default function SavingsPage() {
   const [salePrice, setSalePrice] = useState<string>("");
 
@@ -83,7 +108,7 @@ export default function SavingsPage() {
       {/* Hero */}
       <HeroSection maxWidth="3xl">
         <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-primary-foreground mb-4">
-          See How Much You Could Save With DirectList
+          See How Much You Could Save With <DirectListStyled />
         </h1>
         <p className="text-lg text-primary-foreground/80">
           Use the calculator below to estimate how much you could save by choosing DirectList.

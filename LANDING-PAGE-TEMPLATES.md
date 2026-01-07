@@ -12,8 +12,8 @@ This document defines the visual structure, layout components, spacing, and colo
 ├─────────────────────────────────────────┤
 │ HeroSection (primary/gradient bg)       │  ← REQUIRED: Always first
 ├─────────────────────────────────────────┤
-│ Section (default/muted) - content       │  ← Content sections
-│ Section (default/muted) - as needed     │
+│ Section (cream) - content               │  ← Content sections (ALL cream)
+│ Section (cream) - as needed             │
 │ ...                                     │
 ├─────────────────────────────────────────┤
 │ Section (primary bg) - CTA              │  ← REQUIRED: Always last
@@ -21,6 +21,8 @@ This document defines the visual structure, layout components, spacing, and colo
 │ Footer (from layout)                    │
 └─────────────────────────────────────────┘
 ```
+
+**IMPORTANT: Do NOT alternate section backgrounds.** All content sections use the default cream background. Visual distinction comes from content hierarchy (cards, spacing, typography), not background color changes.
 
 **The mandatory CTA section before footer** eliminates empty space above the footer and creates a visual anchor for short pages.
 
@@ -37,8 +39,9 @@ import { HeroSection, Section, AccessCTA, DirectListCTA } from "@/components/lay
   <p className="text-primary-foreground/80">Subtitle here</p>
 </HeroSection>
 
-// Content sections - use default or muted backgrounds
-<Section variant="content" maxWidth="4xl" background="default">
+// Content sections - always use default (cream) background
+// Do NOT specify background prop - cream is the default
+<Section variant="content" maxWidth="4xl">
   ...
 </Section>
 
@@ -83,7 +86,7 @@ Two CTA components exist, each designed to flow into its paired footer:
 
 | Element | Classes | Notes |
 |---------|---------|-------|
-| HeroSection | `min-h-[200px] pt-20 pb-8 flex items-center` | Flexbox vertical centering with header clearance |
+| HeroSection | `min-h-[280px] pt-20 pb-20 flex items-center` | Symmetric padding for true vertical centering |
 | Section (content) | `py-12` | 48px each direction = 96px gaps |
 | Section (tight) | `py-8` | 32px each direction = 64px gaps |
 | Section (cta) | `py-12` | 48px each direction = 96px gaps |
@@ -101,14 +104,19 @@ Two CTA components exist, each designed to flow into its paired footer:
 
 ## Background Color System
 
-**Three background colors for sections, used purposefully:**
+**All content sections use cream background.** Do NOT alternate backgrounds between sections.
 
 | Background | Tailwind | Hex | Use When |
 |------------|----------|-----|----------|
-| **default** (cream) | `bg-background` | #f8f4ef | Standard content sections |
-| **muted** (light gray) | `bg-muted` | #f9fafb | Feature grids, testimonials, grouped items |
-| **card** (white) | `bg-card` | #ffffff | Rarely - only when content needs max emphasis |
-| **primary** (navy) | `bg-primary` | #284b70 | Hero sections, CTA sections |
+| **default** (cream) | `bg-background` | #f8f4ef | ALL content sections (the only option) |
+| **primary** (navy) | `bg-primary` | #284b70 | Hero sections, CTA sections only |
+
+**For elements WITHIN sections:**
+
+| Element | Tailwind | Hex | Use When |
+|---------|----------|-----|----------|
+| Cards | `bg-card` | #ffffff | White cards sitting on cream background |
+| Inputs | `bg-muted` | #f9fafb | Gray inputs inside white cards |
 
 ### Header vs Body Colors (Option A)
 
@@ -123,24 +131,17 @@ The site uses a gray header / cream body color scheme:
 
 ### Background Rules
 
-1. **Cards are always white** (`bg-card`) - they sit ON section backgrounds
-2. **Cream sections** → white cards contrast naturally (no border needed)
-3. **Muted sections** → white cards contrast naturally (no border needed)
-4. **White sections** → white cards NEED `border border-border`
-5. **Inputs inside white cards** → use `bg-muted` for contrast
-6. **Inputs always have borders** - never use `bg-transparent border-0`
+1. **All content sections use cream** - do not specify `background` prop
+2. **Cards are always white** (`bg-card`) - they sit on cream and contrast naturally
+3. **Inputs inside white cards** → use `bg-muted` for contrast
+4. **Inputs always have borders** - never use `bg-transparent border-0`
 
-### Preventing Same-Color-on-Same-Color
+### Examples
 
 ```tsx
-// ✅ GOOD: White card on cream background
-<Section background="default">
+// ✅ GOOD: White card on cream section (no background prop needed)
+<Section variant="content" maxWidth="4xl">
   <div className="bg-card rounded-lg p-6">Content</div>
-</Section>
-
-// ✅ GOOD: White card on white section WITH border
-<Section background="card">
-  <div className="bg-card border border-border rounded-lg p-6">Content</div>
 </Section>
 
 // ✅ GOOD: Gray input inside white card
@@ -148,10 +149,10 @@ The site uses a gray header / cream body color scheme:
   <input className="bg-muted border border-border rounded-lg" />
 </div>
 
-// ❌ BAD: White card on white section without border
-<Section background="card">
-  <div className="bg-card rounded-lg p-6">Content</div>  {/* Invisible! */}
-</Section>
+// ❌ BAD: Alternating section backgrounds
+<Section background="card">...</Section>
+<Section background="default">...</Section>
+<Section background="card">...</Section>
 
 // ❌ BAD: White input inside white card
 <div className="bg-card p-6">
