@@ -4,6 +4,7 @@
 import Link from "next/link";
 import { HiCheck, HiArrowRight, HiExclamationTriangle, HiPhoto } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
+import Accordion from "@/components/ui/Accordion";
 
 const keyBenefits = [
   {
@@ -313,28 +314,8 @@ export default function PriceLaunchPage() {
           Frequently Asked Questions
         </h2>
 
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div
-              key={index}
-              className="bg-card border border-border rounded-xl p-6"
-            >
-              <h3 className="font-bold text-foreground mb-2">{faq.question}</h3>
-              <p className="text-muted-foreground">
-                {faq.question === "What if the home doesn't sell?" ? (
-                  <>
-                    If the market shifts, you can use our{" "}
-                    <Link href="/solutions/seller-finance" className="text-secondary hover:underline">
-                      Seller Finance
-                    </Link>{" "}
-                    option to sell without taking steep discounts.
-                  </>
-                ) : (
-                  faq.answer
-                )}
-              </p>
-            </div>
-          ))}
+        <div className="bg-card border border-border rounded-xl px-6">
+          <Accordion items={faqs} />
         </div>
       </Section>
 
