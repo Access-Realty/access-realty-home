@@ -2,7 +2,7 @@
 // ABOUTME: We renovate the property, list it, and get paid at closing
 
 import Link from "next/link";
-import { HiCheck, HiArrowRight, HiWrenchScrewdriver, HiExclamationTriangle, HiPhoto } from "react-icons/hi2";
+import { HiCheck, HiArrowRight, HiExclamationTriangle, HiPhoto } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
 
 const keyBenefits = [
@@ -149,9 +149,6 @@ export default function PriceLaunchPage() {
     <div className="bg-background min-h-screen">
       {/* Hero */}
       <HeroSection maxWidth="3xl">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary-foreground/20 mb-6">
-          <HiWrenchScrewdriver className="h-8 w-8 text-primary-foreground" />
-        </div>
         <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
           Price Launch
         </h1>
@@ -183,7 +180,7 @@ export default function PriceLaunchPage() {
       </Section>
 
       {/* Why It Works */}
-      <Section variant="content" maxWidth="3xl" background="card">
+      <Section variant="content" maxWidth="3xl">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           Why Price Launch Works
         </h2>
@@ -225,7 +222,7 @@ export default function PriceLaunchPage() {
       </Section>
 
       {/* How It Works */}
-      <Section variant="content" maxWidth="3xl" background="card">
+      <Section variant="content" maxWidth="3xl">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           How It Works
         </h2>
@@ -309,7 +306,7 @@ export default function PriceLaunchPage() {
       </Section>
 
       {/* FAQs */}
-      <Section variant="content" maxWidth="3xl" background="card">
+      <Section variant="content" maxWidth="3xl">
         <h2 className="text-2xl font-bold text-foreground mb-8 text-center">
           Frequently Asked Questions
         </h2>

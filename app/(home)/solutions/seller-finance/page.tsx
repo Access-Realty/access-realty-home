@@ -2,7 +2,7 @@
 // ABOUTME: Explains owner financing option where seller becomes the lender
 
 import Link from "next/link";
-import { HiCheck, HiArrowRight, HiBanknotes } from "react-icons/hi2";
+import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
 
 const benefits = [
@@ -60,9 +60,6 @@ export default function SellerFinancePage() {
     <div className="bg-background min-h-screen">
       {/* Hero */}
       <HeroSection maxWidth="3xl">
-        <div className="inline-flex items-center justify-center h-16 w-16 rounded-full bg-primary-foreground/20 mb-6">
-          <HiBanknotes className="h-8 w-8 text-primary-foreground" />
-        </div>
         <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6">
           Seller Financing
         </h1>
