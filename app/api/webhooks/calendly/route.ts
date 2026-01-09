@@ -193,14 +193,14 @@ async function handleInviteeCreated(
     return;
   }
 
-  // Check if meeting already exists (idempotency)
-  const { data: existingMeeting } = await supabase
+  // Check if meeting already exists (idempotency) by searching notes
+  const { data: existingMeetings } = await supabase
     .from("meetings")
     .select("id")
-    .eq("calendly_event_id", eventId)
-    .single();
+    .ilike("notes", `%Calendly event: ${eventId}%`)
+    .limit(1);
 
-  if (existingMeeting) {
+  if (existingMeetings && existingMeetings.length > 0) {
     console.log(`Meeting already exists for event ${eventId}`);
     return;
   }
@@ -216,11 +216,10 @@ async function handleInviteeCreated(
     title: meetingTitle,
     start_time: startTime,
     end_time: endTime,
-    calendly_event_id: eventId,
-    calendly_invitee_id: inviteeId,
+    meeting_type: "consultation",
     status: "scheduled",
-    location: "Google Meet", // Default for remote meetings
-    notes: `Booked via marketing site (${programSource || "unknown"})`,
+    location: "Google Meet",
+    notes: `Booked via marketing site (${programSource || "unknown"}). Calendly event: ${eventId}`,
   });
 
   if (insertError) {
@@ -251,22 +250,41 @@ async function handleInviteeCanceled(
 
   const cancellation = payload.cancellation;
 
+  // Find meeting by searching notes for the calendly event ID
+  const { data: meetings, error: findError } = await supabase
+    .from("meetings")
+    .select("id")
+    .ilike("notes", `%Calendly event: ${eventId}%`)
+    .limit(1);
+
+  if (findError) {
+    console.error("Failed to find meeting:", findError);
+    throw findError;
+  }
+
+  if (!meetings || meetings.length === 0) {
+    console.log(`No meeting found for Calendly event ${eventId}`);
+    return;
+  }
+
+  const meetingId = meetings[0].id;
+
   // Update meeting status
   const { error } = await supabase
     .from("meetings")
     .update({
       status: "cancelled",
       notes: cancellation?.reason
-        ? `Cancelled: ${cancellation.reason}`
-        : "Cancelled",
+        ? `Cancelled: ${cancellation.reason}. Calendly event: ${eventId}`
+        : `Cancelled. Calendly event: ${eventId}`,
       updated_at: new Date().toISOString(),
     })
-    .eq("calendly_event_id", eventId);
+    .eq("id", meetingId);
 
   if (error) {
     console.error("Failed to update meeting status:", error);
     throw error;
   }
 
-  console.log(`Marked meeting ${eventId} as cancelled`);
+  console.log(`Marked meeting ${meetingId} as cancelled (Calendly event: ${eventId})`);
 }
