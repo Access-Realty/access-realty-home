@@ -297,11 +297,13 @@ export default async function ListingDetail({ params }: PageProps) {
       </Section>
 
       {/* Similar Listings */}
-      <ListingsCarousel
-        title="More Homes You May Like"
-        subtitle="Explore similar properties in the area"
-        limit={8}
-      />
+      <Section maxWidth="6xl" className="overflow-hidden">
+        <ListingsCarousel
+          title="More Homes You May Like"
+          subtitle="Explore similar properties in the area"
+          limit={8}
+        />
+      </Section>
     </div>
   );
 }
