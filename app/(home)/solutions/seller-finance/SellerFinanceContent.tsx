@@ -436,7 +436,7 @@ export default function SellerFinanceContent() {
         isOpen={showInquiryModal}
         onClose={() => setShowInquiryModal(false)}
         programName="Seller Finance"
-        programMessage="I'm interested in your Seller Finance option."
+        programSlug="seller_finance"
         addressData={addressData}
       />
     </div>

@@ -399,7 +399,7 @@ export default function TwoPaymentContent() {
         isOpen={showInquiryModal}
         onClose={() => setShowInquiryModal(false)}
         programName="2-Payment"
-        programMessage="I'm interested in your 2-Payment Program."
+        programSlug="2_payment"
         addressData={addressData}
       />
     </div>

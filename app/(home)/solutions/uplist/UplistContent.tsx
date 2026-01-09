@@ -496,7 +496,7 @@ export default function UplistContent() {
         isOpen={showInquiryModal}
         onClose={() => setShowInquiryModal(false)}
         programName="Uplist"
-        programMessage="I'm interested in your Uplist Program."
+        programSlug="uplist"
         addressData={addressData}
       />
     </div>

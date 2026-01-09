@@ -616,7 +616,7 @@ export default function PriceLaunchContent() {
         isOpen={showInquiryModal}
         onClose={() => setShowInquiryModal(false)}
         programName="Price Launch"
-        programMessage="I'm interested in your Price Launch Program."
+        programSlug="price_launch"
         addressData={addressData}
       />
     </div>
