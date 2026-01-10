@@ -103,8 +103,8 @@ const ON_DEMAND_SERVICES = {
     { service: "Leaseback Package", price: "$499" },
   ],
   direct_list_plus: [
-    { service: "On-Market Consultation", price: "$99" },
-    { service: "On-Site Evaluation", price: "$199" },
+    { service: "On-Market Consultation", price: "$49" },
+    { service: "On-Site Evaluation", price: "$149" },
     { service: "Addl Contract Negotiation", price: "$149" },
     { service: "Addl Amendment Negotiation", price: "$149" },
     { service: "Leaseback Package", price: "$299" },
