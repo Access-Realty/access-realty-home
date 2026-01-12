@@ -191,11 +191,9 @@ export function ProgramInquiryModal({
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm"
-      onClick={handleClose}
     >
       <div
         className="bg-card rounded-2xl shadow-2xl w-full max-w-md overflow-hidden max-h-[90vh] flex flex-col"
-        onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
         <div className="bg-primary px-6 py-4 flex items-center justify-between shrink-0">
@@ -340,9 +338,8 @@ export function ProgramInquiryModal({
 
           {/* Creating Lead Step */}
           {step === "creating-lead" && (
-            <div className="flex flex-col items-center justify-center py-12 text-center space-y-4">
+            <div className="flex items-center justify-center py-12">
               <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
-              <p className="text-muted-foreground">Setting up your consultation...</p>
             </div>
           )}
 

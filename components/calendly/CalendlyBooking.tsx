@@ -56,7 +56,7 @@ export function CalendlyBooking({
   const [currentMonth, setCurrentMonth] = useState<Date>(new Date());
   const [slotError, setSlotError] = useState<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [duration, setDuration] = useState<number>(60);
+  const [duration, setDuration] = useState<number | null>(null);
   const [locationKind, setLocationKind] = useState<string | null>(null);
 
   // Track component mount state
@@ -486,16 +486,18 @@ export function CalendlyBooking({
               </div>
             </div>
 
-            <div className="flex items-start gap-3">
-              <div className="rounded-full bg-primary/10 p-2">
-                <HiOutlineClock className="h-5 w-5 text-primary" />
+            {duration && (
+              <div className="flex items-start gap-3">
+                <div className="rounded-full bg-primary/10 p-2">
+                  <HiOutlineClock className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium text-foreground">
+                    {duration} minute consultation
+                  </p>
+                </div>
               </div>
-              <div>
-                <p className="font-medium text-foreground">
-                  {duration} minute consultation
-                </p>
-              </div>
-            </div>
+            )}
 
             <div className="flex items-start gap-3">
               <div className="rounded-full bg-primary/10 p-2">
@@ -610,7 +612,7 @@ export function CalendlyBooking({
                 Select a Time
               </h3>
               <p className="text-sm text-muted-foreground">
-                {formatShortDate(selectedDate)} · {duration} min
+                {formatShortDate(selectedDate)}{duration ? ` · ${duration} min` : ""}
               </p>
             </div>
           </div>
