@@ -26,6 +26,7 @@ interface AddressInputProps {
   onAddressSelect: (address: AddressData) => void;
   placeholder?: string;
   className?: string;
+  inputClassName?: string;
   defaultValue?: string;
 }
 
@@ -33,6 +34,7 @@ export function AddressInput({
   onAddressSelect,
   placeholder = "Enter your property address",
   className = "",
+  inputClassName = "",
   defaultValue = "",
 }: AddressInputProps) {
   const [inputValue, setInputValue] = useState(defaultValue);
@@ -126,7 +128,7 @@ export function AddressInput({
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
           placeholder={placeholder}
-          className="w-full pl-11 pr-4 py-3 border border-border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow"
+          className={`w-full pl-11 pr-4 py-3 border border-border rounded-lg bg-muted text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent transition-shadow ${inputClassName}`}
         />
       </Autocomplete>
     </div>

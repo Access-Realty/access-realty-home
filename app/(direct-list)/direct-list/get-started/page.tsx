@@ -15,6 +15,7 @@ declare global {
 import { useState, useCallback, useEffect } from "react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
+import { getStoredAddress, clearAddress } from "@/lib/addressStorage";
 import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
 import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
 import { HeroSection, Section } from "@/components/layout";
@@ -321,6 +322,31 @@ export default function GetStartedPage() {
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [step]);
+
+  // Check for stored address from homepage hero on mount
+  useEffect(() => {
+    const storedAddress = getStoredAddress();
+    if (storedAddress) {
+      // Populate address state
+      setAddressData(storedAddress);
+      setMapCenter({ lat: storedAddress.lat, lng: storedAddress.lng });
+
+      // Populate editable address fields
+      const street = [storedAddress.streetNumber, storedAddress.streetName]
+        .filter(Boolean)
+        .join(" ");
+      setEditableAddress({
+        street,
+        unit: "",
+        city: storedAddress.city || "",
+        state: storedAddress.state || "",
+        zipCode: storedAddress.zipCode || "",
+      });
+
+      // Clear stored address so it doesn't persist
+      clearAddress();
+    }
+  }, []);
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",

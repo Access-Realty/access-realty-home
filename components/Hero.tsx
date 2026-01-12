@@ -1,19 +1,32 @@
-// ABOUTME: Hero section with headline, description, and address input form
-// ABOUTME: Main landing section with CTA to get started
+// ABOUTME: Hero section with headline, description, and Google Places address input
+// ABOUTME: Stores address in localStorage and navigates to get-started wizard
 
 "use client";
 
-import { useState } from "react";
-import { HiMagnifyingGlass } from "react-icons/hi2";
+import { useState, useCallback } from "react";
+import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
+import { saveAddress } from "@/lib/addressStorage";
 
 const Hero = () => {
-  const [address, setAddress] = useState("");
+  const router = useRouter();
+  const [selectedAddress, setSelectedAddress] = useState<AddressData | null>(null);
+
+  const handleAddressSelect = useCallback((address: AddressData) => {
+    setSelectedAddress(address);
+  }, []);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Redirect to app with address
-    window.location.href = `https://app.access.realty/signup?source=home&address=${encodeURIComponent(address)}`;
+
+    if (selectedAddress) {
+      // Store address for get-started wizard to pick up
+      saveAddress(selectedAddress);
+    }
+
+    // Navigate to get-started wizard
+    router.push("/direct-list/get-started");
   };
 
   return (
@@ -38,14 +51,11 @@ const Hero = () => {
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row gap-3">
-              <div className="relative flex-1">
-                <HiMagnifyingGlass className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
-                <input
-                  type="text"
+              <div className="flex-1">
+                <AddressInput
+                  onAddressSelect={handleAddressSelect}
                   placeholder="Enter Your Address to Get Started"
-                  value={address}
-                  onChange={(e) => setAddress(e.target.value)}
-                  className="w-full pl-10 h-14 text-lg border-2 border-border rounded-md focus:border-secondary focus:outline-none bg-card text-foreground"
+                  inputClassName="!h-14 !py-0 !text-lg !border-2 !rounded-md !bg-card focus:!border-secondary"
                 />
               </div>
               <button
