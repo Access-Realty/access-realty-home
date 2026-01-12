@@ -4,32 +4,35 @@
 "use client";
 
 import Link from "next/link";
-import { HiOutlineClock, HiArrowTrendingUp, HiWrenchScrewdriver, HiFaceSmile, HiArrowRight } from "react-icons/hi2";
+import { HiArrowRight } from "react-icons/hi2";
+import { BsFillStopwatchFill } from "react-icons/bs";
+import { FaMoneyBillTrendUp, FaPeopleGroup } from "react-icons/fa6";
+import { RiPaintBrushFill } from "react-icons/ri";
 
 const cards = [
   {
-    icon: HiOutlineClock,
+    icon: BsFillStopwatchFill,
     title: "Need to Sell Fast?",
     description:
       "We buy houses in any condition — and can close in days, not months.",
     href: "/need-to-sell-fast",
   },
   {
-    icon: HiArrowTrendingUp,
+    icon: FaMoneyBillTrendUp,
     title: "Want to Maximize Price?",
     description:
       "List your home with our top performing agents or use our exclusive self service listing option and save thousands in fees.",
     href: "/sell-for-the-most",
   },
   {
-    icon: HiWrenchScrewdriver,
+    icon: RiPaintBrushFill,
     title: "House Less Than Perfect?",
     description:
       "No problem — we have a team ready to handle updates so you don't leave money on the table.",
     href: "/less-than-perfect-house",
   },
   {
-    icon: HiFaceSmile,
+    icon: FaPeopleGroup,
     title: "Want To Avoid Showings And Negotiations?",
     description:
       "Let us handle everything behind the scenes while you stay in control.",

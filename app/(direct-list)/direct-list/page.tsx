@@ -7,15 +7,14 @@ import { useState } from "react";
 import {
   HiCheck,
   HiChevronDown,
-  HiOutlineBanknotes,
-  HiOutlineHomeModern,
-  HiOutlineShieldCheck,
-  HiOutlineClock,
-  HiOutlinePencilSquare,
-  HiOutlineCamera,
-  HiOutlineRocketLaunch,
-  HiOutlineChatBubbleLeftRight
+  HiOutlineCurrencyDollar,
 } from "react-icons/hi2";
+import { FaLaptopHouse, FaSign } from "react-icons/fa";
+import { BsSliders } from "react-icons/bs";
+import { MdRocketLaunch } from "react-icons/md";
+import { GoChecklist } from "react-icons/go";
+import { RiCameraAiFill } from "react-icons/ri";
+import { FaHandshake } from "react-icons/fa6";
 import Link from "next/link";
 import { StyledTierName } from "@/components/services/StyledTierName";
 
@@ -238,7 +237,7 @@ export default function DirectListPage() {
             {/* Save Thousands */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <HiOutlineBanknotes className="h-8 w-8 text-primary" />
+                <HiOutlineCurrencyDollar className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Save Thousands in Commissions
@@ -254,7 +253,7 @@ export default function DirectListPage() {
             {/* Full MLS Exposure */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <HiOutlineHomeModern className="h-8 w-8 text-primary" />
+                <FaLaptopHouse className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Full MLS Exposure
@@ -270,7 +269,7 @@ export default function DirectListPage() {
             {/* Complete Control */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <HiOutlineShieldCheck className="h-8 w-8 text-primary" />
+                <BsSliders className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Complete Control
@@ -286,7 +285,7 @@ export default function DirectListPage() {
             {/* Quick MLS Activation */}
             <div className="bg-muted rounded-xl p-6 text-center">
               <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <HiOutlineClock className="h-8 w-8 text-primary" />
+                <MdRocketLaunch className="h-8 w-8 text-primary" />
               </div>
               <h3 className="text-lg font-bold text-foreground mb-2">
                 Quick MLS Activation
@@ -433,7 +432,7 @@ export default function DirectListPage() {
             {/* Step 1 - Left */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <HiOutlinePencilSquare className="h-6 w-6 text-primary-foreground" />
+                <GoChecklist className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -448,7 +447,7 @@ export default function DirectListPage() {
             {/* Step 2 - Right on desktop */}
             <div className="flex gap-6 items-start md:flex-row-reverse md:text-right">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <HiOutlineCamera className="h-6 w-6 text-primary-foreground" />
+                <RiCameraAiFill className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -463,7 +462,7 @@ export default function DirectListPage() {
             {/* Step 3 - Left */}
             <div className="flex gap-6 items-start">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <HiOutlineRocketLaunch className="h-6 w-6 text-primary-foreground" />
+                <FaSign className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
@@ -478,7 +477,7 @@ export default function DirectListPage() {
             {/* Step 4 - Right on desktop */}
             <div className="flex gap-6 items-start md:flex-row-reverse md:text-right">
               <div className="flex-shrink-0 h-12 w-12 rounded-full bg-primary flex items-center justify-center">
-                <HiOutlineChatBubbleLeftRight className="h-6 w-6 text-primary-foreground" />
+                <FaHandshake className="h-6 w-6 text-primary-foreground" />
               </div>
               <div>
                 <h3 className="text-xl font-bold text-foreground mb-1">
