@@ -58,6 +58,23 @@ export function ProgramInquiryModal({
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
+  // Format phone number as user types: (555) 123-4567
+  const formatPhone = (value: string) => {
+    let digits = value.replace(/\D/g, "");
+    // Strip leading "1" country code if autofill included it
+    if (digits.length === 11 && digits.startsWith("1")) {
+      digits = digits.slice(1);
+    }
+    if (digits.length <= 3) return digits;
+    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
+    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
+  };
+
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const formatted = formatPhone(e.target.value);
+    setFormData((prev) => ({ ...prev, phone: formatted }));
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setStep("creating-lead");
@@ -305,7 +322,7 @@ export function ProgramInquiryModal({
                   name="phone"
                   required
                   value={formData.phone}
-                  onChange={handleChange}
+                  onChange={handlePhoneChange}
                   className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
                   placeholder="(555) 123-4567"
                 />
@@ -318,10 +335,6 @@ export function ProgramInquiryModal({
               >
                 Continue to Schedule
               </button>
-
-              <p className="text-xs text-muted-foreground text-center">
-                We&apos;ll send you a confirmation email after you select a time.
-              </p>
             </form>
           )}
 
