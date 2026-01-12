@@ -92,8 +92,10 @@ function generateSlug(firstName: string, lastName: string): string {
 /**
  * Generate initials from name (e.g., "Justin Brown" -> "JB")
  */
-function generateInitials(firstName: string, lastName: string): string {
-  return `${firstName.charAt(0)}${lastName.charAt(0)}`.toUpperCase();
+function generateInitials(firstName: string | null, lastName: string | null): string {
+  const first = firstName?.charAt(0) || "";
+  const last = lastName?.charAt(0) || "";
+  return `${first}${last}`.toUpperCase();
 }
 
 /**

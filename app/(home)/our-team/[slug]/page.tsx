@@ -106,13 +106,13 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
         <div className="flex flex-wrap justify-center gap-4">
           <a
             href={`mailto:${staff.email}`}
-            className="bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:bg-secondary-light transition-colors"
+            className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:bg-secondary-light transition-colors"
           >
             Contact Me
           </a>
           <a
             href={`tel:+1${telPhone}`}
-            className="border-2 border-primary-foreground text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-foreground/10 transition-colors"
+            className="inline-flex items-center justify-center border-2 border-primary-foreground text-primary-foreground px-6 py-3 rounded-md font-semibold hover:bg-primary-foreground/10 transition-colors"
           >
             {formattedPhone}
           </a>
