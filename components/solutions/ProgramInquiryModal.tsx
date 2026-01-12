@@ -356,9 +356,11 @@ export function ProgramInquiryModal({
               programSource={programSlug}
               onBooked={handleBooked}
               onError={handleBookingError}
+              meetingInfo={{
+                type: "phone",
+              }}
               hostInfo={{
-                name: null,
-                isTeamCalendar: true,
+                name: "Solutions Expert",
               }}
             />
           )}

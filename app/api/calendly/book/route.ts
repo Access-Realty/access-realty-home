@@ -209,12 +209,21 @@ export async function POST(request: NextRequest) {
     if (!response.ok) {
       const errorText = await response.text();
       console.error("Calendly API error:", response.status, errorText);
+      console.error("Request body was:", JSON.stringify(calendlyRequestBody, null, 2));
 
       // Parse error for better user feedback
       let errorMessage = "Failed to create booking";
       try {
         const errorJson = JSON.parse(errorText);
-        if (errorJson.message) {
+        // Calendly often returns details in various fields
+        if (errorJson.details) {
+          // Details array contains specific field errors
+          const details = Array.isArray(errorJson.details)
+            ? errorJson.details.map((d: { message?: string; parameter?: string }) => d.message || d.parameter).join(", ")
+            : JSON.stringify(errorJson.details);
+          errorMessage = details || errorJson.message || errorJson.title || errorMessage;
+          console.error("Calendly error details:", errorJson.details);
+        } else if (errorJson.message) {
           errorMessage = errorJson.message;
         } else if (errorJson.title) {
           errorMessage = errorJson.title;

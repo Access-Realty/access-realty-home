@@ -10,6 +10,7 @@ import {
   HiOutlineClock,
   HiOutlineVideoCamera,
   HiOutlineMapPin,
+  HiOutlinePhone,
   HiOutlineUser,
   HiOutlineArrowLeft,
   HiOutlineCheckCircle,
@@ -504,6 +505,10 @@ export function CalendlyBooking({
                 {meetingInfo?.type === "in_person" ||
                 locationKind === "physical" ? (
                   <HiOutlineMapPin className="h-5 w-5 text-primary" />
+                ) : meetingInfo?.type === "phone" ||
+                  locationKind === "outbound_call" ||
+                  locationKind === "inbound_call" ? (
+                  <HiOutlinePhone className="h-5 w-5 text-primary" />
                 ) : (
                   <HiOutlineVideoCamera className="h-5 w-5 text-primary" />
                 )}
@@ -518,6 +523,17 @@ export function CalendlyBooking({
                     {meetingInfo?.location && (
                       <p className="text-sm text-muted-foreground">
                         {meetingInfo.location}
+                      </p>
+                    )}
+                  </>
+                ) : meetingInfo?.type === "phone" ||
+                  locationKind === "outbound_call" ||
+                  locationKind === "inbound_call" ? (
+                  <>
+                    <p className="font-medium text-foreground">Phone call</p>
+                    {meetingInfo?.description && (
+                      <p className="text-sm text-muted-foreground">
+                        {meetingInfo.description}
                       </p>
                     )}
                   </>
@@ -536,18 +552,11 @@ export function CalendlyBooking({
                 </div>
                 <div>
                   {hostInfo.name ? (
-                    <p className="font-medium text-foreground">
-                      Meeting with {hostInfo.name}
-                    </p>
+                    <p className="font-medium text-foreground">{hostInfo.name}</p>
                   ) : hostInfo.isTeamCalendar ? (
-                    <>
-                      <p className="font-medium text-foreground">
-                        Access Realty team member
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        A realtor will be assigned
-                      </p>
-                    </>
+                    <p className="font-medium text-foreground">
+                      Access Realty team member
+                    </p>
                   ) : (
                     <p className="font-medium text-foreground">
                       Access Realty realtor

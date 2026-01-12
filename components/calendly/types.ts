@@ -21,13 +21,14 @@ export interface CalendlyBookingResult {
 }
 
 export interface MeetingInfo {
-  type: "remote" | "in_person";
+  type: "remote" | "in_person" | "phone";
   location?: string;
+  description?: string;
 }
 
 export interface HostInfo {
   name: string | null;
-  isTeamCalendar: boolean;
+  isTeamCalendar?: boolean;
 }
 
 export interface CalendlyBookingProps {
