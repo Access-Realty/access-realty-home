@@ -52,7 +52,7 @@ export function ProgramInquiryModal({
 
   // Get Calendly event type URI from props or environment
   const eventTypeUri =
-    calendlyEventTypeUri || process.env.NEXT_PUBLIC_CALENDLY_EVENT_TYPE_URI || "";
+    calendlyEventTypeUri || process.env.NEXT_PUBLIC_CALENDLY_INQUIRIES_URI || "";
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
