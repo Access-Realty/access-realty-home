@@ -172,10 +172,16 @@ export async function POST(request: NextRequest) {
     };
 
     // Add location if event type requires it
-    console.log("Location kind:", locationKind, "Phone:", body.invitee.phone);
+    // These location kinds require a location.location value (phone number or address)
+    const kindsRequiringLocation = ["outbound_call", "inbound_call", "ask_invitee", "physical", "custom"];
+    console.log("=== BOOKING DEBUG ===");
+    console.log("Location kind:", locationKind);
+    console.log("Phone from request:", body.invitee.phone);
+    console.log("Requires location.location:", kindsRequiringLocation.includes(locationKind || ""));
+
     if (locationKind) {
-      // For outbound_call, we need to include the phone number
-      if (locationKind === "outbound_call" && body.invitee.phone) {
+      if (kindsRequiringLocation.includes(locationKind) && body.invitee.phone) {
+        // Format phone as E.164 for Calendly
         const digits = body.invitee.phone.replace(/\D/g, "");
         let phoneE164 = "";
         if (digits.length === 10) {
@@ -185,15 +191,21 @@ export async function POST(request: NextRequest) {
         } else if (digits.length > 10) {
           phoneE164 = `+${digits}`;
         }
+        console.log("Formatted phone E164:", phoneE164);
         if (phoneE164) {
           calendlyRequestBody.location = { kind: locationKind, location: phoneE164 };
         } else {
+          console.log("WARNING: Could not format phone, sending without location.location");
           calendlyRequestBody.location = { kind: locationKind };
         }
+      } else if (kindsRequiringLocation.includes(locationKind)) {
+        console.log("WARNING: Location kind requires phone but no phone provided!");
+        calendlyRequestBody.location = { kind: locationKind };
       } else {
         calendlyRequestBody.location = { kind: locationKind };
       }
     }
+    console.log("Final location object:", JSON.stringify(calendlyRequestBody.location));
 
     // Add phone number for SMS reminders if provided (must be E.164 format)
     if (body.invitee.phone) {
