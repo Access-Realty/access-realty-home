@@ -159,6 +159,7 @@ export async function POST(request: NextRequest) {
       };
       location?: {
         kind: string;
+        location?: string;
       };
     } = {
       event_type: body.event_type,
@@ -171,8 +172,27 @@ export async function POST(request: NextRequest) {
     };
 
     // Add location if event type requires it
+    console.log("Location kind:", locationKind, "Phone:", body.invitee.phone);
     if (locationKind) {
-      calendlyRequestBody.location = { kind: locationKind };
+      // For outbound_call, we need to include the phone number
+      if (locationKind === "outbound_call" && body.invitee.phone) {
+        const digits = body.invitee.phone.replace(/\D/g, "");
+        let phoneE164 = "";
+        if (digits.length === 10) {
+          phoneE164 = `+1${digits}`;
+        } else if (digits.length === 11 && digits.startsWith("1")) {
+          phoneE164 = `+${digits}`;
+        } else if (digits.length > 10) {
+          phoneE164 = `+${digits}`;
+        }
+        if (phoneE164) {
+          calendlyRequestBody.location = { kind: locationKind, location: phoneE164 };
+        } else {
+          calendlyRequestBody.location = { kind: locationKind };
+        }
+      } else {
+        calendlyRequestBody.location = { kind: locationKind };
+      }
     }
 
     // Add phone number for SMS reminders if provided (must be E.164 format)

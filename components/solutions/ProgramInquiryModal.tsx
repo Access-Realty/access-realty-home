@@ -178,13 +178,12 @@ export function ProgramInquiryModal({
     switch (step) {
       case "form":
       case "creating-lead":
-        return "Schedule Your Consultation";
       case "booking":
-        return "Choose a Time";
+        return "Schedule a Call";
       case "success":
         return "You're All Set!";
       default:
-        return "Schedule Your Consultation";
+        return "Schedule a Call";
     }
   };
 

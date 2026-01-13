@@ -459,12 +459,6 @@ export function CalendlyBooking({
     return (
       <StepContainer>
         <div className="space-y-6">
-          <div className="text-center">
-            <h3 className="text-lg font-semibold text-foreground">
-              Review the details below
-            </h3>
-          </div>
-
           {slotError && (
             <div className="flex items-center gap-2 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
               <HiOutlineExclamationCircle className="h-4 w-4 flex-shrink-0" />
@@ -473,96 +467,42 @@ export function CalendlyBooking({
           )}
 
           <div className="bg-muted/50 rounded-xl p-5 space-y-4">
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="rounded-full bg-primary/10 p-2">
                 <HiOutlineCalendarDays className="h-5 w-5 text-primary" />
               </div>
-              <div>
-                <p className="font-medium text-foreground">
-                  {formatDate(slotDate)}
-                </p>
-                <p className="text-sm text-muted-foreground">
-                  {formatTime(selectedSlot.start_time, true)}
-                </p>
-              </div>
+              <p className="font-medium text-foreground">
+                {formatShortDate(slotDate)} · {formatTime(selectedSlot.start_time, true)}
+              </p>
             </div>
 
-            {duration && (
-              <div className="flex items-start gap-3">
-                <div className="rounded-full bg-primary/10 p-2">
-                  <HiOutlineClock className="h-5 w-5 text-primary" />
-                </div>
-                <div>
-                  <p className="font-medium text-foreground">
-                    {duration} minute consultation
-                  </p>
-                </div>
-              </div>
-            )}
-
-            <div className="flex items-start gap-3">
+            <div className="flex items-center gap-3">
               <div className="rounded-full bg-primary/10 p-2">
-                {meetingInfo?.type === "in_person" ||
-                locationKind === "physical" ? (
+                {meetingInfo?.type === "in_person" || locationKind === "physical" ? (
                   <HiOutlineMapPin className="h-5 w-5 text-primary" />
-                ) : meetingInfo?.type === "phone" ||
-                  locationKind === "outbound_call" ||
-                  locationKind === "inbound_call" ? (
+                ) : meetingInfo?.type === "phone" || locationKind === "outbound_call" || locationKind === "inbound_call" ? (
                   <HiOutlinePhone className="h-5 w-5 text-primary" />
                 ) : (
                   <HiOutlineVideoCamera className="h-5 w-5 text-primary" />
                 )}
               </div>
-              <div>
-                {meetingInfo?.type === "in_person" ||
-                locationKind === "physical" ? (
-                  <>
-                    <p className="font-medium text-foreground">
-                      In-person meeting
-                    </p>
-                    {meetingInfo?.location && (
-                      <p className="text-sm text-muted-foreground">
-                        {meetingInfo.location}
-                      </p>
-                    )}
-                  </>
-                ) : meetingInfo?.type === "phone" ||
-                  locationKind === "outbound_call" ||
-                  locationKind === "inbound_call" ? (
-                  <>
-                    <p className="font-medium text-foreground">Phone call</p>
-                    {meetingInfo?.description && (
-                      <p className="text-sm text-muted-foreground">
-                        {meetingInfo.description}
-                      </p>
-                    )}
-                  </>
-                ) : (
-                  <p className="font-medium text-foreground">
-                    {getLocationDisplayName(locationKind)}
-                  </p>
-                )}
-              </div>
+              <p className="font-medium text-foreground">
+                {meetingInfo?.type === "in_person" || locationKind === "physical"
+                  ? "In-person"
+                  : meetingInfo?.type === "phone" || locationKind === "outbound_call" || locationKind === "inbound_call"
+                  ? "Phone call"
+                  : getLocationDisplayName(locationKind)}
+              </p>
             </div>
 
             {hostInfo && (
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 <div className="rounded-full bg-primary/10 p-2">
                   <HiOutlineUser className="h-5 w-5 text-primary" />
                 </div>
-                <div>
-                  {hostInfo.name ? (
-                    <p className="font-medium text-foreground">{hostInfo.name}</p>
-                  ) : hostInfo.isTeamCalendar ? (
-                    <p className="font-medium text-foreground">
-                      Access Realty team member
-                    </p>
-                  ) : (
-                    <p className="font-medium text-foreground">
-                      Access Realty realtor
-                    </p>
-                  )}
-                </div>
+                <p className="font-medium text-foreground">
+                  {hostInfo.name || (hostInfo.isTeamCalendar ? "Access Realty team member" : "Access Realty realtor")}
+                </p>
               </div>
             )}
 
@@ -616,14 +556,9 @@ export function CalendlyBooking({
             >
               <HiOutlineArrowLeft className="h-4 w-4" />
             </button>
-            <div>
-              <h3 className="text-lg font-semibold text-foreground">
-                Select a Time
-              </h3>
-              <p className="text-sm text-muted-foreground">
-                {formatShortDate(selectedDate)}{duration ? ` · ${duration} min` : ""}
-              </p>
-            </div>
+            <p className="text-lg font-semibold text-foreground">
+              {formatShortDate(selectedDate)}{duration ? ` · ${duration} min` : ""}
+            </p>
           </div>
 
           {slotError && (
@@ -698,14 +633,9 @@ export function CalendlyBooking({
   return (
     <StepContainer>
       <div className="space-y-5">
-        <div className="text-center space-y-1">
-          <h3 className="text-lg font-semibold text-foreground">
-            Select a Date
-          </h3>
-          <p className="text-sm text-muted-foreground">
-            Choose an available date for your consultation
-          </p>
-        </div>
+        <h3 className="text-lg font-semibold text-foreground text-center">
+          Select a Date
+        </h3>
 
         <div className="flex justify-center relative">
           {/* Loading overlay */}
