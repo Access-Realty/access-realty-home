@@ -3,12 +3,22 @@
 
 import { NextRequest, NextResponse } from "next/server";
 
+interface CalendlyCustomQuestion {
+  name: string;
+  type: string;
+  position: number;
+  enabled: boolean;
+  required: boolean;
+  answer_choices?: string[];
+}
+
 interface CalendlyEventTypeResponse {
   resource: {
     uri: string;
     name: string;
     duration: number;
     locations: Array<{ kind: string; location?: string }> | null;
+    custom_questions?: CalendlyCustomQuestion[];
   };
 }
 
@@ -83,11 +93,23 @@ export async function GET(request: NextRequest) {
       displayName: mapLocationKind(loc.kind),
     }));
 
+    // Filter and map custom questions (only enabled ones)
+    const customQuestions = (data.resource.custom_questions || [])
+      .filter((q) => q.enabled)
+      .map((q) => ({
+        name: q.name,
+        type: q.type,
+        position: q.position,
+        required: q.required,
+        answerChoices: q.answer_choices || null,
+      }));
+
     return NextResponse.json({
       uri: data.resource.uri,
       name: data.resource.name,
       duration: data.resource.duration,
       locations: locations || [],
+      customQuestions,
     });
   } catch (error) {
     console.error("Error fetching event type:", error);

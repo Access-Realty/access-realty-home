@@ -55,10 +55,19 @@ interface CalendlyScheduledEventResponse {
   };
 }
 
+interface CalendlyCustomQuestion {
+  name: string;
+  type: string;
+  position: number;
+  enabled: boolean;
+  required: boolean;
+}
+
 interface CalendlyEventTypeResponse {
   resource: {
     uri: string;
     locations: Array<{ kind: string; location?: string }> | null;
+    custom_questions?: CalendlyCustomQuestion[];
   };
 }
 
@@ -123,8 +132,9 @@ export async function POST(request: NextRequest) {
     // Default timezone if not provided (America/Chicago for Texas-based business)
     const timezone = body.invitee.timezone || "America/Chicago";
 
-    // Fetch event type to check if location is required
+    // Fetch event type to check if location and custom questions are required
     let locationKind: string | null = null;
+    let customQuestions: CalendlyCustomQuestion[] = [];
     try {
       const eventTypeResponse = await fetch(body.event_type, {
         headers: {
@@ -141,6 +151,10 @@ export async function POST(request: NextRequest) {
         if (firstLocation) {
           locationKind = firstLocation.kind;
         }
+        // Get custom questions (filter to enabled only)
+        customQuestions = (eventTypeData.resource.custom_questions || []).filter(
+          (q) => q.enabled
+        );
       }
     } catch (eventTypeError) {
       console.warn("Failed to fetch event type details:", eventTypeError);
@@ -161,6 +175,11 @@ export async function POST(request: NextRequest) {
         kind: string;
         location?: string;
       };
+      questions_and_answers?: Array<{
+        question: string;
+        answer: string;
+        position: number;
+      }>;
     } = {
       event_type: body.event_type,
       start_time: startTime.toISOString(),
@@ -170,6 +189,53 @@ export async function POST(request: NextRequest) {
         timezone: timezone,
       },
     };
+
+    // Build questions_and_answers if event type has custom questions
+    if (customQuestions.length > 0) {
+      const questionsAndAnswers: Array<{ question: string; answer: string; position: number }> = [];
+
+      for (const q of customQuestions) {
+        let answer = "";
+
+        // Map known question types to our collected data
+        if (q.type === "phone_number" && body.invitee.phone) {
+          // Phone number question - format as E.164
+          const digits = body.invitee.phone.replace(/\D/g, "");
+          if (digits.length === 10) {
+            answer = `+1${digits}`;
+          } else if (digits.length === 11 && digits.startsWith("1")) {
+            answer = `+${digits}`;
+          } else if (digits.length > 10) {
+            answer = `+${digits}`;
+          }
+        } else if (q.name.toLowerCase().includes("phone") && body.invitee.phone) {
+          // Fallback: question name contains "phone"
+          const digits = body.invitee.phone.replace(/\D/g, "");
+          if (digits.length === 10) {
+            answer = `+1${digits}`;
+          } else if (digits.length === 11 && digits.startsWith("1")) {
+            answer = `+${digits}`;
+          } else if (digits.length > 10) {
+            answer = `+${digits}`;
+          }
+        }
+        // Skip non-required questions we don't have answers for
+        if (!answer && !q.required) {
+          continue;
+        }
+
+        questionsAndAnswers.push({
+          question: q.name,
+          answer: answer,
+          position: q.position,
+        });
+      }
+
+      if (questionsAndAnswers.length > 0) {
+        calendlyRequestBody.questions_and_answers = questionsAndAnswers;
+        console.log("Questions and answers:", JSON.stringify(questionsAndAnswers, null, 2));
+      }
+    }
 
     // Add location if event type requires it
     // These location kinds require a location.location value (phone number or address)
