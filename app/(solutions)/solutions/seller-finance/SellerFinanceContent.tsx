@@ -6,7 +6,6 @@
 import { useState } from "react";
 import {
   HiCheck,
-  HiArrowRight,
   HiOutlineBanknotes,
   HiOutlineCalendarDays,
   HiOutlineShieldCheck,
@@ -15,7 +14,7 @@ import {
   HiOutlineCheckBadge,
   HiOutlineChartBar,
 } from "react-icons/hi2";
-import { Section } from "@/components/layout";
+import { HeroSection, Section } from "@/components/layout";
 import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
@@ -150,7 +149,7 @@ export default function SellerFinanceContent() {
   return (
     <div className="bg-background min-h-screen">
       {/* On-Page Navigation Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border">
+      <nav className="sticky top-0 z-50 bg-white border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -195,87 +194,69 @@ export default function SellerFinanceContent() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-12 bg-gradient-to-b from-blue-50 to-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight mb-6">
-                Become the Bank,{" "}
-                <span className="text-secondary">Earn Monthly Income</span>
-              </h1>
-              <p className="text-lg text-muted-foreground mb-6">
-                Instead of a lump sum, receive monthly payments with interest. Seller financing
-                lets you create a passive income stream while potentially reducing your tax burden.
-              </p>
+      <HeroSection maxWidth="6xl" centered={false}>
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-white">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Become the Bank,{" "}
+              <span className="text-secondary">Earn Monthly Income</span>
+            </h1>
+            <p className="text-base md:text-lg mb-6 text-white/80">
+              Instead of a lump sum, receive monthly payments with interest. Seller financing
+              lets you create a passive income stream while potentially reducing your tax burden.
+            </p>
 
-              {/* Trust badges */}
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  Monthly income
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  Tax advantages
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  You set the terms
-                </div>
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                Monthly income
               </div>
-
-              {/* Address Input */}
-              <div id="hero-address-input" className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2">
-                <div className="flex-grow">
-                  <AddressInput
-                    onAddressSelect={handleAddressSelect}
-                    placeholder="Enter your property address"
-                    className="w-full"
-                  />
-                </div>
-                <button
-                  onClick={handleQualifyClick}
-                  className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
-                >
-                  See If You Qualify
-                  <HiArrowRight className="h-5 w-5" />
-                </button>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                Tax advantages
               </div>
-
-              <p className="text-xs text-muted-foreground mt-3">
-                Free consultation • No obligation • DFW Metroplex only
-              </p>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                You set the terms
+              </div>
             </div>
 
-            {/* Right Side - Decorative */}
-            <div className="hidden lg:flex items-center justify-center">
-              <div className="relative">
-                <div className="bg-white rounded-2xl shadow-xl p-8 w-[400px]">
-                  <div className="text-center mb-6">
-                    <HiOutlineBanknotes className="h-16 w-16 text-primary/30 mx-auto mb-4" />
-                    <p className="text-lg font-semibold text-foreground">Create Passive Income</p>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <HiCheck className="h-6 w-6 text-green-600" />
-                      <span className="text-sm text-foreground">Monthly payments with interest</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <HiCheck className="h-6 w-6 text-green-600" />
-                      <span className="text-sm text-foreground">Spread capital gains over time</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <HiCheck className="h-6 w-6 text-green-600" />
-                      <span className="text-sm text-foreground">Property stays as collateral</span>
-                    </div>
-                  </div>
-                </div>
+            {/* Address Input */}
+            <div id="hero-address-input" className="flex flex-col sm:flex-row gap-3 mb-4">
+              <div className="relative flex-1">
+                <AddressInput
+                  onAddressSelect={handleAddressSelect}
+                  placeholder="Enter your property address"
+                  className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
+                />
               </div>
+              <button
+                onClick={handleQualifyClick}
+                className="h-14 px-8 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold rounded-md transition-colors whitespace-nowrap"
+              >
+                See If You Qualify
+              </button>
+            </div>
+
+            <p className="text-sm text-white/60">
+              Free consultation • No obligation • DFW Metroplex only
+            </p>
+          </div>
+
+          {/* Right Image */}
+          <div className="hidden md:block">
+            <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
+              <img
+                src="/price-launch-hero.jpg"
+                alt="Beautiful home"
+                className="w-full h-auto object-cover"
+              />
             </div>
           </div>
         </div>
-      </section>
+      </HeroSection>
 
       {/* Benefits */}
       <Section variant="content" maxWidth="5xl">
@@ -361,75 +342,45 @@ export default function SellerFinanceContent() {
       </Section>
 
       {/* Bottom CTA */}
-      <section className="bg-primary py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Is Seller Financing Right for You?
+      <Section variant="content" maxWidth="3xl">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
+            See If Your Property Qualifies
           </h2>
-          <p className="text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-            Let&apos;s discuss your property and financial goals to see if seller financing makes sense for your situation.
+          <p className="text-muted-foreground mb-8">
+            Enter your address to discuss if seller financing is right for your situation.
           </p>
-          <button
-            onClick={focusAddressInput}
-            className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
-          >
-            See If You Qualify
-            <HiArrowRight className="h-5 w-5" />
-          </button>
 
-          <div className="flex flex-wrap justify-center gap-6 mt-8">
-            <div className="flex items-center gap-2 text-sm text-white/80">
-              <HiCheck className="h-5 w-5 text-white" />
-              Free consultation
+          {/* Address Input - same as hero */}
+          <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-6">
+            <div className="relative flex-1">
+              <AddressInput
+                onAddressSelect={handleAddressSelect}
+                placeholder="Enter your property address"
+                className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
+              />
             </div>
-            <div className="flex items-center gap-2 text-sm text-white/80">
-              <HiCheck className="h-5 w-5 text-white" />
+            <button
+              onClick={handleQualifyClick}
+              className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors whitespace-nowrap"
+            >
+              See If You Qualify
+            </button>
+          </div>
+
+          {/* Trust badges */}
+          <div className="flex justify-center gap-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <HiCheck className="h-5 w-5 text-primary" />
               No pressure
             </div>
-            <div className="flex items-center gap-2 text-sm text-white/80">
-              <HiCheck className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <HiCheck className="h-5 w-5 text-primary" />
               Expert guidance
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-primary py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="text-white font-semibold">
-              <span className="font-serif italic">Seller</span>{" "}
-              <span className="font-sans font-bold">Finance</span>
-            </span>
-
-            <div className="flex items-center gap-6 text-white/70 text-sm">
-              <button
-                onClick={() => scrollToSection("how-it-works")}
-                className="hover:text-white transition-colors"
-              >
-                How It Works
-              </button>
-              <button
-                onClick={() => scrollToSection("benefits")}
-                className="hover:text-white transition-colors"
-              >
-                Benefits
-              </button>
-              <button
-                onClick={() => scrollToSection("faq")}
-                className="hover:text-white transition-colors"
-              >
-                FAQ
-              </button>
-            </div>
-
-            <span className="text-white/50 text-sm">
-              © {new Date().getFullYear()} Seller Finance. All rights reserved.
-            </span>
-          </div>
-        </div>
-      </footer>
+      </Section>
 
       {/* Inquiry Modal */}
       <ProgramInquiryModal
