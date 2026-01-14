@@ -273,7 +273,11 @@ export function CalendlyBooking({
     transitionToStep("validating");
 
     try {
-      const freshSlots = await fetchWeekSlots(selectedDate);
+      // Use current time (not selectedDate which could be midnight of today)
+      // to avoid "start_time must be in the future" error from Calendly
+      const now = new Date();
+      now.setMinutes(now.getMinutes() + 1);
+      const freshSlots = await fetchWeekSlots(now);
       if (!isMountedRef.current) return;
 
       const slotStillAvailable = freshSlots.some(
