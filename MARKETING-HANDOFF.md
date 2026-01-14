@@ -1,5 +1,7 @@
 # Marketing Site → App Handoff
 
+> **Maintainers:** This document describes the data contract between the marketing site and the app. If you modify the `leads` or `parcels` table schema, API request/response formats, URL parameters, or Stripe metadata, update this document to keep both repos in sync.
+
 This document describes how lead and property data flows from the marketing site to the app. There are two main lead capture flows:
 
 1. **DirectList Wizard** - Full checkout flow with Stripe payment → redirect to app
