@@ -1,4 +1,4 @@
-// ABOUTME: Solutions overview page showcasing 6 service offerings
+// ABOUTME: Solutions overview page showcasing 7 service offerings
 // ABOUTME: Cards link to individual solution detail pages
 
 import Link from "next/link";
@@ -42,6 +42,15 @@ const solutions = [
     isPartner: true,
   },
   {
+    id: "seller-finance",
+    name: "Seller Finance",
+    tagline: "Become the bank, earn monthly income",
+    description:
+      "Instead of a lump sum, receive monthly payments with interest. Create passive income while potentially reducing your tax burden.",
+    href: "/solutions/seller-finance",
+    isPartner: true,
+  },
+  {
     id: "direct-list",
     name: "Direct List",
     tagline: "Full exposure, flat fee",
@@ -70,7 +79,7 @@ export default function Solutions() {
           Sell Your House Your Way
         </h1>
         <p className="text-xl text-primary-foreground/80 max-w-2xl mx-auto">
-          Six flexible solutions to fit your timeline, budget, and goals.
+          Seven flexible solutions to fit your timeline, budget, and goals.
         </p>
       </HeroSection>
 
