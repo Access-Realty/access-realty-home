@@ -5,6 +5,7 @@
 
 import { useState } from "react";
 import {
+  HiCheck,
   HiArrowRight,
   HiExclamationTriangle,
 } from "react-icons/hi2";
@@ -36,27 +37,27 @@ const howItWorks = [
 const faqs = [
   {
     question: "Is this a loan?",
-    answer: "No. Equity Bridge is not a loan. We pay off your existing mortgage and eliminate your monthly payment. You're not taking on new debt — you're getting relief while your home sells.",
+    answer: "No. Equity Bridge is not a loan and does not add debt to your situation. It's a structured sale solution designed to remove payments now and settle equity later.",
   },
   {
     question: "What's the catch?",
-    answer: "There's no catch. Our fee comes out of the sale proceeds at closing, similar to typical real estate commissions. You know the cost upfront, and you don't pay anything until your home sells.",
+    answer: "There isn't one. You're simply trading time and flexibility for payment relief — without being forced to sell at a steep discount. All terms are explained upfront before you decide anything.",
   },
   {
     question: "Do I lose control of my home?",
-    answer: "No. You remain in control of the sale. You decide on the listing price, approve showings, and accept or reject offers. We're here to remove the financial pressure, not take over.",
+    answer: "No. You're not being rushed, pressured, or forced into a quick sale. Depending on the option you choose, either we sell the home, or you sell the home with our help. Either way, the goal is the same: a clean sale with less stress.",
   },
   {
     question: "Will I still get my equity?",
-    answer: "Yes. When your home sells, our fees are settled from the proceeds and you receive your remaining equity at closing — just like a traditional sale.",
+    answer: "Yes — after fees, closing costs, and expenses, the remaining equity is paid to you when the home sells. If protecting your equity matters, this is exactly why Equity Bridge exists.",
   },
   {
     question: "Is there any cost to see if I qualify?",
-    answer: "No. Checking your eligibility is completely free with no obligation. Enter your address and we'll let you know if Equity Bridge is a fit for your situation.",
+    answer: "No. Checking eligibility is free and has no obligation.",
   },
   {
     question: "Who is this for?",
-    answer: "Equity Bridge is ideal for homeowners who need to sell but are struggling with monthly payments, facing foreclosure, or simply want relief from carrying costs while their home is on the market.",
+    answer: "Equity Bridge is best for homeowners who are carrying two house payments, have already moved into another home, want relief while the home sells, or don't want a low cash offer.",
   },
 ];
 
@@ -142,6 +143,87 @@ export default function EquityBridgeContent() {
         </div>
       </nav>
 
+      {/* Hero Section */}
+      <section className="pt-12 pb-12 bg-gradient-to-b from-blue-50 to-background">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* Left Content */}
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight mb-6">
+                Lose the Payment,{" "}
+                <span className="text-secondary">Keep the Equity</span>
+              </h1>
+              <p className="text-lg text-muted-foreground mb-6">
+                A smarter way to eliminate payments while selling — without giving up your equity.
+              </p>
+
+              {/* Trust badges */}
+              <div className="flex flex-wrap gap-4 mb-8">
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <HiCheck className="h-5 w-5 text-primary" />
+                  No more payments
+                </div>
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <HiCheck className="h-5 w-5 text-primary" />
+                  Keep your equity
+                </div>
+                <div className="flex items-center gap-2 text-sm text-foreground">
+                  <HiCheck className="h-5 w-5 text-primary" />
+                  No fire-sale pricing
+                </div>
+              </div>
+
+              {/* Address Input */}
+              <div id="hero-address-input" className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2">
+                <div className="flex-grow">
+                  <AddressInput
+                    onAddressSelect={handleAddressSelect}
+                    placeholder="Enter your property address"
+                    className="w-full"
+                  />
+                </div>
+                <button
+                  onClick={handleQualifyClick}
+                  className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
+                >
+                  Check Eligibility
+                  <HiArrowRight className="h-5 w-5" />
+                </button>
+              </div>
+
+              <p className="text-xs text-muted-foreground mt-3">
+                Free • No obligation • Only available in the DFW Metroplex
+              </p>
+            </div>
+
+            {/* Right Side - Is This You? */}
+            <div className="hidden lg:block">
+              <div className="bg-card border border-border rounded-2xl p-8">
+                <h3 className="text-xl font-bold text-foreground mb-6">Is This You?</h3>
+                <ul className="space-y-4">
+                  <li className="flex items-start gap-3">
+                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground/80">Carrying two house payments</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground/80">Already moved into another home</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground/80">Want relief while the home sells</span>
+                  </li>
+                  <li className="flex items-start gap-3">
+                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
+                    <span className="text-foreground/80">Don&apos;t want a low cash offer</span>
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* How It Works */}
       <Section variant="content" maxWidth="4xl">
         <div id="how-it-works" className="scroll-mt-20">
@@ -204,7 +286,7 @@ export default function EquityBridgeContent() {
           </p>
 
           {/* Address Input */}
-          <div id="hero-address-input" className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
+          <div className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2 max-w-xl mx-auto">
             <div className="flex-grow">
               <AddressInput
                 onAddressSelect={handleAddressSelect}
