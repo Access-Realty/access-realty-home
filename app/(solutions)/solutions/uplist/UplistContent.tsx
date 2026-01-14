@@ -9,13 +9,12 @@ import {
   HiArrowRight,
   HiXMark,
   HiOutlineHome,
-  HiOutlineBanknotes,
   HiOutlineClipboardDocumentCheck,
   HiOutlineDocumentText,
   HiOutlineUserGroup,
   HiOutlineCheckBadge,
 } from "react-icons/hi2";
-import { Section } from "@/components/layout";
+import { HeroSection, Section } from "@/components/layout";
 import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
@@ -171,7 +170,7 @@ export default function UplistContent() {
   return (
     <div className="bg-background min-h-screen">
       {/* On-Page Navigation Header */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white border-b border-border">
+      <nav className="sticky top-0 z-50 bg-white border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
@@ -216,87 +215,69 @@ export default function UplistContent() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-24 pb-12 bg-gradient-to-b from-blue-50 to-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight mb-6">
-                Get Market Price{" "}
-                <span className="text-secondary">Without the Hassle</span>
-              </h1>
-              <p className="text-lg text-muted-foreground mb-6">
-                Stop settling for low investor offers. With Uplist, we cover your mortgage
-                payments while your home sells on the open market for what it&apos;s actually worth.
-              </p>
+      <HeroSection maxWidth="6xl" centered={false}>
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-white">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Get Market Price{" "}
+              <span className="text-secondary">Without the Hassle</span>
+            </h1>
+            <p className="text-base md:text-lg mb-6 text-white/80">
+              Stop settling for low investor offers. With Uplist, we cover your mortgage
+              payments while your home sells on the open market for what it&apos;s actually worth.
+            </p>
 
-              {/* Trust badges */}
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  Mortgage covered
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  Market price
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  Hands-off selling
-                </div>
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                Mortgage covered
               </div>
-
-              {/* Address Input */}
-              <div id="hero-address-input" className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2">
-                <div className="flex-grow">
-                  <AddressInput
-                    onAddressSelect={handleAddressSelect}
-                    placeholder="Enter your property address"
-                    className="w-full"
-                  />
-                </div>
-                <button
-                  onClick={handleQualifyClick}
-                  className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
-                >
-                  See If You Qualify
-                  <HiArrowRight className="h-5 w-5" />
-                </button>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                Market price
               </div>
-
-              <p className="text-xs text-muted-foreground mt-3">
-                Free consultation • No obligation • DFW Metroplex only
-              </p>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                Hands-off selling
+              </div>
             </div>
 
-            {/* Right Side - Decorative */}
-            <div className="hidden lg:flex items-center justify-center">
-              <div className="relative">
-                <div className="bg-white rounded-2xl shadow-xl p-8 w-[400px]">
-                  <div className="text-center mb-6">
-                    <HiOutlineBanknotes className="h-16 w-16 text-primary/30 mx-auto mb-4" />
-                    <p className="text-lg font-semibold text-foreground">We Cover Your Mortgage</p>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <HiCheck className="h-6 w-6 text-green-600" />
-                      <span className="text-sm text-foreground">No payments while selling</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <HiCheck className="h-6 w-6 text-green-600" />
-                      <span className="text-sm text-foreground">Full MLS exposure</span>
-                    </div>
-                    <div className="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-                      <HiCheck className="h-6 w-6 text-green-600" />
-                      <span className="text-sm text-foreground">Market value sale price</span>
-                    </div>
-                  </div>
-                </div>
+            {/* Address Input */}
+            <div id="hero-address-input" className="flex flex-col sm:flex-row gap-3 mb-4">
+              <div className="relative flex-1">
+                <AddressInput
+                  onAddressSelect={handleAddressSelect}
+                  placeholder="Enter your property address"
+                  className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
+                />
               </div>
+              <button
+                onClick={handleQualifyClick}
+                className="h-14 px-8 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold rounded-md transition-colors whitespace-nowrap"
+              >
+                See If You Qualify
+              </button>
+            </div>
+
+            <p className="text-sm text-white/60">
+              Free consultation • No obligation • DFW Metroplex only
+            </p>
+          </div>
+
+          {/* Right Image */}
+          <div className="hidden md:block">
+            <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
+              <img
+                src="/price-launch-hero.jpg"
+                alt="Beautiful home"
+                className="w-full h-auto object-cover"
+              />
             </div>
           </div>
         </div>
-      </section>
+      </HeroSection>
 
       {/* Is This You? */}
       <Section variant="content" maxWidth="3xl">
