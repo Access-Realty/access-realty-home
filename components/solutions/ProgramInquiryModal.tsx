@@ -4,7 +4,7 @@
 "use client";
 
 import { useState } from "react";
-import { HiXMark, HiOutlineArrowLeft } from "react-icons/hi2";
+import { HiXMark } from "react-icons/hi2";
 import type { AddressData } from "@/components/direct-list/AddressInput";
 import { useTrackingParams } from "@/lib/useTrackingParams";
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
@@ -155,12 +155,6 @@ export function ProgramInquiryModal({
     // Stay on booking step, CalendlyBooking shows its own error
   };
 
-  const handleBack = () => {
-    setStep("form");
-    setLeadId(null);
-    setError("");
-  };
-
   const handleClose = () => {
     // Reset state when closing
     setFormData({ firstName: "", lastName: "", email: "", phone: "" });
@@ -196,23 +190,13 @@ export function ProgramInquiryModal({
       >
         {/* Header */}
         <div className="bg-primary px-6 py-4 flex items-center justify-between shrink-0">
-          <div className="flex items-center gap-3">
-            {step === "booking" && (
-              <button
-                onClick={handleBack}
-                className="text-primary-foreground/80 hover:text-primary-foreground transition-colors"
-              >
-                <HiOutlineArrowLeft className="h-5 w-5" />
-              </button>
-            )}
-            <div>
-              <h3 className="text-xl font-bold text-primary-foreground">
-                {getHeaderTitle()}
-              </h3>
-              <p className="text-sm text-primary-foreground/80 mt-1">
-                {programName} Program
-              </p>
-            </div>
+          <div>
+            <h3 className="text-xl font-bold text-primary-foreground">
+              {getHeaderTitle()}
+            </h3>
+            <p className="text-sm text-primary-foreground/80 mt-1">
+              {programName} Program
+            </p>
           </div>
           <button
             onClick={handleClose}
@@ -371,10 +355,10 @@ export function ProgramInquiryModal({
                 Booking configuration is missing. Please contact support.
               </p>
               <button
-                onClick={handleBack}
+                onClick={handleClose}
                 className="text-primary font-medium hover:underline"
               >
-                Go back
+                Close
               </button>
             </div>
           )}
