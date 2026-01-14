@@ -36,6 +36,8 @@ export interface CalendlyBookingProps {
   invitee: CalendlyInvitee;
   leadId: string; // Required for webhook to link meeting to lead
   programSource?: string; // e.g., "price_launch" for tracking
+  programName?: string; // e.g., "Price Launch" for display in calendar
+  propertyAddress?: string; // e.g., "123 Main St, Dallas, TX 75001"
   onBooked: (result: CalendlyBookingResult) => void;
   onError?: (error: string) => void;
   onBack?: () => void;

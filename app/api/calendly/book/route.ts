@@ -19,6 +19,11 @@ interface BookingRequest {
     utm_content?: string;
     utm_term?: string;
   };
+  // Context for freeform "anything to help prepare" questions
+  context?: {
+    programName?: string; // e.g., "Price Launch"
+    propertyAddress?: string; // e.g., "123 Main St, Dallas, TX 75001"
+  };
 }
 
 interface CalendlyInviteeResponse {
@@ -217,6 +222,40 @@ export async function POST(request: NextRequest) {
             answer = `+${digits}`;
           } else if (digits.length > 10) {
             answer = `+${digits}`;
+          }
+        } else if (q.name.toLowerCase().includes("solution") || q.name.toLowerCase().includes("program")) {
+          // Map solution/program question to context or utm_source
+          if (body.context?.programName) {
+            answer = body.context.programName;
+          } else if (body.utm?.utm_source && body.utm.utm_source !== "marketing_site") {
+            // Fallback: format slug nicely: "price-launch" -> "Price Launch"
+            answer = body.utm.utm_source
+              .split("-")
+              .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+              .join(" ");
+          }
+        } else if (q.type === "text" && (q.name.toLowerCase().includes("anything") || q.name.toLowerCase().includes("prepare") || q.name.toLowerCase().includes("help"))) {
+          // Freeform "anything to help prepare" question - only populate for inquiry bookings
+          // (when context is explicitly provided)
+          if (body.context?.programName || body.context?.propertyAddress) {
+            const parts: string[] = [];
+            if (body.context.programName) {
+              parts.push(`Program: ${body.context.programName}`);
+            }
+            if (body.context.propertyAddress) {
+              parts.push(`Property: ${body.context.propertyAddress}`);
+            }
+            // Include phone for field staff quick reference
+            if (body.invitee.phone) {
+              const digits = body.invitee.phone.replace(/\D/g, "");
+              if (digits.length >= 10) {
+                const formatted = digits.length === 10
+                  ? `(${digits.slice(0,3)}) ${digits.slice(3,6)}-${digits.slice(6)}`
+                  : `+${digits}`;
+                parts.push(`Phone: ${formatted}`);
+              }
+            }
+            answer = parts.join("\n");
           }
         }
         // Skip non-required questions we don't have answers for

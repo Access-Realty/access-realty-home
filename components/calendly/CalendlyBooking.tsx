@@ -40,6 +40,8 @@ export function CalendlyBooking({
   invitee,
   leadId,
   programSource,
+  programName,
+  propertyAddress,
   onBooked,
   onError,
   onBack,
@@ -324,6 +326,11 @@ export function CalendlyBooking({
             utm_source: programSource || "marketing_site",
             utm_campaign: "consultation",
             utm_content: leadId, // This is how webhook links to lead
+          },
+          // Context for calendar event description
+          context: {
+            programName,
+            propertyAddress,
           },
         }),
       });

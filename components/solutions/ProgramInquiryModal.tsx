@@ -337,6 +337,8 @@ export function ProgramInquiryModal({
               }}
               leadId={leadId}
               programSource={programSlug}
+              programName={programName}
+              propertyAddress={addressData?.formattedAddress}
               onBooked={handleBooked}
               onError={handleBookingError}
               meetingInfo={{
