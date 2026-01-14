@@ -24,6 +24,8 @@ export interface AddressData {
 
 interface AddressInputProps {
   onAddressSelect: (address: AddressData) => void;
+  /** Called after address selection - use this to auto-submit forms when user selects from autocomplete */
+  onAutoSubmit?: () => void;
   placeholder?: string;
   className?: string;
   inputClassName?: string;
@@ -32,6 +34,7 @@ interface AddressInputProps {
 
 export function AddressInput({
   onAddressSelect,
+  onAutoSubmit,
   placeholder = "Enter your property address",
   className = "",
   inputClassName = "",
@@ -77,7 +80,10 @@ export function AddressInput({
 
     setInputValue(addressData.formattedAddress);
     onAddressSelect(addressData);
-  }, [onAddressSelect]);
+
+    // Trigger auto-submit if provided (e.g., to open modal or navigate after address selection)
+    onAutoSubmit?.();
+  }, [onAddressSelect, onAutoSubmit]);
 
   // Update input value when defaultValue changes
   useEffect(() => {

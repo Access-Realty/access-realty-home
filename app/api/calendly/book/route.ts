@@ -383,10 +383,11 @@ export async function POST(request: NextRequest) {
     const inviteeId = inviteeUri.split("/").pop() || "";
     const eventId = eventUri.split("/").pop() || "";
 
-    // Fetch the scheduled event to get start/end times and assigned host
+    // Fetch the scheduled event to get start/end times, assigned host, and location
     let startTimeResult = body.start_time;
     let endTimeResult: string | undefined;
     let assignedHost: { name: string; email: string } | undefined;
+    let locationResult: { type: string; location?: string } | undefined;
 
     try {
       const eventResponse = await fetch(eventUri, {
@@ -410,16 +411,25 @@ export async function POST(request: NextRequest) {
             email: membership.user_email,
           };
         }
+
+        // Extract location info
+        if (eventData.resource.location) {
+          locationResult = {
+            type: eventData.resource.location.type,
+            location: eventData.resource.location.location,
+          };
+        }
       }
     } catch (eventError) {
       console.warn("Failed to fetch event details:", eventError);
-      // Continue with original start_time, no end_time or host
+      // Continue with original start_time, no end_time, host, or location
     }
 
     console.log("Booking created successfully:", {
       eventId,
       inviteeId,
       assignedHost,
+      location: locationResult,
     });
 
     return NextResponse.json({
@@ -428,6 +438,7 @@ export async function POST(request: NextRequest) {
       start_time: startTimeResult,
       end_time: endTimeResult,
       assigned_host: assignedHost,
+      location: locationResult,
       reschedule_url: data.resource.reschedule_url,
       cancel_url: data.resource.cancel_url,
     });

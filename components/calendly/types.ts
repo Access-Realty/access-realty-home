@@ -16,6 +16,10 @@ export interface CalendlyBookingResult {
     name: string;
     email: string;
   };
+  location?: {
+    type: string; // e.g., "outbound_call", "physical", "google_conference"
+    location?: string; // e.g., phone number or address
+  };
   reschedule_url?: string;
   cancel_url?: string;
 }
