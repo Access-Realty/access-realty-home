@@ -15,18 +15,18 @@ const Hero = () => {
 
   const handleAddressSelect = useCallback((address: AddressData) => {
     setSelectedAddress(address);
+    // Save immediately so it's available when navigating
+    saveAddress(address);
   }, []);
+
+  const navigateToWizard = useCallback(() => {
+    router.push("/direct-list/get-started");
+  }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (selectedAddress) {
-      // Store address for get-started wizard to pick up
-      saveAddress(selectedAddress);
-    }
-
-    // Navigate to get-started wizard
-    router.push("/direct-list/get-started");
+    // Address already saved in handleAddressSelect if selected
+    navigateToWizard();
   };
 
   return (
@@ -54,6 +54,7 @@ const Hero = () => {
               <div className="flex-1">
                 <AddressInput
                   onAddressSelect={handleAddressSelect}
+                  onAutoSubmit={navigateToWizard}
                   placeholder="Enter Your Address to Get Started"
                   inputClassName="!h-14 !py-0 !text-lg !border-2 !rounded-md !bg-card focus:!border-secondary"
                 />

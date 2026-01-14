@@ -248,6 +248,7 @@ export default function UplistContent() {
               <div className="relative flex-1">
                 <AddressInput
                   onAddressSelect={handleAddressSelect}
+                  onAutoSubmit={() => setShowInquiryModal(true)}
                   placeholder="Enter your property address"
                   className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
                 />
@@ -415,6 +416,7 @@ export default function UplistContent() {
             <div className="relative flex-1">
               <AddressInput
                 onAddressSelect={handleAddressSelect}
+                onAutoSubmit={() => setShowInquiryModal(true)}
                 placeholder="Enter your property address"
                 className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
               />
