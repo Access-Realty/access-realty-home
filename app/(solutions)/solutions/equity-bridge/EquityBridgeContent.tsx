@@ -7,9 +7,8 @@ import { useState } from "react";
 import {
   HiCheck,
   HiArrowRight,
-  HiExclamationTriangle,
 } from "react-icons/hi2";
-import { Section } from "@/components/layout";
+import { HeroSection, Section } from "@/components/layout";
 import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
@@ -94,16 +93,6 @@ export default function EquityBridgeContent() {
 
   return (
     <div className="bg-background min-h-screen">
-      {/* Under Construction Banner */}
-      <div className="bg-secondary/20 border-b border-secondary/30">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
-          <div className="flex items-center justify-center gap-2 text-sm text-foreground">
-            <HiExclamationTriangle className="h-5 w-5 text-secondary" />
-            <span>This page is under construction. Content and design coming soon.</span>
-          </div>
-        </div>
-      </div>
-
       {/* On-Page Navigation Header */}
       <nav className="sticky top-0 z-50 bg-white border-b border-border">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -144,85 +133,68 @@ export default function EquityBridgeContent() {
       </nav>
 
       {/* Hero Section */}
-      <section className="pt-12 pb-12 bg-gradient-to-b from-blue-50 to-background">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            {/* Left Content */}
-            <div>
-              <h1 className="text-4xl md:text-5xl font-bold text-primary leading-tight mb-6">
-                Lose the Payment,{" "}
-                <span className="text-secondary">Keep the Equity</span>
-              </h1>
-              <p className="text-lg text-muted-foreground mb-6">
-                A smarter way to eliminate payments while selling — without giving up your equity.
-              </p>
+      <HeroSection maxWidth="6xl" centered={false}>
+        <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+          {/* Left Content */}
+          <div className="text-white">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+              Lose the Payment,{" "}
+              <span className="text-secondary">Keep the Equity</span>
+            </h1>
+            <p className="text-base md:text-lg mb-6 text-white/80">
+              A smarter way to eliminate payments while selling — without giving up your equity.
+            </p>
 
-              {/* Trust badges */}
-              <div className="flex flex-wrap gap-4 mb-8">
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  No more payments
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  Keep your equity
-                </div>
-                <div className="flex items-center gap-2 text-sm text-foreground">
-                  <HiCheck className="h-5 w-5 text-primary" />
-                  No fire-sale pricing
-                </div>
+            {/* Trust badges */}
+            <div className="flex flex-wrap gap-4 mb-6">
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                No more payments
               </div>
-
-              {/* Address Input */}
-              <div id="hero-address-input" className="bg-white rounded-xl shadow-lg p-2 flex flex-col sm:flex-row gap-2">
-                <div className="flex-grow">
-                  <AddressInput
-                    onAddressSelect={handleAddressSelect}
-                    placeholder="Enter your property address"
-                    className="w-full"
-                  />
-                </div>
-                <button
-                  onClick={handleQualifyClick}
-                  className="flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary/90 transition-colors whitespace-nowrap"
-                >
-                  Check Eligibility
-                  <HiArrowRight className="h-5 w-5" />
-                </button>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                Keep your equity
               </div>
-
-              <p className="text-xs text-muted-foreground mt-3">
-                Free • No obligation • Only available in the DFW Metroplex
-              </p>
+              <div className="flex items-center gap-2 text-sm text-white/90">
+                <HiCheck className="h-5 w-5 text-secondary" />
+                No fire-sale pricing
+              </div>
             </div>
 
-            {/* Right Side - Is This You? */}
-            <div className="hidden lg:block">
-              <div className="bg-card border border-border rounded-2xl p-8">
-                <h3 className="text-xl font-bold text-foreground mb-6">Is This You?</h3>
-                <ul className="space-y-4">
-                  <li className="flex items-start gap-3">
-                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-foreground/80">Carrying two house payments</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-foreground/80">Already moved into another home</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-foreground/80">Want relief while the home sells</span>
-                  </li>
-                  <li className="flex items-start gap-3">
-                    <HiCheck className="h-5 w-5 text-primary shrink-0 mt-0.5" />
-                    <span className="text-foreground/80">Don&apos;t want a low cash offer</span>
-                  </li>
-                </ul>
+            {/* Address Input */}
+            <div id="hero-address-input" className="flex flex-col sm:flex-row gap-3 mb-4">
+              <div className="relative flex-1">
+                <AddressInput
+                  onAddressSelect={handleAddressSelect}
+                  placeholder="Enter your property address"
+                  className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
+                />
               </div>
+              <button
+                onClick={handleQualifyClick}
+                className="h-14 px-8 bg-secondary hover:bg-secondary/90 text-secondary-foreground font-semibold rounded-md transition-colors whitespace-nowrap"
+              >
+                Check Eligibility
+              </button>
+            </div>
+
+            <p className="text-sm text-white/60">
+              Free • No obligation • DFW Metroplex only
+            </p>
+          </div>
+
+          {/* Right Image */}
+          <div className="hidden md:block">
+            <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
+              <img
+                src="/price-launch-hero.jpg"
+                alt="Beautiful home"
+                className="w-full h-auto object-cover"
+              />
             </div>
           </div>
         </div>
-      </section>
+      </HeroSection>
 
       {/* How It Works */}
       <Section variant="content" maxWidth="4xl">
