@@ -6,7 +6,6 @@
 import { useState } from "react";
 import {
   HiCheck,
-  HiArrowRight,
   HiXMark,
   HiOutlineHome,
   HiOutlineClipboardDocumentCheck,
@@ -402,75 +401,45 @@ export default function UplistContent() {
       </Section>
 
       {/* Bottom CTA */}
-      <section className="bg-primary py-16">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-3xl font-bold text-white mb-4">
-            Ready for a Better Price Without the Hassle?
+      <Section variant="content" maxWidth="3xl">
+        <div className="text-center">
+          <h2 className="text-3xl font-bold text-foreground mb-4">
+            See If Your Property Qualifies
           </h2>
-          <p className="text-primary-foreground/80 mb-8 max-w-2xl mx-auto">
-            Find out if Uplist is right for your situation. We&apos;ll give you a realistic net number with no obligation.
+          <p className="text-muted-foreground mb-8">
+            Enter your address to find out if Uplist is right for your situation.
           </p>
-          <button
-            onClick={focusAddressInput}
-            className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-secondary/90 transition-colors"
-          >
-            See If You Qualify
-            <HiArrowRight className="h-5 w-5" />
-          </button>
 
-          <div className="flex flex-wrap justify-center gap-6 mt-8">
-            <div className="flex items-center gap-2 text-sm text-white/80">
-              <HiCheck className="h-5 w-5 text-white" />
-              Free consultation
+          {/* Address Input - same as hero */}
+          <div className="flex flex-col sm:flex-row gap-3 max-w-2xl mx-auto mb-6">
+            <div className="relative flex-1">
+              <AddressInput
+                onAddressSelect={handleAddressSelect}
+                placeholder="Enter your property address"
+                className="[&_input]:h-14 [&_input]:text-lg [&_input]:bg-card [&_input]:border-2 [&_input]:rounded-md"
+              />
             </div>
-            <div className="flex items-center gap-2 text-sm text-white/80">
-              <HiCheck className="h-5 w-5 text-white" />
+            <button
+              onClick={handleQualifyClick}
+              className="h-14 px-8 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold rounded-md transition-colors whitespace-nowrap"
+            >
+              See If You Qualify
+            </button>
+          </div>
+
+          {/* Trust badges */}
+          <div className="flex justify-center gap-6">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <HiCheck className="h-5 w-5 text-primary" />
               No pressure
             </div>
-            <div className="flex items-center gap-2 text-sm text-white/80">
-              <HiCheck className="h-5 w-5 text-white" />
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <HiCheck className="h-5 w-5 text-primary" />
               Mortgage relief
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-primary py-8">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <span className="text-white font-semibold">
-              <span className="font-serif italic">Up</span>
-              <span className="font-sans font-bold">list</span>
-            </span>
-
-            <div className="flex items-center gap-6 text-white/70 text-sm">
-              <button
-                onClick={() => scrollToSection("how-it-works")}
-                className="hover:text-white transition-colors"
-              >
-                How It Works
-              </button>
-              <button
-                onClick={() => scrollToSection("benefits")}
-                className="hover:text-white transition-colors"
-              >
-                Benefits
-              </button>
-              <button
-                onClick={() => scrollToSection("faq")}
-                className="hover:text-white transition-colors"
-              >
-                FAQ
-              </button>
-            </div>
-
-            <span className="text-white/50 text-sm">
-              © {new Date().getFullYear()} Uplist. All rights reserved.
-            </span>
-          </div>
-        </div>
-      </footer>
+      </Section>
 
       {/* Inquiry Modal */}
       <ProgramInquiryModal
