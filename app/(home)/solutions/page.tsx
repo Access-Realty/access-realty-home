@@ -24,12 +24,12 @@ const solutions = [
     isPartner: true,
   },
   {
-    id: "2-payment",
-    name: "2 Payment",
-    tagline: "Pay when it works for you",
+    id: "equity-bridge",
+    name: "Equity Bridge",
+    tagline: "Lose the payment while it sells",
     description:
-      "Split your fees into two payments — a small amount upfront, the rest at closing. Keep more cash in your pocket until you sell.",
-    href: "/solutions/2-payment",
+      "We handle your mortgage payments while your home sells on the open market. Get more than a cash offer without the carrying costs.",
+    href: "/solutions/equity-bridge",
     isPartner: true,
   },
   {

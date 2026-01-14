@@ -3,10 +3,13 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Section, AccessCTA } from "@/components/layout";
 import { HiArrowRight, HiArrowLeft, HiCheck } from "react-icons/hi2";
+import { recommendOptions, type RecommendationResult } from "@/lib/sellingDecisionEngine";
+import { extractQuizAnswers, mapQuizAnswersToEngine } from "@/lib/sellingPlanMapper";
+import { SellingPlanResults } from "@/components/selling-plan/SellingPlanResults";
 
 // Question types
 type QuestionType = "single" | "multi" | "rank";
@@ -19,8 +22,8 @@ interface Question {
   options: { id: string; label: string; description?: string }[];
 }
 
-// Priority options for the stepped ranking
-const priorityOptions = [
+// Priority options for the stepped ranking (base list)
+const allPriorityOptions = [
   { id: "price", label: "Maximizing price", description: "Getting the most money from the sale" },
   { id: "speed", label: "Selling quickly", description: "Closing as fast as possible" },
   { id: "repairs", label: "Avoiding repairs", description: "Not having to fix anything" },
@@ -59,11 +62,11 @@ const questions: Question[] = [
     subtitle: "Select all that apply",
     type: "multi",
     options: [
-      { id: "major-structural", label: "Yes — Major structural issues", description: "e.g., foundation repair" },
-      { id: "big-ticket", label: "Yes — Big-ticket items", description: "roof, AC/heating, plumbing leaks" },
-      { id: "non-loanable", label: "Yes — Non-loanable items", description: "exposed plumbing or electrical, missing flooring, etc." },
-      { id: "minor", label: "Yes — Minor repairs or maintenance" },
       { id: "none", label: "No repairs needed" },
+      { id: "minor", label: "Yes — Minor repairs or maintenance" },
+      { id: "non-loanable", label: "Yes — Non-loanable items", description: "exposed plumbing or electrical, missing flooring, etc." },
+      { id: "big-ticket", label: "Yes — Big-ticket items", description: "roof, AC/heating, plumbing leaks" },
+      { id: "major-structural", label: "Yes — Major structural issues", description: "e.g., foundation repair" },
     ],
   },
   {
@@ -82,7 +85,7 @@ const questions: Question[] = [
     id: "priorities",
     question: "What matters most to you?",
     type: "rank",
-    options: priorityOptions,
+    options: allPriorityOptions, // Filtered dynamically in component based on repairs answer
   },
 ];
 
@@ -231,6 +234,14 @@ export default function SellingPlanPage() {
 
   const question = questions[currentQuestion];
   const isRankingQuestion = question.type === "rank";
+
+  // Filter out "Avoiding repairs" if user selected "No repairs needed"
+  const repairsAnswer = answers.repairs as string[] | undefined;
+  const hasNoRepairs = repairsAnswer?.length === 1 && repairsAnswer[0] === "none";
+  const priorityOptions = hasNoRepairs
+    ? allPriorityOptions.filter((opt) => opt.id !== "repairs")
+    : allPriorityOptions;
+
   const rankingStep = priorityRanking.length;
   const totalRankingSteps = priorityOptions.length;
 
@@ -238,6 +249,14 @@ export default function SellingPlanPage() {
   const baseProgress = currentQuestion / questions.length;
   const rankingProgress = isRankingQuestion ? (rankingStep / totalRankingSteps) / questions.length : 0;
   const progress = Math.round((baseProgress + rankingProgress) * 100);
+
+  // Calculate recommendation when quiz is completed
+  const recommendation = useMemo<RecommendationResult | null>(() => {
+    if (!completed) return null;
+    const quizAnswers = extractQuizAnswers(answers, priorityRanking);
+    const engineAnswers = mapQuizAnswersToEngine(quizAnswers);
+    return recommendOptions(engineAnswers);
+  }, [completed, answers, priorityRanking]);
 
   // Transition helper
   const transitionTo = (direction: "left" | "right", callback: () => void) => {
@@ -412,41 +431,18 @@ export default function SellingPlanPage() {
     );
   }
 
-  // Completed screen
-  if (completed) {
+  // Completed screen with recommendations
+  if (completed && recommendation) {
     return (
       <div className="bg-background flex-1">
-      <Section variant="content" maxWidth="3xl" className="pt-24 pb-12">
-        <div className={`bg-card rounded-xl border border-border p-8 md:p-12 text-center ${contentClasses}`}>
-          <h1 className="text-4xl md:text-5xl font-bold text-primary mb-6">
-            Your Personalized Plan
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8">
-            Based on your answers, we&apos;re preparing your personalized selling recommendations.
-          </p>
-          <div className="bg-muted rounded-xl p-8 mb-8">
-            <p className="text-2xl font-bold text-primary mb-4">
-              Results Coming Soon
-            </p>
-            <p className="text-muted-foreground mb-6">
-              We&apos;re building the recommendation engine. In the meantime, give us a call and we&apos;ll walk through your options together.
-            </p>
-            <a
-              href="tel:+19728207902"
-              className="inline-block bg-secondary hover:bg-secondary-light text-secondary-foreground font-semibold px-8 py-4 rounded-lg transition-colors"
-            >
-              Call (972) 820-7902
-            </a>
+        <Section variant="content" maxWidth="5xl" className="pt-24 pb-12">
+          <div className={contentClasses}>
+            <SellingPlanResults
+              result={recommendation}
+              onStartOver={handleRestart}
+            />
           </div>
-          <button
-            onClick={handleRestart}
-            disabled={isTransitioning}
-            className="text-primary hover:text-secondary transition-colors font-semibold"
-          >
-            Start Over
-          </button>
-        </div>
-      </Section>
+        </Section>
       </div>
     );
   }
@@ -481,9 +477,11 @@ export default function SellingPlanPage() {
                     <h2 className="text-3xl font-bold text-primary mb-2">
                       {rankingPrompts[rankingStep] || "What matters most?"}
                     </h2>
-                    <p className="text-muted-foreground mb-6">
-                      Step {rankingStep + 1} of {totalRankingSteps}
-                    </p>
+                    {rankingStep < totalRankingSteps && (
+                      <p className="text-muted-foreground mb-6">
+                        Step {rankingStep + 1} of {totalRankingSteps}
+                      </p>
+                    )}
                   </motion.div>
 
                   {/* Already ranked items */}
