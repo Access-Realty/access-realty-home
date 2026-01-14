@@ -1,8 +1,15 @@
 # Marketing Site → App Handoff
 
-This document describes how lead and property data flows from the marketing site to the app after a user completes the DirectList get-started wizard.
+This document describes how lead and property data flows from the marketing site to the app. There are two main lead capture flows:
 
-## Overview
+1. **DirectList Wizard** - Full checkout flow with Stripe payment → redirect to app
+2. **Solution Inquiries** - Contact form + Calendly booking (Price Launch, Equity Bridge, Uplist, Seller Finance)
+
+Both flows write to the shared `leads` table in Supabase.
+
+---
+
+## DirectList Wizard Flow
 
 The get-started wizard (`/direct-list/get-started`) collects property and contact info before checkout. After successful payment, the user is redirected to the app with URL parameters that allow the app to fetch the lead data and pre-populate the submission form.
 
@@ -172,13 +179,154 @@ To test the full flow:
 4. Verify redirect to app with `lead_id` param
 5. Verify app can fetch lead + parcel data
 
+---
+
+## Solution Inquiry Leads
+
+Solution pages (Price Launch, Equity Bridge, Uplist, Seller Finance) capture leads through a contact form + Calendly booking flow. Unlike DirectList which redirects to the app after payment, these inquiries stay on the marketing site and schedule a consultation call.
+
+### Flow Overview
+
+| Step | What Happens | Data Collected |
+|------|--------------|----------------|
+| 1. Address | User enters property address | Address components |
+| 2. Qualify Click | Opens ProgramInquiryModal | - |
+| 3. Contact Form | User enters contact info | Name, email, phone |
+| 4. Lead Creation | POST to `/api/leads` | Lead record in DB |
+| 5. Slack Notification | POST to `/api/program-inquiry` | Team notified |
+| 6. Calendly Booking | User selects appointment time | Meeting scheduled |
+
+### Data Flow
+
+```
+┌─────────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│  Solution Page      │     │  /api/leads     │     │  Supabase       │
+│  (Price Launch,     │────>│                 │────>│  leads table    │
+│   Equity Bridge,    │     └─────────────────┘     └─────────────────┘
+│   Uplist, etc.)     │
+│                     │     ┌─────────────────┐     ┌─────────────────┐
+│  ProgramInquiry     │────>│  /api/program-  │────>│  Slack          │
+│  Modal              │     │  inquiry        │     │  #needs-attn    │
+└─────────────────────┘     └─────────────────┘     └─────────────────┘
+         │
+         │                  ┌─────────────────┐
+         └─────────────────>│  Calendly       │
+                            │  Booking        │
+                            └─────────────────┘
+```
+
+### Contact Form Data
+
+The `ProgramInquiryModal` collects:
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| First Name | Yes | |
+| Last Name | Yes | |
+| Email | Yes | Validated format |
+| Phone | Yes | Auto-formatted as (555) 123-4567 |
+
+Plus the address data passed from the solution page.
+
+### Lead Creation (`POST /api/leads`)
+
+```typescript
+// Request body
+{
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  street?: string;
+  city?: string;
+  state?: string;
+  zip?: string;
+  source: "website";
+  landingUrl: string;
+  // Multi-touch attribution
+  originalTouch?: TouchParams;
+  latestTouch?: TouchParams;
+  convertingTouch?: TouchParams;
+}
+
+// Response
+{
+  success: true,
+  leadId: "uuid-here"
+}
+```
+
+### Multi-Touch Attribution
+
+Solution inquiries track the user's journey across multiple sessions:
+
+| Touch Type | Purpose | Example |
+|------------|---------|---------|
+| `originalTouch` | First interaction with site | Google Ads click from 2 weeks ago |
+| `latestTouch` | Most recent session before conversion | Direct visit today |
+| `convertingTouch` | Params at form submission | Current page URL |
+
+Attribution params stored:
+- `utm_source`, `utm_medium`, `utm_campaign`, `utm_term`, `utm_content`
+- `gclid` (Google Ads), `fbclid` (Facebook)
+- `landing_url`, `captured_at`
+
+### Slack Notification (`POST /api/program-inquiry`)
+
+Sends immediate notification to `#needs-attention` channel:
+
+```typescript
+{
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  programName: string;  // "Price Launch", "Equity Bridge", etc.
+  address: string;
+  attribution?: {
+    originalTouch: string | null;  // "google/cpc/campaign-name"
+    latestTouch: string | null;
+  };
+}
+```
+
+### Calendly Integration
+
+After lead creation, the modal shows an embedded Calendly widget:
+
+- Event type configured via `NEXT_PUBLIC_CALENDLY_INQUIRIES_URI`
+- Pre-fills invitee name, email, phone from form
+- Passes `leadId` and `programSource` as custom fields
+- On successful booking, shows confirmation message
+
+### Solution Pages Using This Flow
+
+| Solution | Page Path | programSlug |
+|----------|-----------|-------------|
+| Price Launch | `/solutions/price-launch` | `price_launch` |
+| Equity Bridge | `/solutions/equity-bridge` | `equity_bridge` |
+| Uplist | `/solutions/uplist` | `uplist` |
+| Seller Finance | `/solutions/seller-finance` | `seller_finance` |
+
+---
+
 ## Related Files
 
 ### Marketing Site (this repo)
+
+**DirectList Wizard:**
 - `app/(direct-list)/direct-list/get-started/page.tsx` - Wizard UI
-- `app/api/leads/route.ts` - Lead creation endpoint
 - `app/api/stripe/create-checkout-session/route.ts` - Checkout + redirect URL
 - `lib/propertyLookup.ts` - BatchData lookup client
+
+**Solution Inquiries:**
+- `components/solutions/ProgramInquiryModal.tsx` - Contact form + Calendly modal
+- `app/api/program-inquiry/route.ts` - Slack notification endpoint
+- `components/calendly/CalendlyBooking.tsx` - Calendly embed component
+- `lib/useTrackingParams.ts` - Multi-touch attribution hook
+
+**Shared:**
+- `app/api/leads/route.ts` - Lead creation endpoint (used by both flows)
 
 ### App Repo
 - `scripts/test-marketing-handoff.mjs` - Puppeteer test
