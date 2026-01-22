@@ -17,6 +17,7 @@ import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { getStoredAddress, clearAddress } from "@/lib/addressStorage";
 import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
+import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps";
 import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
 import { HeroSection, Section } from "@/components/layout";
 import { useTrackingParams } from "@/lib/useTrackingParams";
@@ -33,9 +34,6 @@ import {
   HiChevronDown,
 } from "react-icons/hi2";
 import { StyledTierName } from "@/components/services/StyledTierName";
-
-// Define libraries outside component to prevent re-renders
-const libraries: ("places")[] = ["places"];
 
 const mapContainerStyle = {
   width: "100%",
@@ -350,7 +348,7 @@ export default function GetStartedPage() {
 
   const { isLoaded } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries,
+    libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
   // Open Calendly popup (loads script if needed)

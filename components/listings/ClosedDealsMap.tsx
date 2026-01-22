@@ -5,6 +5,7 @@
 
 import { useCallback, useState, useMemo } from "react";
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
+import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps";
 import type { ClosedDeal } from "@/lib/listings";
 
 interface ClosedDealsMapProps {
@@ -52,6 +53,7 @@ export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
+    libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
   // Calculate center from deals or use default

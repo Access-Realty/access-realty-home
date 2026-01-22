@@ -6,9 +6,7 @@
 import { useRef, useCallback, useEffect, useState } from "react";
 import { useJsApiLoader, Autocomplete } from "@react-google-maps/api";
 import { HiOutlineMapPin } from "react-icons/hi2";
-
-// Define libraries array outside component to prevent re-renders
-const libraries: ("places")[] = ["places"];
+import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps";
 
 export interface AddressData {
   formattedAddress: string;
@@ -46,7 +44,7 @@ export function AddressInput({
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
-    libraries,
+    libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
   const onLoad = useCallback((autocomplete: google.maps.places.Autocomplete) => {
