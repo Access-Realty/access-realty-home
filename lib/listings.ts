@@ -138,6 +138,7 @@ function getOfficeKeys(officeMlsIds: string[]): string[] {
 /**
  * Fetch listings with optional filters and pagination
  * Uses indexed (mls_name, list_office_key) for efficient queries
+ * When agentKey is provided, includes listings where agent is primary OR co-listing agent
  */
 export async function getListings(
   filter: ListingsFilter = {},
@@ -163,6 +164,12 @@ export async function getListings(
     return { listings: [], total: 0, hasMore: false };
   }
 
+  // If filtering by agent, look up their member_key for co-listing query
+  let agentMemberKey: string | null = null;
+  if (agentKey) {
+    agentMemberKey = await getAgentMemberKey(agentKey);
+  }
+
   let query = supabase
     .from("mls_listings")
     .select(LISTING_SELECT_FIELDS, { count: "exact" })
@@ -172,9 +179,15 @@ export async function getListings(
     .neq("property_type", "Residential Lease") // Exclude rentals
     .order("list_price", { ascending: false });
 
-  // Apply optional filters
+  // Apply agent filter (primary listing agent OR co-listing agent)
   if (agentKey) {
-    query = query.eq("list_agent_mls_id", agentKey);
+    if (agentMemberKey) {
+      // Include both primary and co-listing agent matches
+      query = query.or(`list_agent_mls_id.eq.${agentKey},co_list_agent_key.eq.${agentMemberKey}`);
+    } else {
+      // Fallback to just primary agent if member_key lookup failed
+      query = query.eq("list_agent_mls_id", agentKey);
+    }
   }
   if (minPrice !== undefined) {
     query = query.gte("list_price", minPrice);
@@ -388,10 +401,10 @@ async function getAgentMemberKey(agentMlsId: string): Promise<string | null> {
 
 /**
  * Fetch all closed deals for an agent (for map display)
- * Includes both listing-side (as seller's agent) and buyer-side deals
+ * Includes listing-side (as seller's agent), co-listing side, and buyer-side deals
  */
 export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> {
-  // Fetch listing-side deals (where agent represented the seller)
+  // Fetch listing-side deals (where agent was primary listing agent)
   const listingDealsPromise = supabase
     .from("mls_listings")
     .select(MAP_SELECT_FIELDS)
@@ -403,8 +416,33 @@ export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> 
     .not("longitude", "is", null)
     .order("list_price", { ascending: false });
 
-  // Look up agent's member_key for buyer-side query
+  // Look up agent's member_key for co-listing and buyer-side queries
   const memberKey = await getAgentMemberKey(agentMlsId);
+
+  // Fetch co-listing deals (where agent was co-listing agent)
+  let coListingDeals: ClosedDeal[] = [];
+  if (memberKey) {
+    const { data: coListData, error: coListError } = await supabase
+      .from("mls_listings")
+      .select(MAP_SELECT_FIELDS)
+      .eq("mls_name", MLS_NAME)
+      .eq("co_list_agent_key", memberKey)
+      .eq("standard_status", "Closed")
+      .neq("property_type", "Residential Lease")
+      .not("latitude", "is", null)
+      .not("longitude", "is", null)
+      .order("list_price", { ascending: false });
+
+    if (coListError) {
+      console.error("Error fetching co-listing deals:", coListError);
+    } else if (coListData) {
+      // Co-listing is still listing-side (representing seller)
+      coListingDeals = (coListData as Omit<ClosedDeal, "side">[]).map((deal) => ({
+        ...deal,
+        side: "listing" as const,
+      }));
+    }
+  }
 
   // Fetch buyer-side deals (where agent represented the buyer)
   let buyerDeals: ClosedDeal[] = [];
@@ -443,8 +481,8 @@ export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> 
       }))
     : [];
 
-  // Combine and dedupe (in case agent was on both sides - rare but possible)
-  const allDeals = [...listingDeals, ...buyerDeals];
+  // Combine and dedupe (agent may appear in multiple roles on same listing)
+  const allDeals = [...listingDeals, ...coListingDeals, ...buyerDeals];
   const uniqueDeals = allDeals.filter(
     (deal, index, self) =>
       index === self.findIndex((d) => d.id === deal.id)
