@@ -2,8 +2,8 @@
 // ABOUTME: Uses indexed (mls_name, list_office_key) for efficient queries
 //
 // MLS KEY REFERENCE: See docs/MLS_KEYS_REFERENCE.md for full documentation
-// Quick ref: staff.member_key stores human-readable "Agt ID" (e.g., "0549418")
-//            We filter by list_agent_mls_id which uses the same format
+// Quick ref: staff.member_key stores the Bridge API hash (e.g., "f0f41567d56826d793512e7742f46dbe")
+//            We filter by list_agent_key which uses the same hash format
 //
 // NOTE: For client-side formatting utilities, use @/lib/listing-utils instead
 
@@ -164,12 +164,6 @@ export async function getListings(
     return { listings: [], total: 0, hasMore: false };
   }
 
-  // If filtering by agent, look up their member_key for co-listing query
-  let agentMemberKey: string | null = null;
-  if (agentKey) {
-    agentMemberKey = await getAgentMemberKey(agentKey);
-  }
-
   let query = supabase
     .from("mls_listings")
     .select(LISTING_SELECT_FIELDS, { count: "exact" })
@@ -180,14 +174,9 @@ export async function getListings(
     .order("list_price", { ascending: false });
 
   // Apply agent filter (primary listing agent OR co-listing agent)
+  // agentKey is the member_key hash from staff table
   if (agentKey) {
-    if (agentMemberKey) {
-      // Include both primary and co-listing agent matches
-      query = query.or(`list_agent_mls_id.eq.${agentKey},co_list_agent_key.eq.${agentMemberKey}`);
-    } else {
-      // Fallback to just primary agent if member_key lookup failed
-      query = query.eq("list_agent_mls_id", agentKey);
-    }
+    query = query.or(`list_agent_key.eq.${agentKey},co_list_agent_key.eq.${agentKey}`);
   }
   if (minPrice !== undefined) {
     query = query.gte("list_price", minPrice);
@@ -382,90 +371,66 @@ export interface ClosedDeal {
 }
 
 /**
- * Look up an agent's member_key hash from their MLS ID
- */
-async function getAgentMemberKey(agentMlsId: string): Promise<string | null> {
-  const { data, error } = await supabase
-    .from("mls_agents")
-    .select("member_key")
-    .eq("member_mls_id", agentMlsId)
-    .single();
-
-  if (error || !data) {
-    console.error("Error fetching agent member_key:", error);
-    return null;
-  }
-
-  return data.member_key;
-}
-
-/**
  * Fetch all closed deals for an agent (for map display)
  * Includes listing-side (as seller's agent), co-listing side, and buyer-side deals
+ * @param agentMemberKey - The member_key hash from staff table (e.g., "f0f41567d56826d793512e7742f46dbe")
  */
-export async function getClosedDeals(agentMlsId: string): Promise<ClosedDeal[]> {
+export async function getClosedDeals(agentMemberKey: string): Promise<ClosedDeal[]> {
   // Fetch listing-side deals (where agent was primary listing agent)
   const listingDealsPromise = supabase
     .from("mls_listings")
     .select(MAP_SELECT_FIELDS)
     .eq("mls_name", MLS_NAME)
-    .eq("list_agent_mls_id", agentMlsId)
+    .eq("list_agent_key", agentMemberKey)
     .eq("standard_status", "Closed")
     .neq("property_type", "Residential Lease")
     .not("latitude", "is", null)
     .not("longitude", "is", null)
     .order("list_price", { ascending: false });
 
-  // Look up agent's member_key for co-listing and buyer-side queries
-  const memberKey = await getAgentMemberKey(agentMlsId);
-
   // Fetch co-listing deals (where agent was co-listing agent)
-  let coListingDeals: ClosedDeal[] = [];
-  if (memberKey) {
-    const { data: coListData, error: coListError } = await supabase
-      .from("mls_listings")
-      .select(MAP_SELECT_FIELDS)
-      .eq("mls_name", MLS_NAME)
-      .eq("co_list_agent_key", memberKey)
-      .eq("standard_status", "Closed")
-      .neq("property_type", "Residential Lease")
-      .not("latitude", "is", null)
-      .not("longitude", "is", null)
-      .order("list_price", { ascending: false });
+  const { data: coListData, error: coListError } = await supabase
+    .from("mls_listings")
+    .select(MAP_SELECT_FIELDS)
+    .eq("mls_name", MLS_NAME)
+    .eq("co_list_agent_key", agentMemberKey)
+    .eq("standard_status", "Closed")
+    .neq("property_type", "Residential Lease")
+    .not("latitude", "is", null)
+    .not("longitude", "is", null)
+    .order("list_price", { ascending: false });
 
-    if (coListError) {
-      console.error("Error fetching co-listing deals:", coListError);
-    } else if (coListData) {
-      // Co-listing is still listing-side (representing seller)
-      coListingDeals = (coListData as Omit<ClosedDeal, "side">[]).map((deal) => ({
-        ...deal,
-        side: "listing" as const,
-      }));
-    }
+  let coListingDeals: ClosedDeal[] = [];
+  if (coListError) {
+    console.error("Error fetching co-listing deals:", coListError);
+  } else if (coListData) {
+    // Co-listing is still listing-side (representing seller)
+    coListingDeals = (coListData as Omit<ClosedDeal, "side">[]).map((deal) => ({
+      ...deal,
+      side: "listing" as const,
+    }));
   }
 
   // Fetch buyer-side deals (where agent represented the buyer)
-  let buyerDeals: ClosedDeal[] = [];
-  if (memberKey) {
-    const { data: buyerData, error: buyerError } = await supabase
-      .from("mls_listings")
-      .select(MAP_SELECT_FIELDS)
-      .eq("mls_name", MLS_NAME)
-      .eq("buyer_agent_key", memberKey)
-      .eq("standard_status", "Closed")
-      .neq("property_type", "Residential Lease")
-      .not("latitude", "is", null)
-      .not("longitude", "is", null)
-      .order("list_price", { ascending: false });
+  const { data: buyerData, error: buyerError } = await supabase
+    .from("mls_listings")
+    .select(MAP_SELECT_FIELDS)
+    .eq("mls_name", MLS_NAME)
+    .eq("buyer_agent_key", agentMemberKey)
+    .eq("standard_status", "Closed")
+    .neq("property_type", "Residential Lease")
+    .not("latitude", "is", null)
+    .not("longitude", "is", null)
+    .order("list_price", { ascending: false });
 
-    if (buyerError) {
-      console.error("Error fetching buyer deals:", buyerError);
-    } else if (buyerData) {
-      buyerDeals = (buyerData as Omit<ClosedDeal, "side">[]).map((deal) => ({
-        ...deal,
-        side: "buyer" as const,
-      }));
-    }
+  let buyerDeals: ClosedDeal[] = [];
+  if (buyerError) {
+    console.error("Error fetching buyer deals:", buyerError);
+  } else if (buyerData) {
+    buyerDeals = (buyerData as Omit<ClosedDeal, "side">[]).map((deal) => ({
+      ...deal,
+      side: "buyer" as const,
+    }));
   }
 
   const { data: listingData, error: listingError } = await listingDealsPromise;
