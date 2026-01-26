@@ -6,6 +6,7 @@
 import { useState } from "react";
 import { HiXMark } from "react-icons/hi2";
 import type { AddressData } from "@/components/direct-list/AddressInput";
+import { clearAddress } from "@/lib/addressStorage";
 import { useTrackingParams } from "@/lib/useTrackingParams";
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
 import type { CalendlyBookingResult } from "@/components/calendly/types";
@@ -112,6 +113,9 @@ export function ProgramInquiryModal({
 
       const { leadId: newLeadId } = await response.json();
       setLeadId(newLeadId);
+
+      // Clear stored address now that lead is created
+      clearAddress();
 
       // Also send Slack notification (optional - for immediate notification)
       try {

@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import {
   HiXMark,
   HiOutlineCurrencyDollar,
@@ -26,6 +26,7 @@ import { GiHammerNails } from "react-icons/gi";
 import { HeroSection, Section } from "@/components/layout";
 import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
+import { getStoredAddress } from "@/lib/addressStorage";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
 
 // What you DON'T have to do cards
@@ -214,6 +215,14 @@ export default function PriceLaunchContent() {
   const bottomAddressInputRef = useRef<HTMLInputElement>(null);
   const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
+
+  // Pre-fill address from localStorage if available (from homepage or selling plan)
+  useEffect(() => {
+    const stored = getStoredAddress();
+    if (stored) {
+      setAddressData(stored);
+    }
+  }, []);
 
   const scrollToSection = (sectionId: string) => {
     const element = document.getElementById(sectionId);

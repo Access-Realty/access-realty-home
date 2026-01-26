@@ -3,13 +3,15 @@
 
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence, LayoutGroup } from "framer-motion";
 import { Section, AccessCTA } from "@/components/layout";
 import { HiArrowRight, HiArrowLeft, HiCheck } from "react-icons/hi2";
 import { recommendOptions, type RecommendationResult } from "@/lib/sellingDecisionEngine";
 import { extractQuizAnswers, mapQuizAnswersToEngine } from "@/lib/sellingPlanMapper";
 import { SellingPlanResults } from "@/components/selling-plan/SellingPlanResults";
+import { getStoredAddress } from "@/lib/addressStorage";
+import type { AddressData } from "@/components/direct-list/AddressInput";
 
 // Question types
 type QuestionType = "single" | "multi" | "rank";
@@ -226,6 +228,15 @@ export default function SellingPlanPage() {
   const [answers, setAnswers] = useState<Record<string, string | string[]>>({});
   const [priorityRanking, setPriorityRanking] = useState<string[]>([]);
   const [completed, setCompleted] = useState(false);
+  const [storedAddress, setStoredAddress] = useState<AddressData | null>(null);
+
+  // Load stored address from localStorage (from homepage entry)
+  useEffect(() => {
+    const stored = getStoredAddress();
+    if (stored) {
+      setStoredAddress(stored);
+    }
+  }, []);
 
   // Transition state
   const [isVisible, setIsVisible] = useState(true);
@@ -440,6 +451,7 @@ export default function SellingPlanPage() {
             <SellingPlanResults
               result={recommendation}
               onStartOver={handleRestart}
+              storedAddress={storedAddress}
             />
           </div>
         </Section>

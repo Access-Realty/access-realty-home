@@ -20,7 +20,7 @@ const Hero = () => {
   }, []);
 
   const navigateToWizard = useCallback(() => {
-    router.push("/direct-list/get-started");
+    router.push("/selling-plan");
   }, [router]);
 
   const handleSubmit = (e: React.FormEvent) => {

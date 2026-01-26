@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   HiCheck,
   HiXMark,
@@ -16,6 +16,7 @@ import {
 import { HeroSection, Section } from "@/components/layout";
 import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
+import { getStoredAddress } from "@/lib/addressStorage";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
 
 const isThisYou = [
@@ -138,6 +139,14 @@ const faqs = [
 export default function UplistContent() {
   const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
+
+  // Pre-fill address from localStorage if available (from homepage or selling plan)
+  useEffect(() => {
+    const stored = getStoredAddress();
+    if (stored) {
+      setAddressData(stored);
+    }
+  }, []);
 
   const scrollToSection = (id: string) => {
     const element = document.getElementById(id);

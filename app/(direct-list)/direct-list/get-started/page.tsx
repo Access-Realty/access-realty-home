@@ -15,7 +15,7 @@ declare global {
 import { useState, useCallback, useEffect } from "react";
 import { useJsApiLoader, GoogleMap, Marker } from "@react-google-maps/api";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
-import { getStoredAddress, clearAddress } from "@/lib/addressStorage";
+import { getStoredAddress, clearAddress, saveAddress } from "@/lib/addressStorage";
 import { lookupProperty, PropertySpecs } from "@/lib/propertyLookup";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps";
 import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
@@ -341,8 +341,9 @@ export default function GetStartedPage() {
         zipCode: storedAddress.zipCode || "",
       });
 
-      // Clear stored address so it doesn't persist
-      clearAddress();
+      // Save address back to localStorage for use across pages
+      // (will be cleared on lead creation)
+      saveAddress(storedAddress);
     }
   }, []);
 
@@ -561,6 +562,9 @@ export default function GetStartedPage() {
       if (data.leadId) {
         setLeadId(data.leadId);
       }
+
+      // Clear stored address now that lead is created
+      clearAddress();
 
       // Move to service tier selection step
       setStep("service");

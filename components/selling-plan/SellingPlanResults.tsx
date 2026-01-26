@@ -13,15 +13,18 @@ import {
   buildOptionCard,
 } from "@/lib/sellingDecisionEngine";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
+import type { AddressData } from "@/components/direct-list/AddressInput";
 
 interface SellingPlanResultsProps {
   result: RecommendationResult;
   onStartOver: () => void;
+  storedAddress?: AddressData | null;
 }
 
 export function SellingPlanResults({
   result,
   onStartOver,
+  storedAddress,
 }: SellingPlanResultsProps) {
   const [showInquiryModal, setShowInquiryModal] = useState(false);
 
@@ -36,7 +39,7 @@ export function SellingPlanResults({
         onClose={() => setShowInquiryModal(false)}
         programName="Discuss Selling Options"
         programSlug="selling_plan"
-        addressData={null}
+        addressData={storedAddress || null}
       />
     <motion.div
       initial={{ opacity: 0, y: 20 }}
