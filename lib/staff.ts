@@ -35,11 +35,7 @@ const staffContent: Record<string, {
 }> = {
   "justin-brown": {
     bio: [
-      "I'm a full-time Realtor® and Broker Associate serving the Dallas–Fort Worth Metroplex, dedicated to helping clients navigate the buying and selling process with clarity, confidence, and ease. With years of local expertise, strong negotiation skills, and a client-first approach, I guide every step of the journey through clear communication and genuine care.",
-      "To me, real estate is about more than contracts and closings—it's about people, families, and meaningful life moments. Many of my clients remain part of my life long after the transaction ends, becoming friends I genuinely value. Whether you're a first-time buyer, a seasoned investor, or selling to maximize value, I treat your goals as if they were my own and work tirelessly to protect your best interests.",
-      "I was born and raised in the Mid-Cities area of DFW and graduated from Birdville High School before earning my degree from Johnson & Wales University in Denver, Colorado. My early career in the culinary and catering industry, followed by several years in management within the rental car industry, shaped my ability to lead, communicate effectively, manage complex details, and stay solution-focused—skills that translate directly into serving my real estate clients well. Most importantly, these roles allowed me to prioritize time with my son, reinforcing the value I place on family and balance.",
-      "Helping families find a place to call home has been one of the greatest privileges of my life. I'm deeply grateful for the trust my clients place in me and take that responsibility seriously.",
-      "If you're considering buying or selling, I'd be honored to guide you through the process with transparency, professionalism, and genuine support. You'll feel the difference.",
+      "I began my real estate career in 2005 and am a multi-million-dollar producer, having successfully closed over 1200 homes throughout the DFW Metroplex. With more than three decades of local knowledge, I bring deep market insight to every transaction. I work with buyers, sellers, relocation clients, first-time homebuyers, new construction, and rental property owners. I view myself as a true financial partner in the process, focused on clear communication, honest expectations, and helping clients make confident, informed decisions. My goal is to make every buying or selling experience as smooth, transparent, and successful as possible.",
     ],
     services: [
       { icon: "Home", title: "Buyer Representation", description: "Navigate the home buying journey with confidence. From finding your dream home to negotiating the best terms, I'll be your advocate every step of the way." },
@@ -50,8 +46,9 @@ const staffContent: Record<string, {
   },
   "cassidy-spilker": {
     bio: [
-      "As a dedicated Realtor® serving the Dallas–Fort Worth area, I'm passionate about helping clients achieve their real estate dreams. My commitment to exceptional service and attention to detail ensures a smooth and successful transaction every time.",
-      "Whether you're buying your first home, upgrading to your forever home, or selling to start a new chapter, I bring the expertise and dedication needed to make your real estate goals a reality.",
+      "I'm a full-time Realtor® and Broker Associate serving the Dallas–Fort Worth metroplex, committed to making the home buying and selling experience smooth, informed, and successful. With years of local expertise, strong negotiation skills, and a client-first mindset, I guide every step of the journey with clear communication and genuine care.",
+      "I believe real estate is more than transactions. It's people, families, and life-changing milestones. Many of my clients stay in my life long after closing, turning into friends who feel like family. Whether you're a first-time buyer, seasoned investor, or selling for top value, I advocate for your best interests and treat your goals like my own.",
+      "If you're thinking about buying or selling, I'd love to guide you through the process with confidence, transparency, and support. You'll feel the difference.",
     ],
     services: [
       { icon: "Home", title: "Buyer Representation", description: "Navigate the home buying journey with confidence. From finding your dream home to negotiating the best terms, I'll be your advocate every step of the way." },
@@ -62,8 +59,9 @@ const staffContent: Record<string, {
   },
   "jennifer-lovett": {
     bio: [
-      "I'm a dedicated Realtor® committed to providing exceptional service throughout your real estate journey. With a focus on clear communication and client satisfaction, I work tirelessly to ensure your experience exceeds expectations.",
-      "Real estate is more than a transaction—it's about helping families find their perfect place. I'm honored to guide my clients through one of the most important decisions of their lives.",
+      "I'm a real estate agent and investor with over 14 years of hands on experience buying, renovating, and selling properties throughout the DFW Metroplex. I've personally purchased, renovated and sold more than 100 homes, giving me true insight into properties from the inside out.",
+      "As an active investor, I've reviewed hundreds of contracts and worked closely with title companies, lenders, and contractors, allowing me to anticipate issues, protect my clients interests, and guide transactions smoothly from contract to closing.",
+      "I approach every client's purchase or sale the same way I approach my own investments, with careful analysis and honest guidance. Whether you're buying, selling, or investing, I provide clarity, confidence, and results backed by real world experience.",
     ],
     services: [
       { icon: "Home", title: "Buyer Representation", description: "Navigate the home buying journey with confidence. From finding your dream home to negotiating the best terms, I'll be your advocate every step of the way." },
