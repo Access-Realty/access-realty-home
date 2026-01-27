@@ -270,9 +270,8 @@ export function formatVolume(amount: number | null): string {
 
   if (rounded >= 1000000) {
     const millions = rounded / 1000000;
-    // Show one decimal if not a whole number
-    const formatted = millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1);
-    return `$${formatted}M`;
+    // Always show one decimal for consistency ($1.0M, $11.4M)
+    return `$${millions.toFixed(1)}M`;
   }
 
   // Under 1M, show in K
