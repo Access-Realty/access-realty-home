@@ -569,3 +569,138 @@ async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListi
 
   return uniqueDeals;
 }
+
+/**
+ * Fetch all closed listings for the entire company (all staff members)
+ * Used for the company-wide track record map on /our-team
+ */
+export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
+  // TODO: May need to filter by is_active flag in the future
+  // Get all staff with their member_keys
+  const { data: staffData, error: staffError } = await supabase
+    .from("staff")
+    .select("id, member_key");
+
+  if (staffError || !staffData) {
+    console.error("Error fetching staff:", staffError);
+    return [];
+  }
+
+  // Separate staff with and without member_keys
+  const staffWithMemberKey = staffData.filter((s) => s.member_key);
+  const memberKeys = staffWithMemberKey.map((s) => s.member_key!);
+  const allStaffIds = staffData.map((s) => s.id);
+
+  // Batch query: MLS listings where any staff member was involved
+  let mlsDeals: ClosedListing[] = [];
+  if (memberKeys.length > 0) {
+    // Listing-side deals
+    const { data: listingData } = await supabase
+      .from("mls_listings")
+      .select(MAP_SELECT_FIELDS)
+      .eq("mls_name", MLS_NAME)
+      .in("list_agent_key", memberKeys)
+      .eq("standard_status", "Closed")
+      .neq("property_type", "Residential Lease")
+      .not("latitude", "is", null)
+      .not("longitude", "is", null);
+
+    // Co-listing deals
+    const { data: coListData } = await supabase
+      .from("mls_listings")
+      .select(MAP_SELECT_FIELDS)
+      .eq("mls_name", MLS_NAME)
+      .in("co_list_agent_key", memberKeys)
+      .eq("standard_status", "Closed")
+      .neq("property_type", "Residential Lease")
+      .not("latitude", "is", null)
+      .not("longitude", "is", null);
+
+    // Buyer-side deals
+    const { data: buyerData } = await supabase
+      .from("mls_listings")
+      .select(MAP_SELECT_FIELDS)
+      .eq("mls_name", MLS_NAME)
+      .in("buyer_agent_key", memberKeys)
+      .eq("standard_status", "Closed")
+      .neq("property_type", "Residential Lease")
+      .not("latitude", "is", null)
+      .not("longitude", "is", null);
+
+    const listingDeals: ClosedListing[] = (listingData || []).map((d) => ({
+      ...(d as Omit<ClosedListing, "side">),
+      side: "listing" as const,
+    }));
+
+    const coListingDeals: ClosedListing[] = (coListData || []).map((d) => ({
+      ...(d as Omit<ClosedListing, "side">),
+      side: "listing" as const,
+    }));
+
+    const buyerDeals: ClosedListing[] = (buyerData || []).map((d) => ({
+      ...(d as Omit<ClosedListing, "side">),
+      side: "buyer" as const,
+    }));
+
+    // Dedupe by id (same listing shouldn't appear multiple times)
+    const allMls = [...listingDeals, ...coListingDeals, ...buyerDeals];
+    mlsDeals = allMls.filter(
+      (deal, index, self) => index === self.findIndex((d) => d.id === deal.id)
+    );
+  }
+
+  // Batch query: Imported historical deals for all staff
+  const { data: importedData } = await supabase
+    .from("staff_imported_listings")
+    .select(`
+      id,
+      listing_id,
+      close_price,
+      raw_address,
+      raw_city,
+      side,
+      parcels(latitude, longitude)
+    `)
+    .in("staff_id", allStaffIds)
+    .not("parcel_id", "is", null);
+
+  type ParcelData = { latitude: number | null; longitude: number | null } | null;
+
+  const importedDeals: ClosedListing[] = (importedData || [])
+    .filter((deal) => {
+      const parcel = deal.parcels as unknown as ParcelData;
+      return parcel?.latitude && parcel?.longitude;
+    })
+    .map((deal) => {
+      const parcel = deal.parcels as unknown as { latitude: number; longitude: number };
+      return {
+        id: deal.id as string,
+        listing_id: deal.listing_id,
+        list_price: deal.close_price,
+        unparsed_address: deal.raw_address,
+        city: deal.raw_city,
+        state_or_province: "TX",
+        postal_code: null,
+        bedrooms_total: null,
+        bathrooms_total_decimal: null,
+        living_area: null,
+        latitude: parcel.latitude,
+        longitude: parcel.longitude,
+        photo_urls: null,
+        photos_stored: null,
+        side: deal.side as "listing" | "buyer",
+      };
+    });
+
+  // Combine MLS and imported - dedupe imported that overlap with MLS
+  const allDeals = [...mlsDeals, ...importedDeals];
+  const seenListingIds = new Set<string>();
+  const uniqueDeals = allDeals.filter((deal) => {
+    if (!deal.listing_id) return true;
+    if (seenListingIds.has(deal.listing_id)) return false;
+    seenListingIds.add(deal.listing_id);
+    return true;
+  });
+
+  return uniqueDeals;
+}

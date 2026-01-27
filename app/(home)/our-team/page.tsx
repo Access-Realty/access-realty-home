@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { getStaffMembers } from "@/lib/staff";
 import { HeroSection, Section, AccessCTA } from "@/components/layout";
+import CompanyClosedListingsSection from "@/components/listings/CompanyClosedListingsSection";
 
 // Local avatar fallbacks (DB avatar_url takes precedence)
 const staffAvatarFallbacks: Record<string, string> = {
@@ -79,6 +80,8 @@ export default async function Staff() {
           })}
         </div>
       </Section>
+
+      <CompanyClosedListingsSection />
 
       <AccessCTA
         heading="Ready to Work With Our Team?"
