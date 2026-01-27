@@ -157,7 +157,14 @@ export default function ClosedListingsMap({ listings, agentName }: ClosedListing
                   {formatPrice(selectedListing.list_price)}
                 </p>
                 <p className="text-xs text-gray-700 truncate">
-                  {selectedListing.unparsed_address}
+                  {/* Line 1: Street address (everything before first comma) */}
+                  {selectedListing.unparsed_address?.split(",")[0] || "Address N/A"}
+                </p>
+                <p className="text-xs text-gray-700 truncate">
+                  {/* Line 2: City, State Zip */}
+                  {selectedListing.city}
+                  {selectedListing.state_or_province && ` ${selectedListing.state_or_province}`}
+                  {selectedListing.postal_code && ` ${selectedListing.postal_code}`}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {[

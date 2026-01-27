@@ -365,6 +365,8 @@ const MAP_SELECT_FIELDS = `
   list_price,
   unparsed_address,
   city,
+  state_or_province,
+  postal_code,
   bedrooms_total,
   bathrooms_total_decimal,
   living_area,
@@ -380,6 +382,8 @@ export interface ClosedListing {
   list_price: number | null;
   unparsed_address: string | null;
   city: string | null;
+  state_or_province: string | null;
+  postal_code: string | null;
   bedrooms_total: number | null;
   bathrooms_total_decimal: number | null;
   living_area: number | null;
@@ -447,6 +451,8 @@ export async function getClosedListings(staffId: string): Promise<ClosedListing[
           list_price: deal.close_price,
           unparsed_address: deal.raw_address,
           city: deal.raw_city,
+          state_or_province: "TX", // Imported deals are all Texas
+          postal_code: null,
           bedrooms_total: null,
           bathrooms_total_decimal: null,
           living_area: null,
