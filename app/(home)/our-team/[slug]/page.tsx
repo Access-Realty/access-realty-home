@@ -6,7 +6,7 @@ import Image from "next/image";
 import { HiOutlineHomeModern, HiArrowTrendingUp, HiMapPin, HiBuildingOffice2 } from "react-icons/hi2";
 import { BookOnlineButton } from "@/components/staff/BookOnlineButton";
 import ListingsCarousel from "@/components/listings/ListingsCarousel";
-import ClosedDealsSection from "@/components/listings/ClosedDealsSection";
+import ClosedListingsSection from "@/components/listings/ClosedListingsSection";
 import ContactSection from "@/components/staff/ContactSection";
 import { getStaffBySlug, getStaffSlugs } from "@/lib/staff";
 import { HeroSection, Section } from "@/components/layout";
@@ -181,13 +181,11 @@ export default async function StaffMemberPage({ params }: { params: Promise<{ sl
         </Section>
       )}
 
-      {/* Closed Deals Map */}
-      {staff.member_key && (
-        <ClosedDealsSection
-          agentMlsId={staff.member_key}
-          agentName={name}
-        />
-      )}
+      {/* Closed Listings Map */}
+      <ClosedListingsSection
+        staffId={staff.id}
+        agentName={name}
+      />
 
       {/* Contact Section */}
       <ContactSection

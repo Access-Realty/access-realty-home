@@ -49,6 +49,27 @@ This is the **marketing site** (Repo 2 of 3) for Access Realty:
 
 All repos share the same Supabase database.
 
+## MLS Data Identifiers
+
+When Bret references MLS records casually, he uses **human-readable MLS IDs**, not internal keys.
+
+| When Bret says... | Table | Query column | Example |
+|-------------------|-------|--------------|---------|
+| Office ID | `mls_offices` | `office_mls_id` | `PRSG01` |
+| Agent/Member ID | `mls_agents` | `member_mls_id` | `0618343` |
+| Listing ID | `mls_listings` | `listing_id` | `20976128` |
+
+**Key gotchas:**
+- `listing_id` is **text**, not integer. Query as string: `WHERE listing_id = '20976128'`
+- Bridge API `*_key` fields (e.g., `member_key`, `listing_key`) are internal hashes—not human-readable
+- All MLS tables include `mls_name` (e.g., "ntreis2") in composite keys
+
+**Agent lookups for staff pages:**
+- `staff.member_key` → hash (e.g., `772fa4dea37689a3a22c3f7d1b7cf710`)
+- `mls_agents.member_mls_id` → human-readable (e.g., `0618343`)
+- `mls_listings.list_agent_mls_id` → uses human-readable format
+- `mls_listings.buyer_agent_key` → uses hash format
+
 ### Related Repos (for cross-repo reference)
 
 | Repo | Path | Purpose |

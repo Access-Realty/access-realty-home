@@ -260,6 +260,27 @@ export function formatPrice(price: number | null): string {
 }
 
 /**
+ * Format volume for display, rounded to nearest 100K (e.g., "$12.4M")
+ */
+export function formatVolume(amount: number | null): string {
+  if (amount === null || amount === 0) return "$0";
+
+  // Round to nearest 100K
+  const rounded = Math.round(amount / 100000) * 100000;
+
+  if (rounded >= 1000000) {
+    const millions = rounded / 1000000;
+    // Show one decimal if not a whole number
+    const formatted = millions % 1 === 0 ? millions.toFixed(0) : millions.toFixed(1);
+    return `$${formatted}M`;
+  }
+
+  // Under 1M, show in K
+  const thousands = rounded / 1000;
+  return `$${thousands.toFixed(0)}K`;
+}
+
+/**
  * Format beds/baths for display (e.g., "3 bd | 2 ba")
  */
 export function formatBedsBaths(
@@ -354,7 +375,7 @@ const MAP_SELECT_FIELDS = `
   photos_stored
 `;
 
-export interface ClosedDeal {
+export interface ClosedListing {
   id: string;
   listing_id: string | null;
   list_price: number | null;
@@ -371,11 +392,99 @@ export interface ClosedDeal {
 }
 
 /**
- * Fetch all closed deals for an agent (for map display)
- * Includes listing-side (as seller's agent), co-listing side, and buyer-side deals
- * @param agentMemberKey - The member_key hash from staff table (e.g., "f0f41567d56826d793512e7742f46dbe")
+ * Fetch all closed listings for a staff member (for map display)
+ * Combines MLS data (via member_key) and imported historical deals (via staff_id)
+ * @param staffId - The staff UUID from staff table
  */
-export async function getClosedDeals(agentMemberKey: string): Promise<ClosedDeal[]> {
+export async function getClosedListings(staffId: string): Promise<ClosedListing[]> {
+  // First, get member_key for MLS queries
+  const { data: staffData } = await supabase
+    .from("staff")
+    .select("member_key")
+    .eq("id", staffId)
+    .single();
+
+  const memberKey = staffData?.member_key;
+
+  // Fetch MLS deals (only if staff has a member_key)
+  let mlsDeals: ClosedListing[] = [];
+  if (memberKey) {
+    mlsDeals = await getMlsClosedListings(memberKey);
+  }
+
+  // Fetch imported historical deals with parcel coordinates
+  const { data: importedData, error: importedError } = await supabase
+    .from("staff_imported_listings")
+    .select(`
+      id,
+      listing_id,
+      close_price,
+      raw_address,
+      raw_city,
+      side,
+      parcels(latitude, longitude)
+    `)
+    .eq("staff_id", staffId)
+    .not("parcel_id", "is", null);
+
+  let importedDeals: ClosedListing[] = [];
+  if (importedError) {
+    console.error("Error fetching imported deals:", importedError);
+  } else if (importedData) {
+    // Type for the joined parcel data (single object from FK relationship)
+    type ParcelData = { latitude: number | null; longitude: number | null } | null;
+
+    importedDeals = importedData
+      .filter((deal) => {
+        // Supabase returns single object for FK joins (not array)
+        const parcel = deal.parcels as unknown as ParcelData;
+        return parcel?.latitude && parcel?.longitude;
+      })
+      .map((deal) => {
+        const parcel = deal.parcels as unknown as { latitude: number; longitude: number };
+        return {
+          id: deal.id,
+          listing_id: deal.listing_id,
+          list_price: deal.close_price,
+          unparsed_address: deal.raw_address,
+          city: deal.raw_city,
+          bedrooms_total: null,
+          bathrooms_total_decimal: null,
+          living_area: null,
+          latitude: parcel.latitude,
+          longitude: parcel.longitude,
+          photo_urls: null,
+          photos_stored: null,
+          side: deal.side as "listing" | "buyer",
+        };
+      });
+  }
+
+  // Combine MLS and imported deals
+  const allDeals = [...mlsDeals, ...importedDeals];
+
+  // Dedupe by listing_id (imported deals may overlap with MLS data)
+  const seenListingIds = new Set<string>();
+  const uniqueDeals = allDeals.filter((deal) => {
+    if (!deal.listing_id) return true; // Keep deals without listing_id
+    if (seenListingIds.has(deal.listing_id)) return false;
+    seenListingIds.add(deal.listing_id);
+    return true;
+  });
+
+  // Sort by price descending
+  const sortedDeals = uniqueDeals.sort((a, b) => (b.list_price || 0) - (a.list_price || 0));
+
+  // Trigger background photo downloads for MLS deals without stored photos
+  triggerPhotoDownloads(sortedDeals.filter((d) => d.photo_urls !== null));
+
+  return sortedDeals;
+}
+
+/**
+ * Fetch closed listings from MLS data (internal helper)
+ */
+async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListing[]> {
   // Fetch listing-side deals (where agent was primary listing agent)
   const listingDealsPromise = supabase
     .from("mls_listings")
@@ -400,12 +509,12 @@ export async function getClosedDeals(agentMemberKey: string): Promise<ClosedDeal
     .not("longitude", "is", null)
     .order("list_price", { ascending: false });
 
-  let coListingDeals: ClosedDeal[] = [];
+  let coListingDeals: ClosedListing[] = [];
   if (coListError) {
     console.error("Error fetching co-listing deals:", coListError);
   } else if (coListData) {
     // Co-listing is still listing-side (representing seller)
-    coListingDeals = (coListData as Omit<ClosedDeal, "side">[]).map((deal) => ({
+    coListingDeals = (coListData as Omit<ClosedListing, "side">[]).map((deal) => ({
       ...deal,
       side: "listing" as const,
     }));
@@ -423,11 +532,11 @@ export async function getClosedDeals(agentMemberKey: string): Promise<ClosedDeal
     .not("longitude", "is", null)
     .order("list_price", { ascending: false });
 
-  let buyerDeals: ClosedDeal[] = [];
+  let buyerDeals: ClosedListing[] = [];
   if (buyerError) {
     console.error("Error fetching buyer deals:", buyerError);
   } else if (buyerData) {
-    buyerDeals = (buyerData as Omit<ClosedDeal, "side">[]).map((deal) => ({
+    buyerDeals = (buyerData as Omit<ClosedListing, "side">[]).map((deal) => ({
       ...deal,
       side: "buyer" as const,
     }));
@@ -439,8 +548,8 @@ export async function getClosedDeals(agentMemberKey: string): Promise<ClosedDeal
     console.error("Error fetching listing deals:", listingError);
   }
 
-  const listingDeals: ClosedDeal[] = listingData
-    ? (listingData as Omit<ClosedDeal, "side">[]).map((deal) => ({
+  const listingDeals: ClosedListing[] = listingData
+    ? (listingData as Omit<ClosedListing, "side">[]).map((deal) => ({
         ...deal,
         side: "listing" as const,
       }))
@@ -453,11 +562,5 @@ export async function getClosedDeals(agentMemberKey: string): Promise<ClosedDeal
       index === self.findIndex((d) => d.id === deal.id)
   );
 
-  // Sort by price descending
-  const sortedDeals = uniqueDeals.sort((a, b) => (b.list_price || 0) - (a.list_price || 0));
-
-  // Trigger background photo downloads for deals without stored photos
-  triggerPhotoDownloads(sortedDeals);
-
-  return sortedDeals;
+  return uniqueDeals;
 }

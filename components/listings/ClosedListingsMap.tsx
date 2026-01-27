@@ -1,4 +1,4 @@
-// ABOUTME: Google Maps component showing agent's closed deals
+// ABOUTME: Google Maps component showing agent's closed listings
 // ABOUTME: Client component with markers for each sold property
 
 "use client";
@@ -6,10 +6,10 @@
 import { useCallback, useState, useMemo } from "react";
 import { GoogleMap, useJsApiLoader, Marker, InfoWindow } from "@react-google-maps/api";
 import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps";
-import type { ClosedDeal } from "@/lib/listings";
+import type { ClosedListing } from "@/lib/listings";
 
-interface ClosedDealsMapProps {
-  deals: ClosedDeal[];
+interface ClosedListingsMapProps {
+  listings: ClosedListing[];
   agentName: string;
 }
 
@@ -48,45 +48,35 @@ function formatPrice(price: number | null): string {
   }).format(price);
 }
 
-export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps) {
-  const [selectedDeal, setSelectedDeal] = useState<ClosedDeal | null>(null);
+export default function ClosedListingsMap({ listings, agentName }: ClosedListingsMapProps) {
+  const [selectedListing, setSelectedListing] = useState<ClosedListing | null>(null);
 
   const { isLoaded, loadError } = useJsApiLoader({
     googleMapsApiKey: process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY || "",
     libraries: GOOGLE_MAPS_LIBRARIES,
   });
 
-  // Calculate center from deals or use default
-  const center = deals.length > 0
+  // Calculate center from listings or use default
+  const center = listings.length > 0
     ? {
-        lat: deals.reduce((sum, d) => sum + (d.latitude || 0), 0) / deals.length,
-        lng: deals.reduce((sum, d) => sum + (d.longitude || 0), 0) / deals.length,
+        lat: listings.reduce((sum, d) => sum + (d.latitude || 0), 0) / listings.length,
+        lng: listings.reduce((sum, d) => sum + (d.longitude || 0), 0) / listings.length,
       }
     : defaultCenter;
 
-  // Memoize marker icons - only compute when Google Maps is loaded
+  // Memoize marker icon - single color for all listings
   // This prevents "google is not defined" errors on mobile
-  const markerIcons = useMemo(() => {
+  const markerIcon = useMemo(() => {
     if (!isLoaded || typeof google === "undefined" || !google.maps?.SymbolPath) {
-      return { listing: undefined, buyer: undefined };
+      return undefined;
     }
     return {
-      listing: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 8,
-        fillColor: "#284b70", // Navy - listing side (seller's agent)
-        fillOpacity: 0.9,
-        strokeColor: "#ffffff",
-        strokeWeight: 2,
-      },
-      buyer: {
-        path: google.maps.SymbolPath.CIRCLE,
-        scale: 8,
-        fillColor: "#d6b283", // Gold/tan - buyer side (buyer's agent)
-        fillOpacity: 0.9,
-        strokeColor: "#ffffff",
-        strokeWeight: 2,
-      },
+      path: google.maps.SymbolPath.CIRCLE,
+      scale: 8,
+      fillColor: "#284b70", // Navy - Access Realty primary
+      fillOpacity: 0.9,
+      strokeColor: "#ffffff",
+      strokeWeight: 2,
     };
   }, [isLoaded]);
 
@@ -94,11 +84,11 @@ export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps
     // Safety check for google object
     if (typeof google === "undefined" || !google.maps) return;
 
-    if (deals.length > 1) {
+    if (listings.length > 1) {
       const bounds = new google.maps.LatLngBounds();
-      deals.forEach((deal) => {
-        if (deal.latitude && deal.longitude) {
-          bounds.extend({ lat: deal.latitude, lng: deal.longitude });
+      listings.forEach((listing) => {
+        if (listing.latitude && listing.longitude) {
+          bounds.extend({ lat: listing.latitude, lng: listing.longitude });
         }
       });
       map.fitBounds(bounds);
@@ -108,7 +98,7 @@ export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps
         if (zoom && zoom > 12) map.setZoom(12);
       });
     }
-  }, [deals]);
+  }, [listings]);
 
   if (loadError) {
     return (
@@ -136,44 +126,44 @@ export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps
         zoom={10}
         options={mapOptions}
         onLoad={onLoad}
-        onClick={() => setSelectedDeal(null)}
+        onClick={() => setSelectedListing(null)}
       >
-        {deals.map((deal) => (
-          deal.latitude && deal.longitude && (
+        {listings.map((listing) => (
+          listing.latitude && listing.longitude && (
             <Marker
-              key={deal.id}
-              position={{ lat: deal.latitude, lng: deal.longitude }}
-              onClick={() => setSelectedDeal(deal)}
-              icon={markerIcons[deal.side]}
+              key={listing.id}
+              position={{ lat: listing.latitude, lng: listing.longitude }}
+              onClick={() => setSelectedListing(listing)}
+              icon={markerIcon}
             />
           )
         ))}
 
-        {selectedDeal && selectedDeal.latitude && selectedDeal.longitude && (
+        {selectedListing && selectedListing.latitude && selectedListing.longitude && (
           <InfoWindow
-            position={{ lat: selectedDeal.latitude, lng: selectedDeal.longitude }}
-            onCloseClick={() => setSelectedDeal(null)}
+            position={{ lat: selectedListing.latitude, lng: selectedListing.longitude }}
+            onCloseClick={() => setSelectedListing(null)}
           >
             <div className="flex gap-3 p-1" style={{ maxWidth: 320 }}>
-              {selectedDeal.photo_urls?.[0] && (
+              {selectedListing.photo_urls?.[0] && (
                 <img
-                  src={selectedDeal.photo_urls[0]}
-                  alt={selectedDeal.unparsed_address || "Property"}
+                  src={selectedListing.photo_urls[0]}
+                  alt={selectedListing.unparsed_address || "Property"}
                   className="w-24 h-20 object-cover rounded flex-shrink-0"
                 />
               )}
               <div className="min-w-0">
                 <p className="font-bold text-gray-900">
-                  {formatPrice(selectedDeal.list_price)}
+                  {formatPrice(selectedListing.list_price)}
                 </p>
                 <p className="text-xs text-gray-700 truncate">
-                  {selectedDeal.unparsed_address}
+                  {selectedListing.unparsed_address}
                 </p>
                 <p className="text-xs text-gray-500 mt-1">
                   {[
-                    selectedDeal.bedrooms_total && `${selectedDeal.bedrooms_total} bed`,
-                    selectedDeal.bathrooms_total_decimal && `${selectedDeal.bathrooms_total_decimal} bath`,
-                    selectedDeal.living_area && `${selectedDeal.living_area.toLocaleString()} sqft`,
+                    selectedListing.bedrooms_total && `${selectedListing.bedrooms_total} bed`,
+                    selectedListing.bathrooms_total_decimal && `${selectedListing.bathrooms_total_decimal} bath`,
+                    selectedListing.living_area && `${selectedListing.living_area.toLocaleString()} sqft`,
                   ].filter(Boolean).join(" · ")}
                 </p>
               </div>
@@ -183,21 +173,9 @@ export default function ClosedDealsMap({ deals, agentName }: ClosedDealsMapProps
       </GoogleMap>
 
       <div className="bg-card px-4 py-3 border-t border-border">
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <p className="text-sm text-muted-foreground">
-            <span className="font-semibold text-foreground">{deals.length}</span> closed transactions by {agentName}
-          </p>
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-primary"></span>
-              Seller&apos;s Agent ({deals.filter(d => d.side === "listing").length})
-            </span>
-            <span className="flex items-center gap-1.5">
-              <span className="w-3 h-3 rounded-full bg-secondary"></span>
-              Buyer&apos;s Agent ({deals.filter(d => d.side === "buyer").length})
-            </span>
-          </div>
-        </div>
+        <p className="text-sm text-muted-foreground">
+          <span className="font-semibold text-foreground">{listings.length}</span> closed listings by {agentName}
+        </p>
       </div>
     </div>
   );
