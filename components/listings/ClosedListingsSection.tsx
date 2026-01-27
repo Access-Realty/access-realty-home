@@ -2,7 +2,7 @@
 // ABOUTME: Fetches MLS + imported historical listings and renders map with stats
 
 import { getClosedListings, formatVolume } from "@/lib/listings";
-import ClosedListingsMap from "./ClosedListingsMap";
+import DeckGLListingsMap from "./DeckGLListingsMap";
 
 interface ClosedListingsSectionProps {
   staffId: string;
@@ -52,7 +52,7 @@ export default async function ClosedListingsSection({
           </div>
         </div>
 
-        <ClosedListingsMap listings={listings} agentName={agentName} />
+        <DeckGLListingsMap listings={listings} />
       </div>
     </section>
   );
