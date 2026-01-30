@@ -1,5 +1,5 @@
 // ABOUTME: Savings calculator page for DirectList
-// ABOUTME: Interactive calculator comparing DirectList flat fee vs 6% traditional commission
+// ABOUTME: Interactive calculator comparing DirectList flat fee vs 3% traditional listing commission
 
 "use client";
 
@@ -23,7 +23,7 @@ const faqItems = [
   {
     question: "How is DirectList different from a traditional real estate agent?",
     answer:
-      "Traditional agents typically charge 6% total commission (3% listing + 3% buyer's agent). With DirectList, you pay a flat fee with no percentage-based listing commission. You maintain more control over pricing and negotiations, and you keep more of your equity. It's designed for sellers who want exposure without overpaying.",
+      "Traditional listing agents typically charge 3% of the sale price. With DirectList, you pay a flat fee instead of a percentage-based listing commission. You maintain more control over pricing and negotiations, and you keep more of your equity. It's designed for sellers who want exposure without overpaying.",
   },
   {
     question: 'Is DirectList a "For Sale By Owner" (FSBO) listing?',
@@ -43,7 +43,7 @@ const faqItems = [
   {
     question: "How accurate is the savings calculator?",
     answer:
-      "The calculator provides an estimate based on your entered sale price and a 6% traditional commission. Actual savings will depend on final sale price, buyer agent commission (if any), negotiated terms, and closing costs. The calculator is meant to give you a clear comparison, not an exact closing statement.",
+      "The calculator provides an estimate based on your entered sale price and a 3% traditional listing commission. Actual savings will depend on final sale price, buyer agent commission (if any), negotiated terms, and closing costs. The calculator is meant to give you a clear comparison, not an exact closing statement.",
   },
 ];
 
@@ -90,7 +90,7 @@ export default function SavingsPage() {
   const [salePrice, setSalePrice] = useState<string>("");
 
   const salePriceNum = parseFloat(salePrice.replace(/,/g, "")) || 0;
-  const traditionalFee = salePriceNum * 0.06; // 6% traditional commission
+  const traditionalFee = salePriceNum * 0.03; // 3% traditional listing commission
   const directListFee = 2995;
   const savings = Math.max(0, traditionalFee - directListFee);
 
@@ -144,7 +144,7 @@ export default function SavingsPage() {
           {/* Traditional Fee */}
           <div className="bg-card border-2 border-red-200 rounded-xl p-6 text-center">
             <div className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-2">
-              Traditional Listing Fee (6%)*
+              Traditional Listing Fee (3%)*
             </div>
             <div className="text-3xl md:text-4xl font-bold text-red-500">
               {formatCurrency(traditionalFee)}
@@ -174,7 +174,7 @@ export default function SavingsPage() {
 
         {/* Disclaimer */}
         <p className="text-center text-sm text-muted-foreground max-w-2xl mx-auto">
-          *Under a standard Texas Residential Listing Agreement (TXR-1101), the seller agrees to pay a commission—typically 6% of the sales price—to the listing broker, who then offers a portion to the cooperating buyer&apos;s broker. While commission rates are not fixed by law or any association, this structure remains the prevailing industry practice. Your actual savings will depend on the final sales price of the Property.
+          *Under a standard Texas Residential Listing Agreement (TXR-1101), the seller agrees to pay a listing commission—typically 3% of the sales price—to the listing broker, who then offers a portion to the cooperating buyer&apos;s broker. While commission rates are not fixed by law or any association, this structure remains the prevailing industry practice. Your actual savings will depend on the final sales price of the Property.
         </p>
       </Section>
 
