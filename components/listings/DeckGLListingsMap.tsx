@@ -33,15 +33,6 @@ const COLORS = {
   accent: [79, 129, 189] as [number, number, number], // Lighter blue for buyer side
 };
 
-function formatPrice(price: number | null): string {
-  if (!price) return "N/A";
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(price);
-}
-
 export default function DeckGLListingsMap({ listings }: DeckGLListingsMapProps) {
   const [selectedListing, setSelectedListing] = useState<ClosedListing | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<{ x: number; y: number } | null>(null);
@@ -132,30 +123,31 @@ export default function DeckGLListingsMap({ listings }: DeckGLListingsMapProps) 
               width: 300,
             }}
           >
-            <button
-              onClick={closePanel}
-              className="absolute top-2 right-2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm transition-colors"
-            >
-              ×
-            </button>
-
             {selectedListing.photo_urls?.[0] ? (
-              <img
-                src={selectedListing.photo_urls[0]}
-                alt={selectedListing.unparsed_address || "Property"}
-                className="w-full h-36 object-cover"
-              />
+              <>
+                <button
+                  onClick={closePanel}
+                  className="absolute top-2 right-2 z-10 bg-black/50 hover:bg-black/70 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm transition-colors"
+                >
+                  ×
+                </button>
+                <img
+                  src={selectedListing.photo_urls[0]}
+                  alt={selectedListing.unparsed_address || "Property"}
+                  className="w-full h-36 object-cover"
+                />
+              </>
             ) : (
-              <div className="w-full h-36 bg-muted flex items-center justify-center text-muted-foreground text-sm">
-                No photo available
-              </div>
+              <button
+                onClick={closePanel}
+                className="absolute top-2 right-2 z-10 bg-gray-200 hover:bg-gray-300 text-gray-600 rounded-full w-6 h-6 flex items-center justify-center text-sm transition-colors"
+              >
+                ×
+              </button>
             )}
 
             <div className="p-3">
-              <p className="text-lg font-bold text-gray-900">
-                {formatPrice(selectedListing.list_price)}
-              </p>
-              <p className="text-sm text-gray-700 truncate">{selectedListing.unparsed_address}</p>
+              <p className="text-sm font-medium text-gray-900 truncate">{selectedListing.unparsed_address}</p>
               <p className="text-xs text-gray-500">{selectedListing.city}</p>
 
               {(selectedListing.bedrooms_total ||
