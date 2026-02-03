@@ -1,11 +1,12 @@
 // ABOUTME: DirectList Fix & Flip landing page for real estate investors
 // ABOUTME: Flat-fee MLS listing service targeted at fix and flip sellers
 
+"use client";
+
+import { useState } from "react";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
-import { HiCheck } from "react-icons/hi2";
-import { HiPhone } from "react-icons/hi2";
-import Accordion from "@/components/ui/Accordion";
+import { HiCheck, HiChevronDown, HiPhone } from "react-icons/hi2";
 
 // FAQ items for fix & flip investors
 const faqItems = [
@@ -97,6 +98,8 @@ const steps = [
 ];
 
 export default function FixAndFlipPage() {
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+
   return (
     <div className="bg-background">
       {/* Hero Section */}
@@ -156,12 +159,12 @@ export default function FixAndFlipPage() {
 
         <div className="relative max-w-2xl mx-auto">
           {/* Vertical timeline line */}
-          <div className="absolute left-5 top-6 bottom-6 w-0.5 bg-secondary/40" />
+          <div className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-secondary/40" />
 
-          <div className="space-y-10">
+          <div className="space-y-12">
             {steps.map((step) => (
               <div key={step.number} className="flex gap-6 items-start">
-                <div className="flex-shrink-0 h-10 w-10 rounded-full bg-secondary/30 flex items-center justify-center z-10">
+                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-secondary/30 flex items-center justify-center z-10">
                   <span className="text-sm font-bold text-primary">
                     {step.number}
                   </span>
@@ -239,8 +242,38 @@ export default function FixAndFlipPage() {
           </h2>
         </div>
 
-        <div className="bg-card border border-border rounded-xl p-6 md:p-8">
-          <Accordion items={faqItems} />
+        <div className="space-y-3">
+          {faqItems.map((item, index) => {
+            const isOpen = openFaq === index;
+            return (
+              <div
+                key={index}
+                className="bg-card border border-border rounded-xl overflow-hidden"
+              >
+                <button
+                  onClick={() => setOpenFaq(isOpen ? null : index)}
+                  className="w-full flex items-center justify-between px-6 py-4 text-left"
+                  aria-expanded={isOpen}
+                >
+                  <span className="font-semibold text-primary pr-4">
+                    {item.question}
+                  </span>
+                  <HiChevronDown
+                    className={`h-5 w-5 text-primary shrink-0 transition-transform duration-200 ${
+                      isOpen ? "rotate-180" : ""
+                    }`}
+                  />
+                </button>
+                <div
+                  className={`overflow-hidden transition-all duration-200 ${
+                    isOpen ? "max-h-96 pb-4" : "max-h-0"
+                  }`}
+                >
+                  <p className="text-muted-foreground px-6">{item.answer}</p>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </Section>
 
