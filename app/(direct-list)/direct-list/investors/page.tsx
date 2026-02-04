@@ -1,4 +1,4 @@
-// ABOUTME: DirectList Fix & Flip landing page for real estate investors
+// ABOUTME: DirectList investors landing page for real estate investors
 // ABOUTME: Flat-fee MLS listing service targeted at fix and flip sellers
 
 "use client";
@@ -98,7 +98,7 @@ const steps = [
   },
 ];
 
-export default function FixAndFlipPage() {
+export default function InvestorsPage() {
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -121,7 +121,7 @@ export default function FixAndFlipPage() {
             {/* CTAs */}
             <div className="flex flex-col sm:flex-row items-start gap-4">
               <Link
-                href="/direct-list/get-started"
+                href="/direct-list/investors/book"
                 className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
               >
                 Book a Call
@@ -291,7 +291,7 @@ export default function FixAndFlipPage() {
             Find out if DirectList is the right fit for your next flip.
           </p>
           <Link
-            href="/direct-list/get-started"
+            href="/direct-list/investors/book"
             className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
           >
             <HiPhone className="h-5 w-5" />
