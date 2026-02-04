@@ -1,21 +1,21 @@
-// ABOUTME: Redirect page for yard sign QR codes (alternate)
-// ABOUTME: Serves OG tags for social sharing, then redirects to /direct-list with UTM tracking
+// ABOUTME: Redirect page for Access Realty brand yard sign QR codes
+// ABOUTME: Serves OG tags for social sharing, then redirects to home page with UTM tracking
 
 import { Metadata } from "next";
 import RedirectClient from "./redirect-client";
 
 export const metadata: Metadata = {
-  title: "Direct List by Access Realty",
-  description: "Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.",
+  title: "Access Realty",
+  description: "Modern real estate brokerage. Buy, sell, and invest with expert guidance and transparent pricing.",
   openGraph: {
-    title: "Direct List by Access Realty",
-    description: "Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.",
+    title: "Access Realty",
+    description: "Modern real estate brokerage. Buy, sell, and invest with expert guidance and transparent pricing.",
     images: [
       {
-        url: "https://access.realty/direct-list-logo.png",
-        width: 2500,
-        height: 659,
-        alt: "Direct List",
+        url: "https://access.realty/access-realty-logo.png",
+        width: 1200,
+        height: 630,
+        alt: "Access Realty",
       },
     ],
     type: "website",
@@ -23,9 +23,9 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Direct List by Access Realty",
-    description: "Avoid costly agent fees. Get full MLS exposure, backed by experts, and sell smarter.",
-    images: ["https://access.realty/direct-list-logo.png"],
+    title: "Access Realty",
+    description: "Modern real estate brokerage. Buy, sell, and invest with expert guidance and transparent pricing.",
+    images: ["https://access.realty/access-realty-logo.png"],
   },
 };
 
