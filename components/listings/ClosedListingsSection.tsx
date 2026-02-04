@@ -22,12 +22,17 @@ export default async function ClosedListingsSection({
   // Calculate stats by side
   const listingSide = listings.filter((d) => d.side === "listing");
   const buyerSide = listings.filter((d) => d.side === "buyer");
+  const offMarketSide = listings.filter((d) => d.side === "off_market");
 
   const listingVolume = listingSide.reduce(
     (sum, d) => sum + (d.list_price || 0),
     0
   );
   const buyerVolume = buyerSide.reduce(
+    (sum, d) => sum + (d.list_price || 0),
+    0
+  );
+  const offMarketVolume = offMarketSide.reduce(
     (sum, d) => sum + (d.list_price || 0),
     0
   );
@@ -49,6 +54,11 @@ export default async function ClosedListingsSection({
             <p>
               <span className="font-semibold text-foreground">{buyerSide.length}</span> homes bought • {formatVolume(buyerVolume)}
             </p>
+            {offMarketSide.length > 0 && (
+              <p>
+                <span className="font-semibold text-foreground">{offMarketSide.length}</span> bought off-market • {formatVolume(offMarketVolume)}
+              </p>
+            )}
           </div>
         </div>
 

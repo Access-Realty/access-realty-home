@@ -29,8 +29,9 @@ const MAP_STYLE = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json
 
 // Access Realty colors
 const COLORS = {
-  primary: [40, 75, 112] as [number, number, number], // #284b70 - Navy
-  accent: [79, 129, 189] as [number, number, number], // Lighter blue for buyer side
+  primary: [40, 75, 112] as [number, number, number], // #284b70 - Navy (listing side)
+  accent: [79, 129, 189] as [number, number, number], // Lighter blue (buyer side)
+  offMarket: [22, 117, 68] as [number, number, number], // #167544 - Green (off-market)
 };
 
 export default function DeckGLListingsMap({ listings }: DeckGLListingsMapProps) {
@@ -75,7 +76,11 @@ export default function DeckGLListingsMap({ listings }: DeckGLListingsMapProps) 
         id: "listings",
         data: validListings,
         getPosition: (d: ClosedListing) => [d.longitude!, d.latitude!],
-        getFillColor: (d: ClosedListing) => (d.side === "listing" ? COLORS.primary : COLORS.accent),
+        getFillColor: (d: ClosedListing) => {
+          if (d.side === "listing") return COLORS.primary;
+          if (d.side === "off_market") return COLORS.offMarket;
+          return COLORS.accent; // buyer side
+        },
         getRadius: (d: ClosedListing) => {
           const price = d.list_price || 100000;
           return Math.max(200, Math.sqrt(price) / 10);

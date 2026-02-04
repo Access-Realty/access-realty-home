@@ -391,7 +391,7 @@ export interface ClosedListing {
   longitude: number | null;
   photo_urls: string[] | null;
   photos_stored: boolean | null;
-  side: "listing" | "buyer";
+  side: "listing" | "buyer" | "off_market";
 }
 
 /**
@@ -460,7 +460,7 @@ export async function getClosedListings(staffId: string): Promise<ClosedListing[
           longitude: parcel.longitude,
           photo_urls: null,
           photos_stored: null,
-          side: deal.side as "listing" | "buyer",
+          side: deal.side as "listing" | "buyer" | "off_market",
         };
       });
   }
@@ -688,7 +688,7 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
         longitude: parcel.longitude,
         photo_urls: null,
         photos_stored: null,
-        side: deal.side as "listing" | "buyer",
+        side: deal.side as "listing" | "buyer" | "off_market",
       };
     });
 
