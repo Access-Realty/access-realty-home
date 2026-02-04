@@ -189,15 +189,15 @@ export default function FixAndFlipPage() {
           </h2>
         </div>
 
-        <div className="bg-card rounded-xl overflow-hidden border border-border shadow-sm">
-          <table className="w-full">
+        <div className="rounded-xl border border-border shadow-sm overflow-x-auto">
+          <table className="w-full min-w-[500px] bg-card">
             <thead>
               <tr className="bg-primary text-primary-foreground">
-                <th className="text-left px-6 py-4 font-semibold">Feature</th>
-                <th className="text-center px-6 py-4 font-semibold">
+                <th className="text-left px-4 md:px-6 py-4 font-semibold">Feature</th>
+                <th className="text-center px-4 md:px-6 py-4 font-semibold">
                   DirectList
                 </th>
-                <th className="text-center px-6 py-4 font-semibold">
+                <th className="text-center px-4 md:px-6 py-4 font-semibold">
                   Traditional Listing
                 </th>
               </tr>
@@ -208,8 +208,8 @@ export default function FixAndFlipPage() {
                   key={row.feature}
                   className={idx % 2 === 0 ? "bg-card" : "bg-muted/50"}
                 >
-                  <td className="px-6 py-4 text-foreground">{row.feature}</td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-4 md:px-6 py-4 text-foreground">{row.feature}</td>
+                  <td className="px-4 md:px-6 py-4 text-center">
                     {row.directList === "check" ? (
                       <HiCheck className="h-5 w-5 text-primary mx-auto" />
                     ) : (
@@ -218,7 +218,7 @@ export default function FixAndFlipPage() {
                       </span>
                     )}
                   </td>
-                  <td className="px-6 py-4 text-center">
+                  <td className="px-4 md:px-6 py-4 text-center">
                     {row.traditional === "check" ? (
                       <HiCheck className="h-5 w-5 text-primary mx-auto" />
                     ) : (
