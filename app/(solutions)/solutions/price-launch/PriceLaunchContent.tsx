@@ -4,6 +4,7 @@
 "use client";
 
 import { useRef, useState, useEffect } from "react";
+import Image from "next/image";
 import {
   HiXMark,
   HiOutlineCurrencyDollar,
@@ -339,10 +340,13 @@ export default function PriceLaunchContent() {
           {/* Right Image */}
           <div className="hidden md:block">
             <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
-              <img
+              <Image
                 src="/price-launch-hero.jpg"
                 alt="Beautifully renovated home"
+                width={1824}
+                height={1216}
                 className="w-full h-auto object-cover"
+                priority
               />
             </div>
           </div>

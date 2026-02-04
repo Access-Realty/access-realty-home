@@ -156,7 +156,6 @@ export async function POST(request: NextRequest) {
 
 async function handleInviteeCreated(
   webhookPayload: CalendlyWebhookPayload,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any
 ) {
   const { payload } = webhookPayload;
@@ -239,7 +238,6 @@ async function handleInviteeCreated(
 
 async function handleInviteeCanceled(
   webhookPayload: CalendlyWebhookPayload,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   supabase: any
 ) {
   const { payload } = webhookPayload;

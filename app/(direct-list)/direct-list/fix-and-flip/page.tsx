@@ -4,6 +4,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
 import { HiCheck, HiChevronDown, HiPhone } from "react-icons/hi2";
@@ -134,10 +135,13 @@ export default function FixAndFlipPage() {
           {/* Right Image */}
           <div className="hidden md:block">
             <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
-              <img
+              <Image
                 src="/hero-house-new.jpg"
                 alt="Investment property for sale"
+                width={1920}
+                height={1264}
                 className="w-full h-auto object-cover"
+                priority
               />
             </div>
           </div>

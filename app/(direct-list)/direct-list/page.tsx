@@ -4,6 +4,7 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import {
   HiCheck,
   HiChevronDown,
@@ -212,10 +213,13 @@ export default function DirectListPage() {
             {/* Right Image */}
             <div className="hidden md:block">
               <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
-                <img
+                <Image
                   src="/hero-house-new.jpg"
                   alt="Beautiful home for sale"
+                  width={1920}
+                  height={1264}
                   className="w-full h-auto object-cover"
+                  priority
                 />
               </div>
             </div>
@@ -319,9 +323,11 @@ export default function DirectListPage() {
                   &quot;Agents were quoting us a 6% commission, which felt hard to justify. We went with DirectList, still got full MLS exposure, and kept most of that money. Our listing looked just as professional as others in the neighborhood. It worked out really well for us.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
-                  <img
+                  <Image
                     src="https://i.pravatar.cc/80?img=70"
                     alt="Michael T."
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
@@ -339,9 +345,11 @@ export default function DirectListPage() {
                   &quot;I&apos;d never sold a house before and was nervous about doing it myself. The app walked me through everything step by step. When I got my first offer and started second-guessing myself, my agent called me back within an hour and walked me through what to look for. Closed in 30 days, no surprises.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
-                  <img
+                  <Image
                     src="https://i.pravatar.cc/80?img=47"
                     alt="Sarah M."
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
@@ -359,9 +367,11 @@ export default function DirectListPage() {
                   &quot;This was my third home sale, so I was comfortable handling pricing, showings, and negotiations myself. What I really needed was MLS access, not a 3% commission for someone to list it. DirectList delivered exactly that. We listed, sold in two weeks, and saved $9,000. A great option for sellers that know what they are doing.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
-                  <img
+                  <Image
                     src="https://i.pravatar.cc/80?img=52"
                     alt="Mark H."
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
@@ -379,9 +389,11 @@ export default function DirectListPage() {
                   &quot;I felt confident at first, but the initial offer came in under asking and I needed guidance. My DirectList agent reviewed everything with me and helped me navigate the negotiations. We ended up closing higher than the original offer.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
-                  <img
+                  <Image
                     src="https://i.pravatar.cc/80?img=44"
                     alt="Angela R."
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
@@ -399,9 +411,11 @@ export default function DirectListPage() {
                   &quot;As an investor, I&apos;ve sold several homes using DirectList. The listings looked professional, had full MLS exposure, and reached the same buyers as traditional listings. The flat-fee structure saved me tens of thousands across multiple sales.&quot;
                 </p>
                 <div className="border-t border-border pt-4 flex items-center gap-3">
-                  <img
+                  <Image
                     src="https://i.pravatar.cc/80?img=68"
                     alt="Ryan D."
+                    width={40}
+                    height={40}
                     className="h-10 w-10 rounded-full object-cover"
                   />
                   <div>
