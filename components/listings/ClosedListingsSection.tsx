@@ -48,15 +48,18 @@ export default async function ClosedListingsSection({
             Closed Listings
           </h2>
           <div className="flex flex-col sm:flex-row sm:gap-6 text-muted-foreground">
-            <p>
-              <span className="font-semibold text-foreground">{listingSide.length}</span> homes sold • {formatVolume(listingVolume)}
+            <p className="flex items-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-full bg-[#284b70]" />
+              <span><span className="font-semibold text-foreground">{listingSide.length}</span> homes sold • {formatVolume(listingVolume)}</span>
             </p>
-            <p>
-              <span className="font-semibold text-foreground">{buyerSide.length}</span> homes bought • {formatVolume(buyerVolume)}
+            <p className="flex items-center gap-2">
+              <span className="inline-block w-3 h-3 rounded-full bg-[#4f81bd]" />
+              <span><span className="font-semibold text-foreground">{buyerSide.length}</span> homes bought • {formatVolume(buyerVolume)}</span>
             </p>
             {offMarketSide.length > 0 && (
-              <p>
-                <span className="font-semibold text-foreground">{offMarketSide.length}</span> bought off-market • {formatVolume(offMarketVolume)}
+              <p className="flex items-center gap-2">
+                <span className="inline-block w-3 h-3 rounded-full bg-[#167544]" />
+                <span><span className="font-semibold text-foreground">{offMarketSide.length}</span> bought off-market • {formatVolume(offMarketVolume)}</span>
               </p>
             )}
           </div>
