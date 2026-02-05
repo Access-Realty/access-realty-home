@@ -118,16 +118,17 @@ export default function InvestorsPage() {
               closing.
             </p>
 
-            {/* CTAs */}
-            <div className="flex flex-col sm:flex-row items-start gap-4">
+            {/* CTA */}
+            <div className="flex flex-col items-start gap-4">
               <Link
                 href="/direct-list/investors/book"
-                className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
+                className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
+                <HiPhone className="h-5 w-5" />
                 Book a Call
               </Link>
-              <p className="text-sm text-white/70">
-                Find out if DirectList is the right fit for you.
+              <p className="text-white/70">
+                Find out if you qualify for our Investor Pricing.
               </p>
             </div>
           </div>
@@ -282,24 +283,21 @@ export default function InvestorsPage() {
       </Section>
 
       {/* Bottom CTA - Book a Call */}
-      <section className="bg-primary pt-12">
-        <div className="mx-auto px-4 sm:px-6 lg:px-8 max-w-4xl text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-primary-foreground mb-4">
-            Book a Call
-          </h2>
-          <p className="text-primary-foreground/80 mb-6 max-w-xl mx-auto">
-            Find out if DirectList is the right fit for your next flip.
-          </p>
-          <Link
-            href="/direct-list/investors/book"
-            className="inline-flex items-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
-          >
-            <HiPhone className="h-5 w-5" />
-            Schedule Your Call
-            <span aria-hidden="true">&rarr;</span>
-          </Link>
-        </div>
-      </section>
+      <Section variant="cta" maxWidth="4xl" className="text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          Book a Call
+        </h2>
+        <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
+          Find out if DirectList is the right fit for your next flip.
+        </p>
+        <Link
+          href="/direct-list/investors/book"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Schedule Your Call
+          <span aria-hidden="true">&rarr;</span>
+        </Link>
+      </Section>
     </div>
   );
 }
