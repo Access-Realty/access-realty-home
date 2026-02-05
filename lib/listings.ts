@@ -493,6 +493,7 @@ export async function getClosedListings(staffId: string): Promise<ClosedListing[
  */
 async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListing[]> {
   // Fetch listing-side deals (where agent was primary listing agent)
+  // Note: Supabase defaults to 1000 row limit, so we explicitly set higher
   const listingDealsPromise = supabase
     .from("mls_listings")
     .select(MAP_SELECT_FIELDS)
@@ -502,7 +503,8 @@ async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListi
     .neq("property_type", "Residential Lease")
     .not("latitude", "is", null)
     .not("longitude", "is", null)
-    .order("list_price", { ascending: false });
+    .order("list_price", { ascending: false })
+    .limit(10000);
 
   // Fetch co-listing deals (where agent was co-listing agent)
   const { data: coListData, error: coListError } = await supabase
@@ -514,7 +516,8 @@ async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListi
     .neq("property_type", "Residential Lease")
     .not("latitude", "is", null)
     .not("longitude", "is", null)
-    .order("list_price", { ascending: false });
+    .order("list_price", { ascending: false })
+    .limit(10000);
 
   let coListingDeals: ClosedListing[] = [];
   if (coListError) {
@@ -537,7 +540,8 @@ async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListi
     .neq("property_type", "Residential Lease")
     .not("latitude", "is", null)
     .not("longitude", "is", null)
-    .order("list_price", { ascending: false });
+    .order("list_price", { ascending: false })
+    .limit(10000);
 
   let buyerDeals: ClosedListing[] = [];
   if (buyerError) {
@@ -597,6 +601,7 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
   let mlsDeals: ClosedListing[] = [];
   if (memberKeys.length > 0) {
     // Listing-side deals
+    // Note: Supabase defaults to 1000 row limit, so we explicitly set higher
     const { data: listingData } = await supabase
       .from("mls_listings")
       .select(MAP_SELECT_FIELDS)
@@ -605,7 +610,8 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
       .eq("standard_status", "Closed")
       .neq("property_type", "Residential Lease")
       .not("latitude", "is", null)
-      .not("longitude", "is", null);
+      .not("longitude", "is", null)
+      .limit(10000);
 
     // Co-listing deals
     const { data: coListData } = await supabase
@@ -616,7 +622,8 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
       .eq("standard_status", "Closed")
       .neq("property_type", "Residential Lease")
       .not("latitude", "is", null)
-      .not("longitude", "is", null);
+      .not("longitude", "is", null)
+      .limit(10000);
 
     // Buyer-side deals
     const { data: buyerData } = await supabase
@@ -627,7 +634,8 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
       .eq("standard_status", "Closed")
       .neq("property_type", "Residential Lease")
       .not("latitude", "is", null)
-      .not("longitude", "is", null);
+      .not("longitude", "is", null)
+      .limit(10000);
 
     const listingDeals: ClosedListing[] = (listingData || []).map((d) => ({
       ...(d as Omit<ClosedListing, "side">),
