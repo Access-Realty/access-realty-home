@@ -416,6 +416,7 @@ export async function getClosedListings(staffId: string): Promise<ClosedListing[
   }
 
   // Fetch imported historical deals with parcel coordinates
+  // Note: Supabase defaults to 1000 row limit, so we explicitly set higher
   const { data: importedData, error: importedError } = await supabase
     .from("staff_imported_listings")
     .select(`
@@ -428,7 +429,8 @@ export async function getClosedListings(staffId: string): Promise<ClosedListing[
       parcels(latitude, longitude)
     `)
     .eq("staff_id", staffId)
-    .not("parcel_id", "is", null);
+    .not("parcel_id", "is", null)
+    .limit(10000);
 
   let importedDeals: ClosedListing[] = [];
   if (importedError) {
@@ -650,6 +652,7 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
   }
 
   // Batch query: Imported historical deals for all staff
+  // Note: Supabase defaults to 1000 row limit, so we explicitly set higher
   const { data: importedData } = await supabase
     .from("staff_imported_listings")
     .select(`
@@ -662,7 +665,8 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
       parcels(latitude, longitude)
     `)
     .in("staff_id", allStaffIds)
-    .not("parcel_id", "is", null);
+    .not("parcel_id", "is", null)
+    .limit(10000);
 
   type ParcelData = { latitude: number | null; longitude: number | null } | null;
 
