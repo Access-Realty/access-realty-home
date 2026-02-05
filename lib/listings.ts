@@ -576,11 +576,26 @@ async function getMlsClosedListings(agentMemberKey: string): Promise<ClosedListi
   return uniqueDeals;
 }
 
+/** Stats for headline display (raw totals, not deduped) */
+export interface CompanyClosedStats {
+  totalTransactions: number;
+  totalVolume: number;
+}
+
+/** Result from getCompanyClosedListings */
+export interface CompanyClosedListingsResult {
+  /** Deduped listings for map display */
+  listings: ClosedListing[];
+  /** Raw stats for headline (not deduped - counts every deal where team was involved) */
+  stats: CompanyClosedStats;
+}
+
 /**
  * Fetch all closed listings for the entire company (all staff members)
  * Used for the company-wide track record map on /our-team
+ * Returns deduped listings for map AND raw stats for headline display
  */
-export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
+export async function getCompanyClosedListings(): Promise<CompanyClosedListingsResult> {
   // TODO: May need to filter by is_active flag in the future
   // Get all staff with their member_keys
   const { data: staffData, error: staffError } = await supabase
@@ -589,7 +604,7 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
 
   if (staffError || !staffData) {
     console.error("Error fetching staff:", staffError);
-    return [];
+    return { listings: [], stats: { totalTransactions: 0, totalVolume: 0 } };
   }
 
   // Separate staff with and without member_keys
@@ -599,6 +614,8 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
 
   // Batch query: MLS listings where any staff member was involved
   let mlsDeals: ClosedListing[] = [];
+  let rawMlsCount = 0;
+  let rawMlsVolume = 0;
   if (memberKeys.length > 0) {
     // Listing-side deals
     // Note: Supabase defaults to 1000 row limit, so we explicitly set higher
@@ -652,33 +669,58 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
       side: "buyer" as const,
     }));
 
-    // Dedupe by id (same listing shouldn't appear multiple times)
+    // Dedupe by id (same listing shouldn't appear multiple times on map)
     const allMls = [...listingDeals, ...coListingDeals, ...buyerDeals];
     mlsDeals = allMls.filter(
       (deal, index, self) => index === self.findIndex((d) => d.id === deal.id)
     );
+
+    // Track raw MLS stats (before dedup) for headline numbers
+    rawMlsCount = listingDeals.length + coListingDeals.length + buyerDeals.length;
+    rawMlsVolume = [...listingDeals, ...coListingDeals, ...buyerDeals].reduce(
+      (sum, d) => sum + (d.list_price || 0), 0
+    );
   }
 
-  // Batch query: Imported historical deals for all staff
-  // Note: Supabase defaults to 1000 row limit, so we explicitly set higher
-  const { data: importedData } = await supabase
-    .from("staff_imported_listings")
-    .select(`
-      id,
-      listing_id,
-      close_price,
-      raw_address,
-      raw_city,
-      side,
-      parcels(latitude, longitude)
-    `)
-    .in("staff_id", allStaffIds)
-    .not("parcel_id", "is", null)
-    .limit(10000);
-
+  // Paginated query: Imported historical deals for all staff
+  // Supabase project may have a 1000 row limit, so we paginate
   type ParcelData = { latitude: number | null; longitude: number | null } | null;
 
-  const importedDeals: ClosedListing[] = (importedData || [])
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let allImportedData: any[] = [];
+  let page = 0;
+  // Use 1000 page size to work within Supabase project row limits
+  const pageSize = 1000;
+
+  while (true) {
+    const { data: importedPage } = await supabase
+      .from("staff_imported_listings")
+      .select(`
+        id,
+        listing_id,
+        close_price,
+        raw_address,
+        raw_city,
+        side,
+        parcels(latitude, longitude)
+      `)
+      .in("staff_id", allStaffIds)
+      .not("parcel_id", "is", null)
+      .range(page * pageSize, (page + 1) * pageSize - 1);
+
+    if (!importedPage || importedPage.length === 0) break;
+    allImportedData = allImportedData.concat(importedPage);
+    if (importedPage.length < pageSize) break;
+    page++;
+  }
+
+  // Track raw imported stats for headline numbers
+  const rawImportedCount = allImportedData.length;
+  const rawImportedVolume = allImportedData.reduce(
+    (sum, d) => sum + (d.close_price || 0), 0
+  );
+
+  const importedDeals: ClosedListing[] = allImportedData
     .filter((deal) => {
       const parcel = deal.parcels as unknown as ParcelData;
       return parcel?.latitude && parcel?.longitude;
@@ -704,7 +746,7 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
       };
     });
 
-  // Combine MLS and imported - dedupe imported that overlap with MLS
+  // Combine MLS and imported - dedupe for map display only
   const allDeals = [...mlsDeals, ...importedDeals];
   const seenListingIds = new Set<string>();
   const uniqueDeals = allDeals.filter((deal) => {
@@ -714,5 +756,11 @@ export async function getCompanyClosedListings(): Promise<ClosedListing[]> {
     return true;
   });
 
-  return uniqueDeals;
+  // Raw stats for headline (every deal where team was involved)
+  const stats: CompanyClosedStats = {
+    totalTransactions: rawMlsCount + rawImportedCount,
+    totalVolume: rawMlsVolume + rawImportedVolume,
+  };
+
+  return { listings: uniqueDeals, stats };
 }

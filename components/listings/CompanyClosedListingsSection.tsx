@@ -1,17 +1,16 @@
 // ABOUTME: Server component for company-wide closed listings map
 // ABOUTME: Aggregates all staff MLS + imported deals for /our-team page
+// ABOUTME: Shows raw stats in headline (every deal), deduped data on map
 
 import { getCompanyClosedListings, formatVolume } from "@/lib/listings";
 import DeckGLListingsMap from "./DeckGLListingsMap";
 
 export default async function CompanyClosedListingsSection() {
-  const listings = await getCompanyClosedListings();
+  const { listings, stats } = await getCompanyClosedListings();
 
   if (listings.length === 0) {
     return null;
   }
-
-  const totalVolume = listings.reduce((sum, d) => sum + (d.list_price || 0), 0);
 
   return (
     <section className="py-16 bg-background">
@@ -25,9 +24,9 @@ export default async function CompanyClosedListingsSection() {
           </h2>
           <p className="text-muted-foreground">
             <span className="font-semibold text-foreground">
-              {listings.length.toLocaleString()}
+              {stats.totalTransactions.toLocaleString()}
             </span>{" "}
-            transactions · {formatVolume(totalVolume)}
+            transactions · {formatVolume(stats.totalVolume)}
           </p>
         </div>
 
