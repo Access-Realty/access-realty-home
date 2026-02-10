@@ -266,14 +266,18 @@ NEXT_PUBLIC_APP_URL=https://app.access.realty
 npm install @stripe/stripe-js @stripe/react-stripe-js stripe
 ```
 
-### 5. Price IDs Reference
+### 5. Stripe Account & Price IDs
 
-| Tier | Plan ID | Price | Stripe Product ID |
-|------|---------|-------|-------------------|
-| DirectList | `direct-list` | $495 | `prod_TJxlMoNGc1otZ5` |
-| DirectList+ | `direct-list-plus` | $995 | `prod_TNOHtbmROWkZoh` |
+**Account:** `51SNJmU` — same account as access-realty-app. Both repos MUST use the same account so the app can verify marketing payments.
 
-**Note:** Full Service is commission-based (3% at closing, no upfront payment) - redirects directly to app without Stripe checkout.
+**Test Mode Price IDs (staging):**
+
+| Tier | Plan ID | Price | Price ID (test) | Product ID (test) |
+|------|---------|-------|-----------------|--------------------|
+| DirectList | `direct-list` | $495 | `price_1Sz60WRqJKtMbhDNmC1SEXoZ` | `prod_TwzzDdHkAAVM7n` |
+| DirectList+ | `direct-list-plus` | $995 | `price_1Sz60HRqJKtMbhDNaHhSuAO6` | `prod_TwzzjBZPW6Oiyy` |
+
+**Note:** Full Service is commission-based (3% at closing, no upfront payment) — redirects directly to app without Stripe checkout. Production price IDs are configured in Vercel env vars.
 
 ---
 
