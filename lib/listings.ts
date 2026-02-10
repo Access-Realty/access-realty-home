@@ -11,9 +11,9 @@ import "server-only";
 import { supabase } from "./supabase";
 import type { MlsListing, ListingsFilter, ListingsResponse } from "@/types/mls";
 
-// Edge function URL for downloading photos
+// Edge function URL for downloading photos (derived from Supabase URL to avoid hardcoding)
 const PHOTO_DOWNLOAD_FUNCTION_URL =
-  "https://hvbicnpvactgxzprnygc.supabase.co/functions/v1/download-listing-photos";
+  `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/download-listing-photos`;
 
 // Supabase anon key for edge function auth
 const SUPABASE_ANON_KEY = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || "";

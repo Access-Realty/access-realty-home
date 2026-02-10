@@ -165,7 +165,7 @@ The marketing site detects environment to redirect to correct app:
 | Marketing Site | App Redirect |
 |----------------|--------------|
 | `localhost:4000` | `localhost:3000` |
-| `*.vercel.app` (preview) | `preview.access.realty` |
+| `*.vercel.app` (preview) | `app.staging.access.realty` |
 | `access.realty` (prod) | `app.access.realty` |
 
 See `app/api/stripe/create-checkout-session/route.ts` → `getAppUrl()`.

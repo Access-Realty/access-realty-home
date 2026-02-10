@@ -9,7 +9,7 @@ import Stripe from "stripe";
  * Determine the app URL based on the current environment.
  * Domain structure:
  *   - access.realty (marketing prod) → app.access.realty (app prod)
- *   - *.vercel.app (marketing preview) → preview.access.realty (app staging)
+ *   - *.vercel.app (marketing preview) → app.staging.access.realty (app staging)
  *   - localhost:4000 (marketing dev) → localhost:3000 (app dev)
  */
 function getAppUrl(request: NextRequest): string {
@@ -21,9 +21,9 @@ function getAppUrl(request: NextRequest): string {
   }
 
   // Vercel preview deployments (access-realty-home-*.vercel.app)
-  // Redirect to app staging at preview.access.realty
+  // Redirect to app staging at app.staging.access.realty
   if (host.includes("vercel.app")) {
-    return "https://preview.access.realty";
+    return "https://app.staging.access.realty";
   }
 
   // Production (access.realty) → app.access.realty
