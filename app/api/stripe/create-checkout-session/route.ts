@@ -45,17 +45,17 @@ function getStripe(): Stripe {
 // Map plan IDs to Stripe price IDs
 // Price IDs must be configured in environment variables (from Stripe Dashboard)
 const PLAN_PRICE_MAP: Record<string, { priceId: string; name: string; amountCents: number }> = {
-  "direct-list": {
+  "direct_list": {
     priceId: process.env.STRIPE_PRICE_DIRECT_LIST || "",
     name: "DirectList",
     amountCents: 49500, // $495 upfront
   },
-  "direct-list-plus": {
+  "direct_list_plus": {
     priceId: process.env.STRIPE_PRICE_DIRECT_LIST_PLUS || "",
     name: "DirectList+",
     amountCents: 99500, // $995 upfront
   },
-  "full-service": {
+  "full_service": {
     priceId: process.env.STRIPE_PRICE_FULL_SERVICE || "",
     name: "Full Service",
     amountCents: 0, // No upfront - 3% at closing
@@ -136,7 +136,8 @@ export async function POST(request: NextRequest) {
 
     // Build return URL for embedded checkout
     // After payment completes, user is redirected to the app with session info
-    const tier = plan === "direct-list" ? "direct_list" : plan === "direct-list-plus" ? "direct_list_plus" : plan;
+    // Plan IDs already use underscored format matching the app's tier param (direct_list, direct_list_plus)
+    const tier = plan;
 
     // Build query params for return URL
     // IMPORTANT: Don't use URLSearchParams for {CHECKOUT_SESSION_ID} - it would URL-encode
