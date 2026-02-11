@@ -114,6 +114,17 @@ Colors are defined in `app/globals.css` using the `@theme inline` block - not a 
 
 Use classes like `bg-primary`, `text-secondary`, `bg-background`.
 
+## DirectList Voice & Tone
+
+See **[DIRECTLIST-VOICE-GUIDE.md](./DIRECTLIST-VOICE-GUIDE.md)** for:
+- Base voice rules (always true across all content)
+- Emotional arc of a landing page (Mirror → Validate → Reframe → Prove → Address Doubt → Close)
+- How the voice flexes by persona (investor vs. homeowner in transition vs. first-time seller, etc.)
+- CTA patterns, objection handling voice, and language palette
+- Words/phrases to use and avoid
+
+**IMPORTANT:** All DirectList landing pages, persona pages, and marketing copy must follow this voice guide.
+
 ## Landing Page Design
 
 See **[LANDING-PAGE-TEMPLATES.md](./LANDING-PAGE-TEMPLATES.md)** for:
