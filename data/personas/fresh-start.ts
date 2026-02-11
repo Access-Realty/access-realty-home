@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const freshStartConfig: PersonaLandingConfig = {
   slug: "fresh-start",
   meta: {
-    title: "Sell Your Home on Your Terms | Access Realty DirectList",
+    title: "Sell Your Home on Your Terms | DirectList",
     description:
       "You're already managing everything else. Take control of your home sale too — full MLS listing for $2,995, not 6% of your equity.",
   },

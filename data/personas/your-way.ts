@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const yourWayConfig: PersonaLandingConfig = {
   slug: "your-way",
   meta: {
-    title: "Your Property, Your Process | Access Realty DirectList",
+    title: "Your Property, Your Process | DirectList",
     description:
       "Sometimes you want to handle something yourself. Full MLS listing for $2,995 — your property, your timeline, your decisions.",
   },

@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const familyHomeConfig: PersonaLandingConfig = {
   slug: "family-home",
   meta: {
-    title: "Sell the Family Home the Smart Way | Access Realty DirectList",
+    title: "Sell the Family Home the Smart Way | DirectList",
     description:
       "Your family is counting on you to handle this right. DirectList gives you full MLS exposure for $2,995 — and real savings you can show them.",
   },

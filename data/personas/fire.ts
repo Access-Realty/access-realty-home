@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const fireConfig: PersonaLandingConfig = {
   slug: "fire",
   meta: {
-    title: "Don't Let Commission Fees Wreck Your FIRE Number | Access Realty DirectList",
+    title: "Don't Let Commissions Wreck Your FIRE Number | DirectList",
     description:
       "You've optimized everything down to basis points. Why would you pay 3% on your largest asset? Full MLS listing for $2,995 flat.",
   },

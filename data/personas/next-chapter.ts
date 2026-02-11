@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const nextChapterConfig: PersonaLandingConfig = {
   slug: "next-chapter",
   meta: {
-    title: "Bring Your Professional Expertise to Your Home Sale | Access Realty DirectList",
+    title: "Bring Your Expertise to Your Home Sale | DirectList",
     description:
       "You didn't get where you are by handing things off to people less thorough than you. Full MLS listing with professional-grade tools for $2,995.",
   },

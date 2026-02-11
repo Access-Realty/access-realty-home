@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const smartSellersConfig: PersonaLandingConfig = {
   slug: "smart-sellers",
   meta: {
-    title: "Sell Smarter — Pay for Value, Not Tradition | Access Realty DirectList",
+    title: "Sell Smarter — Pay for Value, Not Tradition | DirectList",
     description:
       "The math on real estate commissions doesn't add up. DirectList gives you full MLS access for a flat $2,995 fee — not 3% of your home's value.",
   },

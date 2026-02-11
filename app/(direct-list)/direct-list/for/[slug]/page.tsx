@@ -5,6 +5,7 @@ import { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { personaConfigs, validSlugs } from "@/data/personas";
 import { PersonaLandingPage } from "@/components/landing/PersonaLandingPage";
+import { PersonaSchema } from "@/components/landing/PersonaSchema";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -22,12 +23,21 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
     return { title: "Page Not Found | Access Realty" };
   }
 
+  const canonicalUrl = `https://direct-list.com/for/${slug}`;
+
   return {
     title: config.meta.title,
     description: config.meta.description,
+    alternates: {
+      canonical: canonicalUrl,
+    },
     openGraph: {
       title: config.meta.title,
       description: config.meta.description,
+      url: canonicalUrl,
+      siteName: "DirectList by Access Realty",
+      type: "website",
+      locale: "en_US",
       ...(config.meta.ogImage && { images: [config.meta.ogImage] }),
     },
   };
@@ -41,5 +51,10 @@ export default async function PersonaPage({ params }: PageProps) {
     notFound();
   }
 
-  return <PersonaLandingPage config={config} />;
+  return (
+    <>
+      <PersonaSchema config={config} />
+      <PersonaLandingPage config={config} />
+    </>
+  );
 }

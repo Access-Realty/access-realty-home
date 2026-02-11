@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const startingOverConfig: PersonaLandingConfig = {
   slug: "starting-over",
   meta: {
-    title: "Sell Your Home Your Way — With Support When You Want It | Access Realty DirectList",
+    title: "Sell Your Home Your Way — With Support | DirectList",
     description:
       "You're capable of more than people give you credit for. List your home on MLS with professional tools and expert support — on your terms.",
   },

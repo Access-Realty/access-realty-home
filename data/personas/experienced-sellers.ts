@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const experiencedSellersConfig: PersonaLandingConfig = {
   slug: "experienced-sellers",
   meta: {
-    title: "You Know Your Market — Now List in It | Access Realty DirectList",
+    title: "You Know Your Market — Now List in It | DirectList",
     description:
       "You know your comps, your pricing, and your timeline. The only thing you need is MLS access. DirectList: $2,995 flat. Full MLS. No hand-holding.",
   },

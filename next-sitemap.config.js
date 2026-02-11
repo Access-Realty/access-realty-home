@@ -10,7 +10,7 @@ module.exports = {
     await config.transform(config, '/solutions/equity-bridge'),
     await config.transform(config, '/solutions/uplist'),
     await config.transform(config, '/solutions/seller-finance'),
-    // DirectList pages under direct-list.com domain
+    // DirectList core pages under direct-list.com domain
     ...[
       '/',
       '/get-started',
@@ -22,6 +22,24 @@ module.exports = {
       loc: `https://direct-list.com${path}`,
       changefreq: 'weekly',
       priority: path === '/' ? 1.0 : 0.7,
+      lastmod: new Date().toISOString(),
+    })),
+    // DirectList persona landing pages
+    ...[
+      '/for',
+      '/for/fresh-start',
+      '/for/smart-sellers',
+      '/for/investors',
+      '/for/starting-over',
+      '/for/family-home',
+      '/for/fire',
+      '/for/your-way',
+      '/for/next-chapter',
+      '/for/experienced-sellers',
+    ].map((path) => ({
+      loc: `https://direct-list.com${path}`,
+      changefreq: 'monthly',
+      priority: path === '/for' ? 0.8 : 0.6,
       lastmod: new Date().toISOString(),
     })),
   ],

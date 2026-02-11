@@ -6,7 +6,7 @@ import type { PersonaLandingConfig } from "@/types/persona-landing";
 export const investorsConfig: PersonaLandingConfig = {
   slug: "investors",
   meta: {
-    title: "List Investment Properties Like a Pro | Access Realty DirectList",
+    title: "List Investment Properties Like a Pro | DirectList",
     description:
       "Serious investors don't give away 3% on every deal. DirectList gives you full MLS access for $2,995 flat — the same tools the pros use.",
   },
