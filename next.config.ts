@@ -19,16 +19,17 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
+      // Redirect old access.realty/direct-list URLs to direct-list.com
       {
-        source: "/:path*",
-        has: [{ type: "host", value: "direct-list.com" }],
-        destination: "https://access.realty/direct-list",
+        source: "/direct-list",
+        has: [{ type: "host", value: "access.realty" }],
+        destination: "https://direct-list.com",
         permanent: true,
       },
       {
-        source: "/:path*",
-        has: [{ type: "host", value: "www.direct-list.com" }],
-        destination: "https://access.realty/direct-list",
+        source: "/direct-list/:path*",
+        has: [{ type: "host", value: "access.realty" }],
+        destination: "https://direct-list.com/:path*",
         permanent: true,
       },
     ];

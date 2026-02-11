@@ -1,8 +1,11 @@
 // ABOUTME: Hero section for persona landing pages
 // ABOUTME: Supports visual mood variants while staying within brand system
 
+"use client";
+
 import Link from "next/link";
 import type { PersonaLandingConfig, BackgroundVariant } from "@/types/persona-landing";
+import { useBrandPath } from "@/lib/BrandProvider";
 
 const variantStyles: Record<BackgroundVariant, { section: string; headline: string; subhead: string; cta: string; trust: string }> = {
   sharp: {
@@ -47,6 +50,7 @@ interface PersonaHeroProps {
 }
 
 export function PersonaHero({ hero }: PersonaHeroProps) {
+  const bp = useBrandPath();
   const styles = variantStyles[hero.backgroundVariant];
 
   return (
@@ -61,7 +65,7 @@ export function PersonaHero({ hero }: PersonaHeroProps) {
           {hero.subhead}
         </p>
         <Link
-          href={hero.ctaLink}
+          href={bp(hero.ctaLink)}
           className={`inline-block px-8 py-4 rounded-lg font-semibold text-lg transition-colors ${styles.cta}`}
           data-persona={hero.backgroundVariant}
           data-section="hero"

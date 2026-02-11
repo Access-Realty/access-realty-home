@@ -1,23 +1,54 @@
 // ABOUTME: Footer component for DirectList pages
-// ABOUTME: Focused on DirectList-relevant links (How It Works, pricing)
+// ABOUTME: Shows DirectList branding on direct-list.com, Access Realty branding on access.realty
+
+"use client";
 
 import Link from "next/link";
+import { useBrand, useBrandPath } from "@/lib/BrandProvider";
+
+function DirectListLogoText() {
+  return (
+    <>
+      <span style={{ fontFamily: "'Times New Roman', serif", fontStyle: "italic" }}>
+        Direct
+      </span>{" "}
+      <span className="font-[var(--font-be-vietnam-pro)]" style={{ fontWeight: 700 }}>
+        List
+      </span>
+    </>
+  );
+}
+
+function AccessLogoText() {
+  return (
+    <>
+      <span style={{ fontFamily: "'Times New Roman', serif", fontStyle: "italic" }}>
+        Access
+      </span>{" "}
+      <span className="font-[var(--font-be-vietnam-pro)]" style={{ fontWeight: 700 }}>
+        Realty
+      </span>
+    </>
+  );
+}
 
 export function DirectListFooter() {
+  const { brand, brandName } = useBrand();
+  const bp = useBrandPath();
+
   return (
     <footer className="bg-primary text-primary-foreground py-8 md:py-12">
       <div className="container mx-auto px-4">
         <div className="grid md:grid-cols-3 gap-6 md:gap-8">
           <div className="space-y-4">
             <div className="text-2xl font-bold">
-              <span style={{ fontFamily: "'Times New Roman', serif", fontStyle: "italic" }}>
-                Access
-              </span>{" "}
-              <span className="font-[var(--font-be-vietnam-pro)]" style={{ fontWeight: 700 }}>
-                Realty
-              </span>
+              {brand === "directlist" ? <DirectListLogoText /> : <AccessLogoText />}
             </div>
-            <p className="text-sm opacity-90">Sell Your House Your Way</p>
+            <p className="text-sm opacity-90">
+              {brand === "directlist"
+                ? "The way selling your home should be."
+                : "Sell Your House Your Way"}
+            </p>
           </div>
 
           <div className="space-y-4">
@@ -25,7 +56,7 @@ export function DirectListFooter() {
             <ul className="space-y-2 text-sm">
               <li>
                 <Link
-                  href="/direct-list#pricing"
+                  href={bp("/direct-list#pricing")}
                   className="hover:text-secondary transition-colors"
                 >
                   Compare Plans
@@ -33,7 +64,7 @@ export function DirectListFooter() {
               </li>
               <li>
                 <Link
-                  href="/direct-list/faq"
+                  href={bp("/direct-list/faq")}
                   className="hover:text-secondary transition-colors"
                 >
                   FAQ
@@ -77,7 +108,7 @@ export function DirectListFooter() {
 
         <div className="mt-8 pt-8 border-t border-primary-foreground/20 text-center text-sm">
           <p>
-            &copy; {new Date().getFullYear()} Access Realty. All rights
+            &copy; {new Date().getFullYear()} {brandName}. All rights
             reserved.
           </p>
         </div>

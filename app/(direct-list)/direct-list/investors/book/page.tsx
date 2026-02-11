@@ -7,6 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi2";
 import { useTrackingParams } from "@/lib/useTrackingParams";
+import { useBrandPath } from "@/lib/BrandProvider";
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
 import type { CalendlyBookingResult } from "@/components/calendly/types";
 
@@ -29,6 +30,7 @@ interface ContactFormData {
 type PageStep = "form" | "creating-lead" | "booking" | "success";
 
 export default function InvestorBookPage() {
+  const bp = useBrandPath();
   const [formData, setFormData] = useState<ContactFormData>({
     firstName: "",
     lastName: "",
@@ -152,7 +154,7 @@ export default function InvestorBookPage() {
       <div className="bg-primary pt-20">
         <div className="mx-auto max-w-md px-4 py-6">
           <Link
-            href="/direct-list/investors"
+            href={bp("/direct-list/investors")}
             className="inline-flex items-center gap-1.5 text-sm text-primary-foreground/70 hover:text-primary-foreground transition-colors mb-4"
           >
             <HiArrowLeft className="h-4 w-4" />
@@ -330,7 +332,7 @@ export default function InvestorBookPage() {
                   Booking configuration is missing. Please contact support.
                 </p>
                 <Link
-                  href="/direct-list/investors"
+                  href={bp("/direct-list/investors")}
                   className="text-primary font-medium hover:underline"
                 >
                   Go back
@@ -443,7 +445,7 @@ export default function InvestorBookPage() {
                 </p>
 
                 <Link
-                  href="/direct-list/investors"
+                  href={bp("/direct-list/investors")}
                   className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors text-center block"
                 >
                   Done

@@ -8,6 +8,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
 import { HiCheck, HiChevronDown, HiPhone } from "react-icons/hi2";
+import { useBrandPath } from "@/lib/BrandProvider";
 
 // FAQ items for fix & flip investors
 const faqItems = [
@@ -99,6 +100,7 @@ const steps = [
 ];
 
 export default function InvestorsPage() {
+  const bp = useBrandPath();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
 
   return (
@@ -121,7 +123,7 @@ export default function InvestorsPage() {
             {/* CTA */}
             <div className="flex flex-col items-start gap-4">
               <Link
-                href="/direct-list/investors/book"
+                href={bp("/direct-list/investors/book")}
                 className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 <HiPhone className="h-5 w-5" />
@@ -291,7 +293,7 @@ export default function InvestorsPage() {
           Find out if DirectList is the right fit for your next flip.
         </p>
         <Link
-          href="/direct-list/investors/book"
+          href={bp("/direct-list/investors/book")}
           className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
         >
           Schedule Your Call

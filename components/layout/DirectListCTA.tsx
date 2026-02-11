@@ -1,7 +1,10 @@
 // ABOUTME: Reusable CTA section for DirectList product pages
 // ABOUTME: Flows directly into DirectListFooter (both use bg-primary)
 
+"use client";
+
 import Link from "next/link";
+import { useBrandPath } from "@/lib/BrandProvider";
 
 interface DirectListCTAProps {
   heading?: string;
@@ -16,6 +19,8 @@ export function DirectListCTA({
   buttonText = "Get Started Now",
   buttonHref = "/direct-list/get-started",
 }: DirectListCTAProps) {
+  const bp = useBrandPath();
+
   // Uses custom styling instead of Section component to flow seamlessly into DirectListFooter
   // Both use bg-primary - no bottom padding so it flows directly into footer
   return (
@@ -28,7 +33,7 @@ export function DirectListCTA({
           {subheading}
         </p>
         <Link
-          href={buttonHref}
+          href={bp(buttonHref)}
           className="inline-block px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
         >
           {buttonText}

@@ -1,4 +1,4 @@
-// ABOUTME: Root layout for Access Realty marketing site
+// ABOUTME: Root layout for Access Realty + DirectList multi-domain marketing site
 // ABOUTME: Sets up fonts, metadata, and global styles (no Header/Footer - handled by route groups)
 
 import type { Metadata } from "next";
@@ -6,6 +6,8 @@ import { Suspense } from "react";
 import { Be_Vietnam_Pro, Cormorant_Garamond } from "next/font/google";
 import Script from "next/script";
 import { TrackingCapture } from "@/components/TrackingCapture";
+import { getBrand } from "@/lib/brand-server";
+import { BrandProvider } from "@/lib/BrandProvider";
 import "./globals.css";
 
 const GA_MEASUREMENT_ID = "G-15NH3BVL2Q";
@@ -58,13 +60,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { brand } = await getBrand();
+
   return (
-    <html lang="en">
+    <html lang="en" data-brand={brand}>
       <head>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`}
@@ -78,19 +82,23 @@ export default function RootLayout({
             gtag('config', '${GA_MEASUREMENT_ID}');
           `}
         </Script>
-        <Script
-          id="local-business-schema"
-          type="application/ld+json"
-          strategy="beforeInteractive"
-        >
-          {JSON.stringify(localBusinessSchema)}
-        </Script>
+        {brand === "access" && (
+          <Script
+            id="local-business-schema"
+            type="application/ld+json"
+            strategy="beforeInteractive"
+          >
+            {JSON.stringify(localBusinessSchema)}
+          </Script>
+        )}
       </head>
       <body className={`${beVietnamPro.variable} ${cormorantGaramond.variable} antialiased`}>
-        <Suspense fallback={null}>
-          <TrackingCapture />
-        </Suspense>
-        {children}
+        <BrandProvider brand={brand}>
+          <Suspense fallback={null}>
+            <TrackingCapture />
+          </Suspense>
+          {children}
+        </BrandProvider>
       </body>
     </html>
   );

@@ -8,6 +8,7 @@ import Link from "next/link";
 import { HiCheck } from "react-icons/hi2";
 import Accordion from "@/components/ui/Accordion";
 import { HeroSection, Section } from "@/components/layout";
+import { useBrandPath } from "@/lib/BrandProvider";
 
 const faqItems = [
   {
@@ -87,6 +88,7 @@ function DirectListStyled() {
 }
 
 export default function SavingsPage() {
+  const bp = useBrandPath();
   const [salePrice, setSalePrice] = useState<string>("");
 
   const salePriceNum = parseFloat(salePrice.replace(/,/g, "")) || 0;
@@ -219,7 +221,7 @@ export default function SavingsPage() {
           Not every seller should use DirectList — and that&apos;s okay. If saving thousands in commissions sounds appealing, the next step is a quick conversation to see if your property and situation are a good fit.
         </p>
         <Link
-          href="/direct-list/get-started"
+          href={bp("/direct-list/get-started")}
           className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-4 rounded-lg font-semibold hover:bg-primary/90 transition-colors"
         >
           Get Started With DirectList

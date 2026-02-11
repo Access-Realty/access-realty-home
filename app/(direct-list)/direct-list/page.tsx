@@ -18,6 +18,7 @@ import { RiCameraAiFill } from "react-icons/ri";
 import { FaHandshake } from "react-icons/fa6";
 import Link from "next/link";
 import { StyledTierName } from "@/components/services/StyledTierName";
+import { useBrandPath } from "@/lib/BrandProvider";
 
 // Service tier definitions
 const SERVICE_TIERS = [
@@ -141,6 +142,7 @@ function DirectListLogo({ className = "" }: { className?: string }) {
 }
 
 export default function DirectListPage() {
+  const bp = useBrandPath();
   const [expandedTiers, setExpandedTiers] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (tierId: string) => {
@@ -180,13 +182,13 @@ export default function DirectListPage() {
               {/* CTAs */}
               <div className="flex flex-wrap gap-4 mb-10">
                 <Link
-                  href="/direct-list/get-started"
+                  href={bp("/direct-list/get-started")}
                   className="inline-flex items-center justify-center bg-secondary text-secondary-foreground px-6 py-3 rounded-md font-semibold hover:opacity-90 transition-opacity"
                 >
                   Get Started Now
                 </Link>
                 <Link
-                  href="/direct-list/savings"
+                  href={bp("/direct-list/savings")}
                   className="inline-flex items-center justify-center border-2 border-white text-white px-6 py-3 rounded-md font-semibold hover:bg-white/10 transition-colors"
                 >
                   Calculate Your Savings
@@ -637,7 +639,7 @@ export default function DirectListPage() {
               Get full MLS exposure and keep more money in your pocket.
             </p>
             <Link
-              href="/direct-list/get-started"
+              href={bp("/direct-list/get-started")}
               className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-md font-semibold hover:bg-primary/90 transition-colors"
             >
               List My Home on MLS

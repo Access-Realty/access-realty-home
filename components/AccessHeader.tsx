@@ -1,10 +1,10 @@
-// ABOUTME: Fixed header with logo, navigation links, and sign-in button
-// ABOUTME: Sticky nav bar with backdrop blur effect
+// ABOUTME: Fixed header for Access Realty pages
+// ABOUTME: Sticky nav bar with logo, sign-in button, and backdrop blur effect
 
 import Link from "next/link";
 import Image from "next/image";
 
-const Header = () => {
+export function AccessHeader() {
   return (
     <header className="fixed top-0 left-0 right-0 bg-muted/95 backdrop-blur-sm z-50 border-b border-border shadow-sm">
       <div className="container mx-auto px-4 py-4">
@@ -31,6 +31,4 @@ const Header = () => {
       </div>
     </header>
   );
-};
-
-export default Header;
+}
