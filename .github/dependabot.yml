@@ -1,0 +1,94 @@
+version: 2
+updates:
+  # npm dependencies
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    open-pull-requests-limit: 10
+    groups:
+      # Group minor and patch updates to reduce PR noise
+      minor-and-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Next.js ecosystem must be upgraded together
+      nextjs:
+        patterns:
+          - "next"
+          - "eslint-config-next"
+        update-types:
+          - "minor"
+          - "patch"
+      # deck.gl packages must stay in sync (peer deps)
+      deckgl:
+        patterns:
+          - "deck.gl"
+          - "@deck.gl/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Supabase packages should be upgraded together
+      supabase:
+        patterns:
+          - "@supabase/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Stripe packages should be upgraded together
+      stripe:
+        patterns:
+          - "stripe"
+          - "@stripe/*"
+        update-types:
+          - "minor"
+          - "patch"
+      # Playwright packages should be upgraded together
+      playwright:
+        patterns:
+          - "playwright"
+          - "@playwright/*"
+        update-types:
+          - "minor"
+          - "patch"
+    ignore:
+      # Ignore major updates for these - review manually
+      - dependency-name: "react"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "react-dom"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "next"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "eslint-config-next"
+        update-types: ["version-update:semver-major"]
+      # Tailwind v4 is already a rewrite - major bumps need migration
+      - dependency-name: "tailwindcss"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@tailwindcss/*"
+        update-types: ["version-update:semver-major"]
+      # @types/node should match CI Node version - review manually
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
+      # Supabase major versions can have breaking API changes
+      - dependency-name: "@supabase/*"
+        update-types: ["version-update:semver-major"]
+      # Stripe major versions require API migration
+      - dependency-name: "stripe"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@stripe/*"
+        update-types: ["version-update:semver-major"]
+      # deck.gl major versions are significant rewrites
+      - dependency-name: "deck.gl"
+        update-types: ["version-update:semver-major"]
+      - dependency-name: "@deck.gl/*"
+        update-types: ["version-update:semver-major"]
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
