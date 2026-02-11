@@ -13,19 +13,19 @@ export const startingOverConfig: PersonaLandingConfig = {
   hero: {
     headline: "You Don't Need Someone\nto Do This for You.",
     subhead:
-      "You need tools that work when you're ready, support when you ask for it, and the space to do this your way.",
+      "Professional tools when you're ready. Expert support when you want it. Your timeline, your decisions.",
     ctaText: "Start When You're Ready",
     ctaLink: "/direct-list/get-started",
     trustSignal: "Professional tools. Expert support. Your pace, your decisions.",
     backgroundVariant: "warm",
   },
   mirror: {
-    opener: "Everyone means well.",
+    opener: "You don't need anyone's permission to handle this.",
     statements: [
       "Your kids want to help. Your friends have opinions. Someone's already suggested \"their\" agent who'll \"take care of everything.\"",
-      "But you know what you need right now isn't someone else making decisions for you. It's the opposite.",
-      "You need to do this — not because no one else can, but because proving you can matters right now more than almost anything.",
-      "You're not looking for someone to take over. You're looking for the right tools and the confidence that help is there if you want it.",
+      "But you've been making decisions your whole life — including harder ones than this.",
+      "What you need is the right set of tools and the space to move at your own pace. Not someone else's timeline. Not someone else's process.",
+      "Help is available when you want it. Otherwise, this is yours.",
     ],
   },
   reframe: {

@@ -13,7 +13,7 @@ export const smartSellersConfig: PersonaLandingConfig = {
   hero: {
     headline: "You've Done the Math.\nThe Commission Model Is Broken.",
     subhead:
-      "3% of your home's value for 40 hours of work is $200–$400/hr. You're not cheap — you just refuse to pay irrational prices.",
+      "3% of your home's value for 40 hours of work is $200–$400/hr. That's not a rational price — and you don't pay irrational prices.",
     ctaText: "Pay for Value, Not Tradition",
     ctaLink: "/direct-list/get-started",
     trustSignal: "Join 400+ DFW sellers who chose the rational option",

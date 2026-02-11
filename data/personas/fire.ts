@@ -24,7 +24,7 @@ export const fireConfig: PersonaLandingConfig = {
     statements: [
       "You know your FIRE number. You know your savings rate. You've optimized groceries, insurance, tax strategy, and investment fees down to basis points.",
       "And now you're looking at the single largest transaction of your financial life — and the default option is to hand someone 3% of it. For scheduling showings.",
-      "You're not cheap. You're rational. There's a difference. And the 5-6% commission model doesn't survive rational analysis.",
+      "Every dollar in your plan has a job. The 5-6% commission model doesn't survive the same scrutiny you give everything else.",
       "This is the largest single expense you can optimize. Everything else you've done has been practice for this.",
     ],
   },

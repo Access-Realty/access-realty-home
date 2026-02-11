@@ -16,16 +16,16 @@ export const investorsConfig: PersonaLandingConfig = {
       "Full MLS listing for a flat $2,995. Same exposure. Same buyer pool. The savings compound with every property you move.",
     ctaText: "List Like a Pro",
     ctaLink: "/direct-list/get-started",
-    trustSignal: "Used by DFW investors managing growing portfolios",
+    trustSignal: "Flat $2,995 per listing. The savings compound across your portfolio.",
     backgroundVariant: "pro",
   },
   mirror: {
-    opener: "You're thinking about this the right way.",
+    opener: "Margins matter. You already know that.",
     statements: [
-      "You just closed on a property — or maybe you're getting ready to list one. Either way, you're running numbers on everything. You know that margins matter.",
-      "You've read enough to know that the investors who build real wealth treat every transaction as a line item. A 3% listing commission on every deal is a leak in the system.",
-      "You're not looking for a discount. You're looking for the professional-grade tool that lets you operate like the business this is becoming.",
-      "The math is simple: save $9,000 per deal, reinvest it, and watch the gap between you and every other investor widen with every transaction.",
+      "You're running numbers on every deal — acquisition, rehab, hold time, exit price. Every line item gets scrutiny. But somehow the 3% listing commission gets a pass.",
+      "That's a leak in the system. A 3% commission on every deal is money that should be rolling into your next acquisition.",
+      "You're not looking for a discount. You're looking for the professional-grade tool that lets you operate like the business this is.",
+      "The math is simple: save $9,000 per deal, reinvest it, and watch the gap widen with every transaction.",
     ],
   },
   reframe: {

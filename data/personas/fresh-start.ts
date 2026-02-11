@@ -82,7 +82,7 @@ export const freshStartConfig: PersonaLandingConfig = {
     {
       question: "Can I really manage this while dealing with everything else?",
       answer:
-        "Yes. The platform does the heavy lifting — MLS entry, syndication, showing coordination through ShowingTime. You make the decisions. Most sellers spend 2–3 hours total on setup, then it runs itself. You're already managing harder things than this.",
+        "Yes. The platform does the heavy lifting — MLS entry, distribution to Zillow and 100+ sites, showing coordination through ShowingTime. You make the decisions. Most sellers spend 2–3 hours total on setup, then it runs itself. You're already managing harder things than this.",
     },
     {
       question: "What if the other party or their attorney has concerns about the listing approach?",
