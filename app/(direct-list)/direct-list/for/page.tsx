@@ -2,10 +2,10 @@
 // ABOUTME: Primarily for SEO (Google discovers child pages via links), but functional if visited
 
 import { Metadata } from "next";
-import Link from "next/link";
 import { personaConfigs, validSlugs } from "@/data/personas";
 import { HeroSection, Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { PersonaGrid } from "./PersonaGrid";
 
 export const metadata: Metadata = {
   title: "Sell Your Way | DirectList by Access Realty",
@@ -23,18 +23,6 @@ export const metadata: Metadata = {
     type: "website",
     locale: "en_US",
   },
-};
-
-const personaLabels: Record<string, string> = {
-  "fresh-start": "Starting Fresh",
-  "smart-sellers": "Smart Sellers",
-  investors: "Investors",
-  "starting-over": "Starting Over",
-  "family-home": "Family Home",
-  fire: "FIRE Movement",
-  "your-way": "Your Way",
-  "next-chapter": "Next Chapter",
-  "experienced-sellers": "Experienced Sellers",
 };
 
 export default function ForIndexPage() {
@@ -57,6 +45,7 @@ export default function ForIndexPage() {
     <>
       <script
         type="application/ld+json"
+        // Safe: collectionSchema is built entirely from our own static config data
         dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionSchema) }}
       />
 
@@ -71,25 +60,7 @@ export default function ForIndexPage() {
       </HeroSection>
 
       <Section maxWidth="5xl">
-        <div className="grid md:grid-cols-3 gap-6">
-          {validSlugs.map((slug) => {
-            const config = personaConfigs[slug];
-            return (
-              <Link
-                key={slug}
-                href={`/direct-list/for/${slug}`}
-                className="block p-6 rounded-lg border border-border bg-card hover:shadow-md transition-shadow"
-              >
-                <h2 className="text-lg font-bold text-primary mb-2">
-                  {personaLabels[slug] || slug}
-                </h2>
-                <p className="text-sm text-muted-foreground leading-relaxed">
-                  {config.meta.description}
-                </p>
-              </Link>
-            );
-          })}
-        </div>
+        <PersonaGrid />
       </Section>
 
       <DirectListCTA />
