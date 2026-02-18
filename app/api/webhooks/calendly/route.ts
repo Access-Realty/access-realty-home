@@ -183,7 +183,7 @@ async function handleInviteeCreated(
   // Verify lead exists
   const { data: lead, error: leadError } = await supabase
     .from("leads")
-    .select("id, email, first_name, last_name")
+    .select("id, first_name, last_name")
     .eq("id", leadId)
     .single();
 
@@ -261,14 +261,15 @@ async function handleInviteeCanceled(
     return;
   }
 
-  // Update meeting status and append cancellation reason to notes
+  // Mark meeting as cancelled with reason and timestamp
+  const now = new Date().toISOString();
   const { error } = await supabase
     .from("crm_meetings")
     .update({
       status: "cancelled",
       cancellation_reason: cancellation?.reason || null,
-      canceled_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
+      canceled_at: now,
+      updated_at: now,
     })
     .eq("id", meeting.id);
 
