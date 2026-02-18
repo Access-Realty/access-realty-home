@@ -1,5 +1,5 @@
 // ABOUTME: Calendly webhook handler for booking events from marketing site
-// ABOUTME: Verifies signatures and creates meetings linked to leads via lead_id FK
+// ABOUTME: Verifies signatures and creates crm_meetings linked to leads via lead_id FK
 
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@supabase/supabase-js";
@@ -183,7 +183,7 @@ async function handleInviteeCreated(
   // Verify lead exists
   const { data: lead, error: leadError } = await supabase
     .from("leads")
-    .select("id, email, first_name, last_name")
+    .select("id, first_name, last_name")
     .eq("id", leadId)
     .single();
 
@@ -194,7 +194,7 @@ async function handleInviteeCreated(
 
   // Check if meeting already exists (idempotency)
   const { data: existingMeeting } = await supabase
-    .from("meetings")
+    .from("crm_meetings")
     .select("id")
     .eq("calendly_event_id", eventId)
     .single();
@@ -208,18 +208,18 @@ async function handleInviteeCreated(
   const startTime = scheduledEvent?.start_time;
   const endTime = scheduledEvent?.end_time;
 
-  const meetingTitle = `${programSource === "price_launch" ? "Price Launch" : "Program"} Consultation - ${lead.first_name || ""} ${lead.last_name || ""}`.trim();
+  const leadName = `${lead.first_name || ""} ${lead.last_name || ""}`.trim();
 
-  const { error: insertError } = await supabase.from("meetings").insert({
+  const { error: insertError } = await supabase.from("crm_meetings").insert({
     lead_id: leadId,
-    title: meetingTitle,
-    start_time: startTime,
-    end_time: endTime,
+    consultation_type: "inquiry",
+    meeting_type: "phone",
     calendly_event_id: eventId,
     calendly_invitee_id: inviteeId,
+    scheduled_at: startTime,
+    end_time: endTime,
     status: "scheduled",
-    location: "Google Meet",
-    notes: `Booked via marketing site (${programSource || "unknown"})`,
+    notes: `${programSource === "price_launch" ? "Price Launch" : "Program"} inquiry — ${leadName}. Booked via marketing site.`,
   });
 
   if (insertError) {
@@ -251,8 +251,8 @@ async function handleInviteeCanceled(
 
   // Find meeting by calendly_event_id
   const { data: meeting, error: findError } = await supabase
-    .from("meetings")
-    .select("id, notes")
+    .from("crm_meetings")
+    .select("id")
     .eq("calendly_event_id", eventId)
     .single();
 
@@ -261,15 +261,15 @@ async function handleInviteeCanceled(
     return;
   }
 
-  // Update meeting status
+  // Mark meeting as cancelled with reason and timestamp
+  const now = new Date().toISOString();
   const { error } = await supabase
-    .from("meetings")
+    .from("crm_meetings")
     .update({
       status: "cancelled",
-      notes: cancellation?.reason
-        ? `Cancelled: ${cancellation.reason}. ${meeting.notes || ""}`
-        : `Cancelled. ${meeting.notes || ""}`,
-      updated_at: new Date().toISOString(),
+      cancellation_reason: cancellation?.reason || null,
+      canceled_at: now,
+      updated_at: now,
     })
     .eq("id", meeting.id);
 
