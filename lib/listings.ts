@@ -8,7 +8,7 @@
 // NOTE: For client-side formatting utilities, use @/lib/listing-utils instead
 
 import "server-only";
-import { supabase } from "./supabase";
+import { supabase, getSupabaseAdmin } from "./supabase";
 import type { MlsListing, ListingsFilter, ListingsResponse } from "@/types/mls";
 
 // Edge function URL for downloading photos (derived from Supabase URL to avoid hardcoding)
@@ -401,7 +401,8 @@ export interface ClosedListing {
  */
 export async function getClosedListings(staffId: string): Promise<ClosedListing[]> {
   // First, get member_key for MLS queries
-  const { data: staffData } = await supabase
+  // Staff view reads from profiles (RLS-protected), so use admin client
+  const { data: staffData } = await getSupabaseAdmin()
     .from("staff")
     .select("member_key")
     .eq("id", staffId)
@@ -598,7 +599,8 @@ export interface CompanyClosedListingsResult {
 export async function getCompanyClosedListings(): Promise<CompanyClosedListingsResult> {
   // TODO: May need to filter by is_active flag in the future
   // Get all staff with their member_keys
-  const { data: staffData, error: staffError } = await supabase
+  // Staff view reads from profiles (RLS-protected), so use admin client
+  const { data: staffData, error: staffError } = await getSupabaseAdmin()
     .from("staff")
     .select("id, member_key");
 

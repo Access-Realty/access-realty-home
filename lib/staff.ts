@@ -1,7 +1,7 @@
 // ABOUTME: Service layer for staff/agent data from Supabase staff view
 // ABOUTME: Combines DB data (member_key, contact) with hardcoded bio/services
 
-import { supabase } from "./supabase";
+import { getSupabaseAdmin } from "./supabase";
 
 // Staff data from Supabase staff view
 export interface StaffProfile {
@@ -100,6 +100,7 @@ function generateInitials(firstName: string | null, lastName: string | null): st
  * Fetch all active staff members (agents/realtors)
  */
 export async function getStaffMembers(): Promise<StaffMember[]> {
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("staff")
     .select("id, first_name, last_name, full_name, email, phone, role, member_key, calendly_remote_url, calendly_in_person_url, calendly_phone_url, avatar_url, is_active")
@@ -142,6 +143,7 @@ export async function getStaffBySlug(slug: string): Promise<StaffMember | null> 
   const firstName = parts[0];
   const lastName = parts.slice(1).join(" "); // Handle multi-part last names
 
+  const supabase = getSupabaseAdmin();
   const { data, error } = await supabase
     .from("staff")
     .select("id, first_name, last_name, full_name, email, phone, role, member_key, calendly_remote_url, calendly_in_person_url, calendly_phone_url, avatar_url, is_active")
