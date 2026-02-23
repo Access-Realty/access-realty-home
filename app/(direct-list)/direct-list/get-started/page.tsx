@@ -354,7 +354,7 @@ export default function GetStartedPage() {
 
   // Open Calendly popup (loads script if needed)
   const openCalendlyPopup = useCallback(() => {
-    const url = "https://calendly.com/dfw-experts/inquires";
+    const url = "https://calendly.com/access-realty/inquires";
 
     // If Calendly is already loaded, open popup
     if (window.Calendly) {
@@ -581,7 +581,7 @@ export default function GetStartedPage() {
   // Handle Full Service selection - open Calendly popup with prefilled data
   const handleFullServiceSelect = useCallback(() => {
     // Build Calendly URL with prefilled form data
-    const baseUrl = "https://calendly.com/dfw-experts/inquires";
+    const baseUrl = "https://calendly.com/access-realty/inquires";
     const params = new URLSearchParams();
 
     // Prefill name
