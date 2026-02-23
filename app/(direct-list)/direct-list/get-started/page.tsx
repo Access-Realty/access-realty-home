@@ -29,7 +29,8 @@ import {
   HiOutlineExclamationCircle,
   HiOutlineEnvelope,
   HiOutlineUser,
-  HiOutlinePencil,
+  HiMinus,
+  HiPlus,
   HiCheck,
   HiChevronDown,
 } from "react-icons/hi2";
@@ -815,8 +816,9 @@ export default function GetStartedPage() {
                 </div>
               </div>
 
-              {/* Editable Specs - Borderless with pencil triggers */}
+              {/* Editable Specs */}
               <div className="divide-y divide-border mb-6">
+                {/* Property Type - dropdown */}
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Property Type</span>
                   <select
@@ -832,75 +834,121 @@ export default function GetStartedPage() {
                     <option value="Land">Land</option>
                   </select>
                 </div>
+
+                {/* Bedrooms - stepper */}
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Bedrooms</span>
-                  <label className="flex items-center gap-2 cursor-text">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={editableSpecs.bedrooms}
-                      onChange={(e) => handleSpecsChange("bedrooms", e.target.value)}
-                      placeholder="—"
-                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                    />
-                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </label>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.max(0, (parseInt(editableSpecs.bedrooms) || 0) - 1);
+                        handleSpecsChange("bedrooms", v.toString());
+                      }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <HiMinus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="w-10 text-center text-sm font-medium text-foreground tabular-nums">
+                      {editableSpecs.bedrooms || "—"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.min(20, (parseInt(editableSpecs.bedrooms) || 0) + 1);
+                        handleSpecsChange("bedrooms", v.toString());
+                      }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <HiPlus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
+
+                {/* Full Bathrooms - stepper */}
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Full Bathrooms</span>
-                  <label className="flex items-center gap-2 cursor-text">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={editableSpecs.fullBathrooms}
-                      onChange={(e) => handleSpecsChange("fullBathrooms", e.target.value)}
-                      placeholder="—"
-                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                    />
-                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </label>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.max(0, (parseInt(editableSpecs.fullBathrooms) || 0) - 1);
+                        handleSpecsChange("fullBathrooms", v.toString());
+                      }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <HiMinus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="w-10 text-center text-sm font-medium text-foreground tabular-nums">
+                      {editableSpecs.fullBathrooms || "—"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.min(20, (parseInt(editableSpecs.fullBathrooms) || 0) + 1);
+                        handleSpecsChange("fullBathrooms", v.toString());
+                      }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <HiPlus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
+
+                {/* Half Bathrooms - stepper */}
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Half Bathrooms</span>
-                  <label className="flex items-center gap-2 cursor-text">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={editableSpecs.halfBathrooms}
-                      onChange={(e) => handleSpecsChange("halfBathrooms", e.target.value)}
-                      placeholder="—"
-                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                    />
-                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </label>
+                  <div className="flex items-center gap-1">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.max(0, (parseInt(editableSpecs.halfBathrooms) || 0) - 1);
+                        handleSpecsChange("halfBathrooms", v.toString());
+                      }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <HiMinus className="h-3.5 w-3.5" />
+                    </button>
+                    <span className="w-10 text-center text-sm font-medium text-foreground tabular-nums">
+                      {editableSpecs.halfBathrooms || "—"}
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        const v = Math.min(10, (parseInt(editableSpecs.halfBathrooms) || 0) + 1);
+                        handleSpecsChange("halfBathrooms", v.toString());
+                      }}
+                      className="h-8 w-8 flex items-center justify-center rounded-lg border border-border text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
+                    >
+                      <HiPlus className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
                 </div>
+
+                {/* Year Built - text input (no pencil) */}
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Year Built</span>
-                  <label className="flex items-center gap-2 cursor-text">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={editableSpecs.yearBuilt}
-                      onChange={(e) => handleSpecsChange("yearBuilt", e.target.value)}
-                      placeholder="—"
-                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-16 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                    />
-                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={editableSpecs.yearBuilt}
+                    onChange={(e) => handleSpecsChange("yearBuilt", e.target.value)}
+                    placeholder="—"
+                    className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded-lg px-3 py-1.5 text-right w-20 focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
+                  />
                 </div>
+
+                {/* Square Footage - text input (no pencil) */}
                 <div className="flex items-center justify-between py-3">
                   <span className="text-sm text-muted-foreground">Square Footage</span>
-                  <label className="flex items-center gap-2 cursor-text">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      value={editableSpecs.squareFeet}
-                      onChange={(e) => handleSpecsChange("squareFeet", e.target.value)}
-                      placeholder="—"
-                      className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded px-2 py-1 text-right w-20 cursor-text focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                    />
-                    <HiOutlinePencil className="h-4 w-4 text-muted-foreground hover:text-foreground" />
-                  </label>
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    value={editableSpecs.squareFeet}
+                    onChange={(e) => handleSpecsChange("squareFeet", e.target.value)}
+                    placeholder="—"
+                    className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded-lg px-3 py-1.5 text-right w-20 focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
+                  />
                 </div>
               </div>
 
