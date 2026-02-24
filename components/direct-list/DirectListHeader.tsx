@@ -62,7 +62,7 @@ export function DirectListHeader() {
           )}
           <nav className="flex items-center gap-4">
             <a
-              href="https://app.access.realty"
+              href="https://access.realty/app"
               className="text-foreground/70 hover:text-foreground text-sm md:text-base font-medium transition-colors"
             >
               Sign In

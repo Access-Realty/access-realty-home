@@ -8,8 +8,8 @@ import Stripe from "stripe";
 /**
  * Determine the app URL based on the current environment.
  * Domain structure:
- *   - access.realty (marketing prod) → app.access.realty (app prod)
- *   - *.vercel.app (marketing preview) → app.staging.access.realty (app staging)
+ *   - access.realty (marketing prod) → access.realty/app (app prod)
+ *   - *.vercel.app (marketing preview) → staging.access.realty/app (app staging)
  *   - localhost:4000 (marketing dev) → localhost:3000 (app dev)
  */
 function getAppUrl(request: NextRequest): string {
@@ -21,13 +21,13 @@ function getAppUrl(request: NextRequest): string {
   }
 
   // Vercel preview deployments (access-realty-home-*.vercel.app)
-  // Redirect to app staging at app.staging.access.realty
+  // Redirect to app staging at staging.access.realty/app
   if (host.includes("vercel.app")) {
-    return "https://app.staging.access.realty";
+    return "https://staging.access.realty/app";
   }
 
-  // Production (access.realty) → app.access.realty
-  return process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
+  // Production (access.realty) → access.realty/app
+  return process.env.NEXT_PUBLIC_APP_URL || "https://access.realty/app";
 }
 
 // Lazy-initialize Stripe to avoid build-time errors when env vars aren't set

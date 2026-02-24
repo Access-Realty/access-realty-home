@@ -2,7 +2,7 @@
 
 ## Overview
 
-The marketing site (`access.realty`) collects Stripe payments BEFORE users create accounts using **Embedded Checkout**. The payment form renders directly on access.realty in a modal, so users never leave the site during payment. After payment, users are redirected to the app (`app.access.realty`) where their payment is verified and their service tier is pre-selected.
+The marketing site (`access.realty`) collects Stripe payments BEFORE users create accounts using **Embedded Checkout**. The payment form renders directly on access.realty in a modal, so users never leave the site during payment. After payment, users are redirected to the app (`access.realty/app`) where their payment is verified and their service tier is pre-selected.
 
 ## Flow Diagram
 
@@ -31,7 +31,7 @@ The marketing site (`access.realty`) collects Stripe payments BEFORE users creat
                                     ▼
 ┌─────────────────────────────────────────────────────────────────────────────┐
 │                              MAIN APP                                        │
-│                        (app.access.realty)                                   │
+│                       (access.realty/app)                                    │
 ├─────────────────────────────────────────────────────────────────────────────┤
 │                                                                              │
 │  5. User arrives at /?stripe_session_id=cs_xxx&tier=direct_list&ref=...     │
@@ -91,7 +91,7 @@ export async function POST(request: NextRequest) {
 
   // Full Service has no upfront payment - redirect directly to app
   if (planConfig.amountCents === 0) {
-    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
+    const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://access.realty/app";
     const signupUrl = new URL(appBaseUrl);
     signupUrl.searchParams.set("tier", "full_service");
     if (source) signupUrl.searchParams.set("ref", source);
@@ -109,7 +109,7 @@ export async function POST(request: NextRequest) {
   }
 
   // Build return URL with UTM params forwarded
-  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://app.access.realty";
+  const appBaseUrl = process.env.NEXT_PUBLIC_APP_URL || "https://access.realty/app";
   const tier = plan === "direct-list" ? "direct_list" : "direct_list_plus";
   const returnUrlParams = new URLSearchParams({
     stripe_session_id: "{CHECKOUT_SESSION_ID}",
@@ -257,7 +257,7 @@ STRIPE_PRICE_DIRECT_LIST_PLUS=price_xxx # $995 DirectList+
 STRIPE_WEBHOOK_SECRET=whsec_xxx
 
 # URLs
-NEXT_PUBLIC_APP_URL=https://app.access.realty
+NEXT_PUBLIC_APP_URL=https://access.realty/app
 ```
 
 ### 4. Required Packages
@@ -308,7 +308,7 @@ When redirecting to the app after payment, these URL parameters are used:
 ### Return URL Template
 
 ```
-https://app.access.realty/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&ref=direct-list-page
+https://access.realty/app/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&ref=direct-list-page
 ```
 
 ---

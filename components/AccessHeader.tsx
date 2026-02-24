@@ -21,7 +21,7 @@ export function AccessHeader() {
           </Link>
           <nav className="hidden md:flex items-center gap-8">
             <a
-              href="https://app.access.realty"
+              href="https://access.realty/app"
               className="bg-primary text-primary-foreground px-6 py-2 rounded-md font-semibold hover:bg-primary-dark transition-colors"
             >
               Sign In

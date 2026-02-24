@@ -43,7 +43,7 @@ Then read the image to visually verify:
 ## Architecture
 
 This is the **marketing site** (Repo 2 of 3) for Access Realty:
-- **access-realty-app** (`app.access.realty`) - Main application
+- **access-realty-app** (`access.realty/app`) - Main application
 - **access-realty-home** (`access.realty`) - THIS REPO - Marketing site
 - **access-realty-seo** (future) - SEO property pages
 
@@ -145,9 +145,9 @@ See `components/Header.tsx` for implementation.
 ## CTAs and Links
 
 All signup/signin buttons link to the main app:
-- Sign In: `https://app.access.realty/signin`
-- Sign Up: `https://app.access.realty/signup`
-- With tracking: `https://app.access.realty/signup?source={page-name}`
+- Sign In: `https://access.realty/app/signin`
+- Sign Up: `https://access.realty/app/signup`
+- With tracking: `https://access.realty/app/signup?source={page-name}`
 
 ## Environment Variables
 

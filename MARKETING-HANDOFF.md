@@ -30,7 +30,7 @@ The get-started wizard (`/direct-list/get-started`) collects property and contac
 After successful checkout, user is redirected to:
 
 ```
-https://app.access.realty/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&lead_id=abc-123&ref=get-started
+https://access.realty/app/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&lead_id=abc-123&ref=get-started
 ```
 
 | Parameter | Description | Example |
@@ -165,8 +165,8 @@ The marketing site detects environment to redirect to correct app:
 | Marketing Site | App Redirect |
 |----------------|--------------|
 | `localhost:4000` | `localhost:3000` |
-| `*.vercel.app` (preview) | `app.staging.access.realty` |
-| `access.realty` (prod) | `app.access.realty` |
+| `*.vercel.app` (preview) | `staging.access.realty/app` |
+| `access.realty` (prod) | `access.realty/app` |
 
 See `app/api/stripe/create-checkout-session/route.ts` → `getAppUrl()`.
 

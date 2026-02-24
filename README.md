@@ -97,9 +97,9 @@ Three service tiers to display in a comparison table:
 - Zillow/Homes Traffic
 
 ### CTA Buttons
-- "Select Direct List" → `https://app.access.realty/signup?plan=direct-list`
-- "Select Direct List +" → `https://app.access.realty/signup?plan=direct-list-plus`
-- "Select Full Service" → `https://app.access.realty/signup?plan=full-service`
+- "Select Direct List" → `https://access.realty/app/signup?plan=direct-list`
+- "Select Direct List +" → `https://access.realty/app/signup?plan=direct-list-plus`
+- "Select Full Service" → `https://access.realty/app/signup?plan=full-service`
 
 ---
 
@@ -167,9 +167,9 @@ All "Get Started" / signup buttons should link to the main app:
 
 | Action | URL |
 |--------|-----|
-| Sign In | `https://app.access.realty/signin` |
-| Sign Up | `https://app.access.realty/signup` |
-| Sign Up (with source tracking) | `https://app.access.realty/signup?source={page-name}` |
+| Sign In | `https://access.realty/app/signin` |
+| Sign Up | `https://access.realty/app/signup` |
+| Sign Up (with source tracking) | `https://access.realty/app/signup?source={page-name}` |
 
 ---
 
@@ -190,7 +190,7 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=[anon-key]
 
 This is **Repo 2** of the Access Realty platform:
 
-1. **`access-realty-app`** (`app.access.realty`) - Main application
+1. **`access-realty-app`** (`access.realty/app`) - Main application
 2. **`access-realty-home`** (`access.realty`) - THIS REPO - Marketing site
 3. **`access-realty-seo`** (future) - SEO property pages
 

@@ -17,7 +17,7 @@ const StaffHeader = () => {
             </span>
           </Link>
           <a
-            href="https://app.access.realty"
+            href="https://access.realty/app"
             className="bg-primary text-primary-foreground px-6 py-2 rounded-md font-semibold hover:bg-primary-dark transition-colors"
           >
             Sign In

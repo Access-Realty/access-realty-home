@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/app/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/app/:path*" },
+    { "source": "/crm/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/crm/:path*" },
+    { "source": "/buyers/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/buyers/:path*" }
+  ]
+}
