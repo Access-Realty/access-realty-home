@@ -308,7 +308,7 @@ When redirecting to the app after payment, these URL parameters are used:
 ### Return URL Template
 
 ```
-https://access.realty/app/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&ref=direct-list-page
+https://access.realty/app?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&ref=direct-list-page
 ```
 
 ---

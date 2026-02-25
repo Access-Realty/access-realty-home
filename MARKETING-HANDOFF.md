@@ -30,7 +30,7 @@ The get-started wizard (`/direct-list/get-started`) collects property and contac
 After successful checkout, user is redirected to:
 
 ```
-https://access.realty/app/?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&lead_id=abc-123&ref=get-started
+https://access.realty/app?stripe_session_id={CHECKOUT_SESSION_ID}&tier=direct_list&lead_id=abc-123&ref=get-started
 ```
 
 | Parameter | Description | Example |
