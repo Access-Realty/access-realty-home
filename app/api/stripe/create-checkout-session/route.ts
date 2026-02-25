@@ -159,7 +159,7 @@ export async function POST(request: NextRequest) {
       });
     }
 
-    const checkoutReturnUrl = `${appBaseUrl}/?${queryParams.join("&")}`;
+    const checkoutReturnUrl = `${appBaseUrl}?${queryParams.join("&")}`;
 
     // Create Stripe Checkout session in embedded mode (stays on our site)
     const stripe = getStripe();
