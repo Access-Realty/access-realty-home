@@ -26,7 +26,7 @@ The site uses Next.js route groups to apply different layouts:
 +------------------------------------------------------------------------------+
 |                                                                              |
 |   [Access Realty Logo]        Solutions  |  How It Works  |  [Sign In]      |
-|        (links to /)            (/services)   (/how-it-works)  (app.access.realty)|
+|        (links to /)            (/services)   (/how-it-works)  (access.realty/app)|
 |                                                                              |
 +------------------------------------------------------------------------------+
 
@@ -36,7 +36,7 @@ The site uses Next.js route groups to apply different layouts:
 +------------------------------------------------------------------------------+
 |                                                                              |
 |   [Access Realty Logo]       How It Works | Compare Plans  |  [Sign In]     |
-|        (links to /)          (/how-it-works)   (/services)   (app.access.realty)|
+|        (links to /)          (/how-it-works)   (/services)   (access.realty/app)|
 |                                                                              |
 +------------------------------------------------------------------------------+
 Note: DirectList header emphasizes "How It Works" first, then "Compare Plans"
@@ -47,7 +47,7 @@ Note: DirectList header emphasizes "How It Works" first, then "Compare Plans"
 +------------------------------------------------------------------------------+
 |                                                                              |
 |   [Access Realty Logo]                                       [Sign In]      |
-|        (links to /)                                      (app.access.realty)|
+|        (links to /)                                      (access.realty/app)|
 |                                                                              |
 +------------------------------------------------------------------------------+
 Note: Staff header has NO navigation links - just logo and sign in button
@@ -100,7 +100,7 @@ Layout: Marketing (Header + Footer)
   |  HERO SECTION                                            |
   |  - Headline: "Sell Your House Your Way"                  |
   |  - Description text about Access Realty                  |
-  |  - Address input form → redirects to app.access.realty   |
+  |  - Address input form → redirects to access.realty/app   |
   |  - Hero house image                                      |
   |                                                          |
   +----------------------------------------------------------+
@@ -315,12 +315,12 @@ Layout: Marketing (Header + Footer)
 
 All authentication flows redirect to the main application:
 
-  Sign In  →  https://app.access.realty
-  Sign Up  →  https://app.access.realty/signup
+  Sign In  →  https://access.realty/app
+  Sign Up  →  https://access.realty/app/signup
 
 With tracking:
-  Get Started (from home)  →  app.access.realty/signup?source=home&address=...
-  Plan selection           →  app.access.realty/signup?plan=direct-list
+  Get Started (from home)  →  access.realty/app/signup?source=home&address=...
+  Plan selection           →  access.realty/app/signup?plan=direct-list
 
 ================================================================================
                           LOGO STYLING PATTERN

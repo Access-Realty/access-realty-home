@@ -9,7 +9,7 @@
 
                          +------------------+
                          |   EXTERNAL APP   |
-                         | app.access.realty|
+                         | access.realty/app|
                          +------------------+
                                   ^
                                   | (Sign In / Sign Up / Get Started)
@@ -71,7 +71,7 @@ MAIN HEADER (Marketing Pages)
   │  Logo ──────────────────────────────────────> /                 │
   │  Solutions ─────────────────────────────────> /services         │
   │  How It Works ──────────────────────────────> /how-it-works     │
-  │  Sign In ───────────────────────────────────> app.access.realty │
+  │  Sign In ───────────────────────────────────> access.realty/app │
   └─────────────────────────────────────────────────────────────────┘
 
 
@@ -81,7 +81,7 @@ DIRECTLIST HEADER (/direct-list)
   │  Logo ──────────────────────────────────────> /                 │
   │  How It Works ──────────────────────────────> /how-it-works     │
   │  Compare Plans ─────────────────────────────> /services         │
-  │  Sign In ───────────────────────────────────> app.access.realty │
+  │  Sign In ───────────────────────────────────> access.realty/app │
   └─────────────────────────────────────────────────────────────────┘
 
 
@@ -89,7 +89,7 @@ STAFF HEADER (/staff, /staff/[slug])
 ────────────────────────────────────
   ┌─────────────────────────────────────────────────────────────────┐
   │  Logo ──────────────────────────────────────> /                 │
-  │  Sign In ───────────────────────────────────> app.access.realty │
+  │  Sign In ───────────────────────────────────> access.realty/app │
   └─────────────────────────────────────────────────────────────────┘
 
 
@@ -132,7 +132,7 @@ DIRECTLIST FOOTER (/direct-list)
 
                                     EXTERNAL
                             +---------------------+
-                            |  app.access.realty  |
+                            |  access.realty/app  |
                             |  ─────────────────  |
                             |  /signin            |
                             |  /signup            |
@@ -192,15 +192,15 @@ FROM: HOME (/)
   → /privacy ................ via Footer "Privacy Policy"
   → /terms .................. via Footer "Terms of Service"
   → /staff .................. via Footer "Our Team"
-  → app.access.realty ....... via Header "Sign In"
-  → app.access.realty/signup. via Hero "Get Started" button (with address)
+  → access.realty/app ....... via Header "Sign In"
+  → access.realty/app/signup. via Hero "Get Started" button (with address)
 
 
 FROM: /services (Solutions)
 ───────────────────────────
   → / ....................... via Header Logo
   → /how-it-works ........... via Header "How It Works"
-  → app.access.realty ....... via Header "Sign In"
+  → access.realty/app ....... via Header "Sign In"
   → [Tier Modal] → checkout.. via "Select Plan" buttons
   → (all footer links)
 
@@ -209,7 +209,7 @@ FROM: /how-it-works
 ───────────────────
   → / ....................... via Header Logo
   → /services ............... via Header "Solutions"
-  → app.access.realty ....... via Header "Sign In"
+  → access.realty/app ....... via Header "Sign In"
   → [Tier Modal] → checkout.. via "Start Your Listing" CTA
   → (all footer links)
 
@@ -219,7 +219,7 @@ FROM: /direct-list
   → / ....................... via DirectList Header Logo
   → /how-it-works ........... via DirectList Header "How It Works"
   → /services ............... via DirectList Header "Compare Plans"
-  → app.access.realty ....... via DirectList Header "Sign In"
+  → access.realty/app ....... via DirectList Header "Sign In"
   → #pricing ................ via Hero "Calculate Your Savings" (anchor)
   → [Tier Modal] → checkout.. via multiple "Get Started" CTAs
   → /how-it-works ........... via DirectList Footer
@@ -231,7 +231,7 @@ FROM: /direct-list
 FROM: /staff
 ────────────
   → / ....................... via Staff Header Logo
-  → app.access.realty ....... via Staff Header "Sign In"
+  → access.realty/app ....... via Staff Header "Sign In"
   → /staff/justin-brown ..... via team card
   → /staff/cassidy-spilker .. via team card
   → /staff/jennifer-lovett .. via team card
@@ -241,7 +241,7 @@ FROM: /staff
 FROM: /staff/[slug]
 ───────────────────
   → / ....................... via Staff Header Logo
-  → app.access.realty ....... via Staff Header "Sign In"
+  → access.realty/app ....... via Staff Header "Sign In"
   → Calendly popup .......... via scheduling button
   → (all main footer links)
 
@@ -251,7 +251,7 @@ FROM: /privacy, /terms
   → / ....................... via Header Logo
   → /services ............... via Header "Solutions"
   → /how-it-works ........... via Header "How It Works"
-  → app.access.realty ....... via Header "Sign In"
+  → access.realty/app ....... via Header "Sign In"
   → (all main footer links)
 
 
@@ -310,9 +310,9 @@ INTERNAL PAGES:
   /terms             Terms of service (marketing)
 
 EXTERNAL DESTINATIONS:
-  app.access.realty              Main app (sign in)
-  app.access.realty/signup       Sign up flow
-  app.access.realty/signup?plan= Plan-specific signup
+  access.realty/app              Main app (sign in)
+  access.realty/app/signup       Sign up flow
+  access.realty/app/signup?plan= Plan-specific signup
   tel:+19728207902               Phone link
 
 MODALS/OVERLAYS:
