@@ -4,6 +4,7 @@
     { "source": "/crm/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/crm/:path*" },
     { "source": "/buyers/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/buyers/:path*" },
     { "source": "/api/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/api/:path*" },
+    { "source": "/photos/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/photos/:path*" },
     { "source": "/assets/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/assets/:path*" },
     { "source": "/favicons/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/favicons/:path*" },
     { "source": "/watermarks/:path*", "destination": "https://access-realty-app-brets-projects-ea090dc4.vercel.app/watermarks/:path*" }
