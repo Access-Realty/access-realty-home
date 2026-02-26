@@ -2,6 +2,7 @@
 // ABOUTME: Accepts invitee details and time slot, returns booking confirmation
 
 import { NextRequest, NextResponse } from "next/server";
+import { createClient } from "@supabase/supabase-js";
 
 interface BookingRequest {
   event_type: string;
@@ -432,6 +433,25 @@ export async function POST(request: NextRequest) {
       location: locationResult,
     });
 
+    // Create crm_meetings record if this booking is linked to a lead
+    const leadId = body.utm?.utm_content;
+    if (leadId) {
+      await createMeetingForLead({
+        leadId,
+        eventId,
+        inviteeId,
+        startTime: startTimeResult,
+        endTime: endTimeResult,
+        programSource: body.utm?.utm_source,
+        inviteeName: body.invitee.name,
+        rescheduleUrl: data.resource.reschedule_url,
+        cancelUrl: data.resource.cancel_url,
+        locationType: locationResult?.type ?? null,
+        locationDetails: locationResult?.location ?? null,
+        inviteeTimezone: body.invitee.timezone || "America/Chicago",
+      });
+    }
+
     return NextResponse.json({
       event_id: eventId,
       invitee_id: inviteeId,
@@ -448,5 +468,103 @@ export async function POST(request: NextRequest) {
       { error: "Failed to create booking" },
       { status: 500 }
     );
+  }
+}
+
+/**
+ * Create a crm_meetings record linked to a marketing lead after successful Calendly booking.
+ * Non-blocking: logs errors but never throws (booking already succeeded).
+ */
+async function createMeetingForLead(params: {
+  leadId: string;
+  eventId: string;
+  inviteeId: string;
+  startTime: string;
+  endTime?: string;
+  programSource?: string;
+  inviteeName: string;
+  rescheduleUrl: string;
+  cancelUrl: string;
+  locationType: string | null;
+  locationDetails: string | null;
+  inviteeTimezone: string;
+}): Promise<void> {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+
+  if (!supabaseUrl || !supabaseServiceKey) {
+    console.error("Supabase credentials not configured, skipping meeting creation");
+    return;
+  }
+
+  const supabase = createClient(supabaseUrl, supabaseServiceKey);
+
+  try {
+    // Verify lead exists
+    const { data: lead, error: leadError } = await supabase
+      .from("leads")
+      .select("id, first_name, last_name")
+      .eq("id", params.leadId)
+      .single();
+
+    if (leadError || !lead) {
+      console.error(`Lead ${params.leadId} not found:`, leadError);
+      return;
+    }
+
+    // Check idempotency — meeting may already exist from a retry
+    const { data: existingMeeting } = await supabase
+      .from("crm_meetings")
+      .select("id")
+      .eq("calendly_event_id", params.eventId)
+      .maybeSingle();
+
+    if (existingMeeting) {
+      console.log(`Meeting already exists for Calendly event ${params.eventId}`);
+      return;
+    }
+
+    const leadName = `${lead.first_name || ""} ${lead.last_name || ""}`.trim();
+    const programLabel = params.programSource === "price_launch"
+      ? "Price Launch"
+      : params.programSource && params.programSource !== "marketing_site"
+        ? params.programSource.split("-").map((w: string) => w.charAt(0).toUpperCase() + w.slice(1)).join(" ")
+        : "Program";
+
+    const { error: insertError } = await supabase.from("crm_meetings").insert({
+      lead_id: params.leadId,
+      consultation_type: "inquiry",
+      meeting_type: "phone",
+      calendly_event_id: params.eventId,
+      calendly_invitee_id: params.inviteeId,
+      scheduled_at: params.startTime,
+      end_time: params.endTime || null,
+      status: "scheduled",
+      reschedule_url: params.rescheduleUrl,
+      cancel_url: params.cancelUrl,
+      location_type: params.locationType,
+      location_details: params.locationDetails,
+      invitee_timezone: params.inviteeTimezone,
+      notes: `${programLabel} inquiry — ${leadName}. Booked via marketing site.`,
+    });
+
+    if (insertError) {
+      console.error("Failed to create meeting for lead:", insertError);
+      return;
+    }
+
+    console.log(`Created meeting for lead ${params.leadId}, Calendly event ${params.eventId}`);
+
+    // Update lead status to contacted
+    const { error: updateError } = await supabase
+      .from("leads")
+      .update({ status: "contacted" })
+      .eq("id", params.leadId);
+
+    if (updateError) {
+      console.error("Failed to update lead status:", updateError);
+    }
+  } catch (error) {
+    console.error("Error creating meeting for lead:", error);
   }
 }
