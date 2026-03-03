@@ -1,0 +1,30 @@
+# ABOUTME: CI pipeline — syncs staging branch on push to main.
+# ABOUTME: Triggers Vercel redeploy of staging.access.realty automatically.
+
+name: CI
+
+on:
+  push:
+    branches: [main]
+
+jobs:
+  sync-staging:
+    name: Sync Staging
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Fast-forward staging branch
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          REPO_FULL_NAME: ${{ github.repository }}
+        run: |
+          git remote set-url origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO_FULL_NAME}.git"
+          git push origin HEAD:staging --force
+          echo "✅ Staging branch synced — Vercel will redeploy"
