@@ -449,6 +449,7 @@ export async function POST(request: NextRequest) {
         locationType: locationResult?.type ?? null,
         locationDetails: locationResult?.location ?? null,
         inviteeTimezone: body.invitee.timezone || "America/Chicago",
+        assignedHostEmail: assignedHost?.email ?? null,
       });
     }
 
@@ -488,6 +489,7 @@ async function createMeetingForLead(params: {
   locationType: string | null;
   locationDetails: string | null;
   inviteeTimezone: string;
+  assignedHostEmail: string | null;
 }): Promise<void> {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
@@ -524,6 +526,23 @@ async function createMeetingForLead(params: {
       return;
     }
 
+    // Look up staff profile for the Calendly host to assign ownership
+    let staffProfileId: string | null = null;
+    if (params.assignedHostEmail) {
+      const { data: staffProfile } = await supabase
+        .from("profiles")
+        .select("id")
+        .eq("email", params.assignedHostEmail)
+        .eq("user_class", "staff")
+        .maybeSingle();
+
+      if (staffProfile) {
+        staffProfileId = staffProfile.id;
+      } else {
+        console.warn(`No staff profile found for Calendly host: ${params.assignedHostEmail}`);
+      }
+    }
+
     const leadName = `${lead.first_name || ""} ${lead.last_name || ""}`.trim();
     const programLabel = params.programSource === "price_launch"
       ? "Price Launch"
@@ -533,6 +552,7 @@ async function createMeetingForLead(params: {
 
     const { error: insertError } = await supabase.from("crm_meetings").insert({
       lead_id: params.leadId,
+      staff_profile_id: staffProfileId,
       consultation_type: "inquiry",
       meeting_type: "phone",
       calendly_event_id: params.eventId,
@@ -555,10 +575,14 @@ async function createMeetingForLead(params: {
 
     console.log(`Created meeting for lead ${params.leadId}, Calendly event ${params.eventId}`);
 
-    // Update lead status to contacted
+    // Update lead status and assign ownership from Calendly host
+    const leadUpdate: { status: string; assigned_to?: string } = { status: "contacted" };
+    if (staffProfileId) {
+      leadUpdate.assigned_to = staffProfileId;
+    }
     const { error: updateError } = await supabase
       .from("leads")
-      .update({ status: "contacted" })
+      .update(leadUpdate)
       .eq("id", params.leadId);
 
     if (updateError) {
