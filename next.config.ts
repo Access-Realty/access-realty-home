@@ -1,4 +1,8 @@
+// ABOUTME: Next.js configuration with Sentry integration and cross-project rewrites
+// ABOUTME: Wraps config with withSentryConfig for source maps and auto-instrumentation
+
 import type { NextConfig } from "next";
+import { withSentryConfig } from "@sentry/nextjs";
 
 // Build-time env var set per Vercel environment scope (Production vs Preview).
 // Determines which app project deployment receives cross-project rewrites.
@@ -25,7 +29,6 @@ const nextConfig: NextConfig = {
   },
   async redirects() {
     return [
-      // Redirect old access.realty/direct-list URLs to direct-list.com
       {
         source: "/direct-list",
         has: [{ type: "host", value: "access.realty" }],
@@ -60,4 +63,10 @@ const nextConfig: NextConfig = {
   },
 };
 
-export default nextConfig;
+export default withSentryConfig(nextConfig, {
+  org: process.env.SENTRY_ORG,
+  project: process.env.SENTRY_PROJECT,
+
+  // Only print logs for uploading source maps in CI
+  silent: !process.env.CI,
+});
