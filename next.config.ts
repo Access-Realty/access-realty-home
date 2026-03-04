@@ -6,9 +6,14 @@ import { withSentryConfig } from "@sentry/nextjs";
 
 // Build-time env var set per Vercel environment scope (Production vs Preview).
 // Determines which app project deployment receives cross-project rewrites.
-const appOrigin =
-  process.env.APP_REWRITE_ORIGIN ??
-  "https://access-realty-app-brets-projects-ea090dc4.vercel.app";
+// Missing in deployed environments → fail loud so staging never silently proxies production.
+const appOrigin = process.env.APP_REWRITE_ORIGIN;
+if (!appOrigin && process.env.VERCEL) {
+  throw new Error(
+    "APP_REWRITE_ORIGIN is required on Vercel. " +
+      "Set it in Project Settings → Environment Variables for each scope (Production, Preview)."
+  );
+}
 
 const nextConfig: NextConfig = {
   images: {
@@ -44,6 +49,7 @@ const nextConfig: NextConfig = {
     ];
   },
   async rewrites() {
+    if (!appOrigin) return [];
     return [
       { source: "/app/:path*", destination: `${appOrigin}/app/:path*` },
       { source: "/crm/:path*", destination: `${appOrigin}/crm/:path*` },

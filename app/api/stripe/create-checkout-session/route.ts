@@ -20,9 +20,8 @@ function getAppUrl(request: NextRequest): string {
     return "http://localhost:3000";
   }
 
-  // Vercel preview deployments (access-realty-home-*.vercel.app)
-  // Redirect to app staging at staging.access.realty/app
-  if (host.includes("vercel.app")) {
+  // Staging (staging.access.realty or Vercel preview deployments)
+  if (host.includes("vercel.app") || host.startsWith("staging.")) {
     return "https://staging.access.realty/app";
   }
 
