@@ -179,7 +179,7 @@ export async function POST(request: NextRequest) {
         setup_future_usage: "off_session",
       },
       metadata: {
-        plan,
+        tier: plan,
         source: source || "services-page",
         created_from: "marketing-site",
         // Lead ID for fetching property data in app
