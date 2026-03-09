@@ -9,6 +9,7 @@ import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
 import { HiCheck, HiChevronDown, HiPhone } from "react-icons/hi2";
 import { useBrandPath } from "@/lib/BrandProvider";
+import { StyledTierName } from "@/components/services/StyledTierName";
 
 // FAQ items for fix & flip investors
 const faqItems = [
@@ -37,32 +38,6 @@ const faqItems = [
     answer:
       "You can reach out to our licensed agents anytime for advice, strategy, or clarification. You get help when you want it.",
   },
-];
-
-// Comparison table data
-const comparisonRows = [
-  { feature: "MLS Exposure", directList: "check", traditional: "check" },
-  {
-    feature: "Listing Experience",
-    directList: "Step-by-Step Platform",
-    traditional: "Agent Controlled Process",
-  },
-  {
-    feature: "Market Updates",
-    directList: "Real Time Updates",
-    traditional: "Periodic Check-Ins",
-  },
-  {
-    feature: "Pricing Control",
-    directList: "Full Control",
-    traditional: "Dependent on Agent",
-  },
-  {
-    feature: "Agent Support",
-    directList: "Support Available",
-    traditional: "On Demand",
-  },
-  { feature: "Savings", directList: "Thousands", traditional: "None" },
 ];
 
 // How it works steps
@@ -188,56 +163,125 @@ export default function InvestorsPage() {
         </div>
       </Section>
 
-      {/* Comparison Table */}
+      {/* Side-by-Side Pricing */}
       <Section variant="content" maxWidth="4xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            See How DirectList Compares to a Traditional Listing
+            A Smarter Way for Investors to List
           </h2>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
+            Our investor program includes everything needed to list and sell on
+            MLS&mdash;without charging for services most investors never use.
+          </p>
         </div>
 
-        <div className="rounded-xl border border-border shadow-sm overflow-x-auto">
-          <table className="w-full min-w-[500px] bg-card">
-            <thead>
-              <tr className="bg-primary text-primary-foreground">
-                <th className="text-left px-4 md:px-6 py-4 font-semibold">Feature</th>
-                <th className="text-center px-4 md:px-6 py-4 font-semibold">
-                  DirectList
-                </th>
-                <th className="text-center px-4 md:px-6 py-4 font-semibold">
-                  Traditional Listing
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {comparisonRows.map((row, idx) => (
-                <tr
-                  key={row.feature}
-                  className={idx % 2 === 0 ? "bg-card" : "bg-muted/50"}
-                >
-                  <td className="px-4 md:px-6 py-4 text-foreground">{row.feature}</td>
-                  <td className="px-4 md:px-6 py-4 text-center">
-                    {row.directList === "check" ? (
-                      <HiCheck className="h-5 w-5 text-primary mx-auto" />
-                    ) : (
-                      <span className="font-semibold text-primary">
-                        {row.directList}
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 md:px-6 py-4 text-center">
-                    {row.traditional === "check" ? (
-                      <HiCheck className="h-5 w-5 text-primary mx-auto" />
-                    ) : (
-                      <span className="text-muted-foreground">
-                        {row.traditional}
-                      </span>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid md:grid-cols-2 gap-6">
+          {/* DirectList for Homeowners */}
+          <div className="rounded-xl border-2 border-border shadow-md overflow-hidden bg-card flex flex-col">
+            <div className="p-6 text-center bg-primary/5">
+              <h3 className="text-2xl font-semibold mb-1">
+                <StyledTierName name="DirectList" />
+              </h3>
+              <p
+                className="text-sm font-bold text-primary"
+                style={{
+                  fontFamily:
+                    "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
+                }}
+              >
+                for Homeowners
+              </p>
+              <div className="text-3xl font-bold text-primary mt-2">
+                $2,995
+              </div>
+            </div>
+            <div className="p-6 flex-grow">
+              <p className="text-sm font-medium text-muted-foreground mb-4">
+                Everything you need to list on MLS
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "MLS Listing + Syndication",
+                  "Professional Photography",
+                  "Professionally Guided Pricing Strategy",
+                  "Digital Document Signing",
+                  "Lockbox & Yard Sign",
+                  "Showings via ShowingTime",
+                  "Recurring Market Assessments",
+                  "On Demand Services Available",
+                ].map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2 text-sm"
+                  >
+                    <HiCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="p-6 pt-0 text-center">
+              <Link
+                href={bp("/direct-list/get-started")}
+                className="inline-flex items-center justify-center px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+              >
+                Get Started Today
+              </Link>
+            </div>
+          </div>
+
+          {/* DirectList for Investors */}
+          <div className="rounded-xl border-2 border-secondary shadow-md overflow-hidden bg-card flex flex-col">
+            <div className="p-6 text-center bg-secondary/15">
+              <h3 className="text-2xl font-semibold mb-1">
+                <StyledTierName name="DirectList" />
+              </h3>
+              <p
+                className="text-sm font-bold text-primary"
+                style={{
+                  fontFamily:
+                    "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
+                }}
+              >
+                for Investors
+              </p>
+              <div className="text-3xl font-bold text-muted-foreground line-through mt-2">
+                $2,995
+              </div>
+            </div>
+            <div className="p-6 flex-grow">
+              <p className="text-sm font-medium text-muted-foreground mb-4 italic">
+                Everything you need to list on MLS, without paying for extras
+                you&apos;ll never use.
+              </p>
+              <ul className="space-y-3">
+                {[
+                  "MLS Listing + Syndication",
+                  "Professional Photography",
+                  "Digital Document Signing",
+                  "Lockbox & Yard Sign",
+                  "Showings via ShowingTime",
+                  "On Demand Services Available",
+                ].map((feature) => (
+                  <li
+                    key={feature}
+                    className="flex items-start gap-2 text-sm"
+                  >
+                    <HiCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                    <span>{feature}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="p-6 pt-0 text-center">
+              <Link
+                href={bp("/direct-list/investors/book")}
+                className="inline-flex items-center justify-center px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity"
+              >
+                See if you Qualify
+              </Link>
+            </div>
+          </div>
         </div>
       </Section>
 
