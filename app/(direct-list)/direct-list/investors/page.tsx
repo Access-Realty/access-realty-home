@@ -40,40 +40,6 @@ const faqItems = [
   },
 ];
 
-// How it works steps
-const steps = [
-  {
-    number: "01",
-    title: "Book a Call",
-    description:
-      "We will answer questions and explain exactly how the process works.",
-  },
-  {
-    number: "02",
-    title: "Set Up Your Listing",
-    description:
-      "Upload your property details using our step-by-step listing platform and we take care of everything else.",
-  },
-  {
-    number: "03",
-    title: "Go Live on the MLS",
-    description:
-      "Your property is published to the MLS with the same exposure buyers and agents expect, without the high cost of a full-service listing agent.",
-  },
-  {
-    number: "04",
-    title: "Stay Informed & In Control",
-    description:
-      "Stay updated on market activity and make confident pricing decisions. Our experienced, licensed agents are available whenever you need support.",
-  },
-  {
-    number: "05",
-    title: "Close With Confidence",
-    description:
-      "From accepted offer to closing, we help you finish the sale smoothly while maximizing your net proceeds.",
-  },
-];
-
 export default function InvestorsPage() {
   const bp = useBrandPath();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
@@ -126,7 +92,7 @@ export default function InvestorsPage() {
         </div>
       </HeroSection>
 
-      {/* How DirectList Works - Timeline */}
+      {/* How DirectList Works - Visual */}
       <Section variant="content" maxWidth="4xl">
         <div className="text-center mb-12">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
@@ -139,28 +105,13 @@ export default function InvestorsPage() {
           </p>
         </div>
 
-        <div className="relative max-w-2xl mx-auto">
-          {/* Vertical timeline line */}
-          <div className="absolute left-[23px] top-8 bottom-8 w-0.5 bg-secondary/40" />
-
-          <div className="space-y-12">
-            {steps.map((step) => (
-              <div key={step.number} className="flex gap-6 items-start">
-                <div className="flex-shrink-0 h-12 w-12 rounded-full bg-secondary/30 flex items-center justify-center z-10">
-                  <span className="text-sm font-bold text-primary">
-                    {step.number}
-                  </span>
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-1">
-                    {step.title}
-                  </h3>
-                  <p className="text-muted-foreground">{step.description}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
+        <Image
+          src="/3-easy-steps.png"
+          alt="How DirectList works: List Your Home, Receive Offers, Close and Get Paid"
+          width={1080}
+          height={1080}
+          className="w-full max-w-2xl mx-auto h-auto"
+        />
       </Section>
 
       {/* Side-by-Side Pricing */}
