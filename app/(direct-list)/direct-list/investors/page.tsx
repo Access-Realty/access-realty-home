@@ -142,6 +142,9 @@ export default function InvestorsPage() {
               >
                 for Homeowners
               </p>
+              <p className="text-sm italic text-primary/70 mt-1">
+                Standard Listing Package
+              </p>
               <div className="text-3xl font-bold text-primary mt-2">
                 $2,995
               </div>
@@ -195,6 +198,9 @@ export default function InvestorsPage() {
                 }}
               >
                 for Investors
+              </p>
+              <p className="text-sm italic text-primary/70 mt-1">
+                Investor Pricing Available
               </p>
               <div className="text-3xl font-bold text-muted-foreground line-through mt-2">
                 $2,995
