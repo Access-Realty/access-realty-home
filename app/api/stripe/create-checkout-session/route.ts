@@ -197,6 +197,7 @@ export async function POST(request: NextRequest) {
         ...(utmParams?.utm_term && { utm_term: utmParams.utm_term }),
         ...(utmParams?.utm_content && { utm_content: utmParams.utm_content }),
       },
+      allow_promotion_codes: true,
       // Collect billing address for compliance (includes name)
       billing_address_collection: "required",
     });
