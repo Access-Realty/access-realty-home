@@ -30,7 +30,6 @@ interface PropertySpecs {
   fullBathrooms?: string;
   halfBathrooms?: string;
   yearBuilt?: string;
-  squareFeet?: string;
 }
 
 interface EmbeddedCheckoutModalProps {

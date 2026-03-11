@@ -82,7 +82,6 @@ interface EditableSpecs {
   fullBathrooms: string;
   halfBathrooms: string;
   yearBuilt: string;
-  squareFeet: string;
 }
 
 const initialEditableSpecs: EditableSpecs = {
@@ -91,7 +90,6 @@ const initialEditableSpecs: EditableSpecs = {
   fullBathrooms: "",
   halfBathrooms: "",
   yearBuilt: "",
-  squareFeet: "",
 };
 
 // Service tier definitions with full details
@@ -423,7 +421,6 @@ export default function GetStartedPage() {
           fullBathrooms: specs.fullBathrooms?.toString() ?? "",
           halfBathrooms: specs.halfBathrooms?.toString() ?? "",
           yearBuilt: specs.yearBuilt?.toString() ?? "",
-          squareFeet: specs.squareFeet?.toString() ?? "",
         });
       } else {
         setSpecsError("Property data not found. You can still continue.");
@@ -938,18 +935,6 @@ export default function GetStartedPage() {
                   />
                 </div>
 
-                {/* Square Footage - text input (no pencil) */}
-                <div className="flex items-center justify-between py-3">
-                  <span className="text-sm text-muted-foreground">Square Footage</span>
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    value={editableSpecs.squareFeet}
-                    onChange={(e) => handleSpecsChange("squareFeet", e.target.value)}
-                    placeholder="—"
-                    className="text-sm font-medium text-foreground bg-muted/40 hover:bg-muted/60 focus:bg-muted/60 border border-border/50 rounded-lg px-3 py-1.5 text-right w-20 focus:outline-none focus:ring-2 focus:ring-primary/50 placeholder:text-muted-foreground"
-                  />
-                </div>
               </div>
 
               {/* Navigation */}

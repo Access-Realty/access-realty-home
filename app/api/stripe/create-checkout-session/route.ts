@@ -76,7 +76,6 @@ interface PropertySpecs {
   fullBathrooms?: string;
   halfBathrooms?: string;
   yearBuilt?: string;
-  squareFeet?: string;
 }
 
 export async function POST(request: NextRequest) {
@@ -189,7 +188,6 @@ export async function POST(request: NextRequest) {
         ...(propertySpecs?.fullBathrooms && { full_bathrooms: propertySpecs.fullBathrooms }),
         ...(propertySpecs?.halfBathrooms && { half_bathrooms: propertySpecs.halfBathrooms }),
         ...(propertySpecs?.yearBuilt && { year_built: propertySpecs.yearBuilt }),
-        ...(propertySpecs?.squareFeet && { square_feet: propertySpecs.squareFeet }),
         // UTM params for attribution tracking
         ...(utmParams?.utm_source && { utm_source: utmParams.utm_source }),
         ...(utmParams?.utm_medium && { utm_medium: utmParams.utm_medium }),
