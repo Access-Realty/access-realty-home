@@ -36,7 +36,7 @@ export default function ListingCardGrid({
   return (
     <div ref={gridRef}>
       <p className="text-sm text-muted-foreground mb-4">
-        Showing {visibleListings.length} of {listings.length} closed sales
+        Showing {visibleListings.length} of {listings.length} nearby listings
       </p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
