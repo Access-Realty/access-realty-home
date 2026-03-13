@@ -90,6 +90,27 @@ export async function getClosedListingsByCounty(county: string): Promise<SeoList
   return transformListings(data ?? [])
 }
 
+export async function getClosedListingsNearby(
+  lat: number,
+  lng: number,
+  radiusMiles = 15,
+  maxResults = 200
+): Promise<SeoListingProps[]> {
+  const { data, error } = await supabase
+    .rpc('get_nearby_closed_listings', {
+      center_lat: lat,
+      center_lng: lng,
+      radius_miles: radiusMiles,
+      max_results: maxResults,
+    })
+
+  if (error) {
+    console.warn('Error fetching nearby listings:', error)
+    return []
+  }
+  return transformListings(data ?? [])
+}
+
 export async function getClosedListingsByBoundingBox(
   bounds: { minLat: number; maxLat: number; minLng: number; maxLng: number },
   limit = 5000
