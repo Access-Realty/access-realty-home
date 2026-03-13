@@ -1,3 +1,6 @@
+// ABOUTME: Composed wrapper for ListingsMap + ListingCardGrid
+// ABOUTME: Manages shared state (visible IDs, highlighted ID) between map and grid
+
 'use client'
 
 import { useState, useCallback } from 'react'

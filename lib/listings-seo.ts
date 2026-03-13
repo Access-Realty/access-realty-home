@@ -64,7 +64,7 @@ function baseQuery() {
 export async function getClosedListingsByZip(zip: string): Promise<SeoListingProps[]> {
   const { data, error } = await baseQuery().eq('postal_code', zip)
   if (error) {
-    console.error('Error fetching listings by zip:', error)
+    console.warn('Error fetching listings by zip:', error)
     return []
   }
   return transformListings(data ?? [])
@@ -73,7 +73,7 @@ export async function getClosedListingsByZip(zip: string): Promise<SeoListingPro
 export async function getClosedListingsByCity(city: string): Promise<SeoListingProps[]> {
   const { data, error } = await baseQuery().eq('city', city)
   if (error) {
-    console.error('Error fetching listings by city:', error)
+    console.warn('Error fetching listings by city:', error)
     return []
   }
   return transformListings(data ?? [])
@@ -84,7 +84,7 @@ export async function getClosedListingsByCounty(county: string): Promise<SeoList
     .eq('county_or_parish', county)
     .limit(5000)
   if (error) {
-    console.error('Error fetching listings by county:', error)
+    console.warn('Error fetching listings by county:', error)
     return []
   }
   return transformListings(data ?? [])
@@ -101,7 +101,7 @@ export async function getClosedListingsByBoundingBox(
     .lte('longitude', bounds.maxLng)
     .limit(limit)
   if (error) {
-    console.error('Error fetching listings by bounding box:', error)
+    console.warn('Error fetching listings by bounding box:', error)
     return []
   }
   return transformListings(data ?? [])
