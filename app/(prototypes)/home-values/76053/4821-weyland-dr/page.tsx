@@ -7,6 +7,8 @@ import { DirectListCTA } from "@/components/layout/DirectListCTA";
 import { getClosedListingsNearby } from "@/lib/listings-seo";
 import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
+export const dynamic = 'force-dynamic'
+
 // ─── Real parcel data from parcels table ──────────────────────────────────────
 const PARCEL = {
   street_address: "4821 Weyland Dr",

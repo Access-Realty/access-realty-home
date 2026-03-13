@@ -7,6 +7,8 @@ import { DirectListCTA } from "@/components/layout/DirectListCTA";
 import { getClosedListingsByZip } from "@/lib/listings-seo";
 import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
+export const dynamic = 'force-dynamic'
+
 // ─── Market stats ─────────────────────────────────────────────────────────────
 const STATS = {
   period: "Feb 2026",

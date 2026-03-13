@@ -7,6 +7,8 @@ import { DirectListCTA } from "@/components/layout/DirectListCTA";
 import { getClosedListingsByCounty } from '@/lib/listings-seo';
 import ListingsMapSection from '@/components/listings/ListingsMapSection';
 
+export const dynamic = 'force-dynamic'
+
 const COUNTY_STATS = {
   period: "Feb 2026",
   median_sale_price: 372000,

@@ -7,6 +7,8 @@ import { DirectListCTA } from "@/components/layout/DirectListCTA";
 import { getClosedListingsByBoundingBox } from "@/lib/listings-seo";
 import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
+export const dynamic = 'force-dynamic'
+
 const DFW_STATS = {
   period: "Feb 2026",
   median_sale_price: 395000,

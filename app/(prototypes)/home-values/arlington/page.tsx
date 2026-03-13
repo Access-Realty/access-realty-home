@@ -7,6 +7,8 @@ import { DirectListCTA } from "@/components/layout/DirectListCTA";
 import { getClosedListingsByCity } from "@/lib/listings-seo";
 import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
+export const dynamic = 'force-dynamic'
+
 const CITY_STATS = {
   period: "Feb 2026",
   median_sale_price: 355000,
