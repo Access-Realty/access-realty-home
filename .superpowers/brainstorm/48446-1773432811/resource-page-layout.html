@@ -1,0 +1,87 @@
+<h2>Individual Resource Page Layout</h2>
+<p class="subtitle">For pages like "Photography Preparation Guide" — how should the video and written content relate?</p>
+
+<div class="cards">
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 20px; background: #1a1a2e;">
+      <!-- Mockup A: Video Hero -->
+      <div style="background: #0f0f1a; border-radius: 8px; overflow: hidden;">
+        <div style="background: #000; aspect-ratio: 16/9; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px; position: relative;">
+          <div style="width: 50px; height: 50px; border-radius: 50%; border: 3px solid #fff; display: flex; align-items: center; justify-content: center;">▶</div>
+        </div>
+      </div>
+      <div style="padding: 16px 0 8px;">
+        <div style="color: #d6b283; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Photography Preparation</div>
+        <div style="color: #fff; font-size: 16px; font-weight: 600; margin-bottom: 8px;">How to Prepare Your Home for Professional Photos</div>
+      </div>
+      <div style="border-top: 1px solid #333; padding-top: 12px;">
+        <div style="color: #aaa; font-size: 10px; line-height: 1.6;">
+          Article content flows below the video...<br>
+          Key takeaways • Detailed guidance • FAQ
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Video Hero</h3>
+      <p>Full-width video at the top, article content flows below. Video is the star, written content supports it. Clean, focused.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 20px; background: #1a1a2e;">
+      <!-- Mockup B: Side by Side -->
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+        <div>
+          <div style="background: #000; aspect-ratio: 16/9; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px;">
+            <div style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center;">▶</div>
+          </div>
+          <div style="color: #aaa; font-size: 9px; margin-top: 6px;">2:55 • Watch the guide</div>
+        </div>
+        <div>
+          <div style="color: #d6b283; font-size: 9px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">Key Takeaways</div>
+          <div style="color: #ccc; font-size: 9px; line-height: 1.5;">
+            ✓ Declutter every room<br>
+            ✓ Natural light matters<br>
+            ✓ Stage key areas<br>
+            ✓ Curb appeal first
+          </div>
+        </div>
+      </div>
+      <div style="border-top: 1px solid #333; margin-top: 12px; padding-top: 12px;">
+        <div style="color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 6px;">Detailed Guide</div>
+        <div style="color: #aaa; font-size: 10px; line-height: 1.6;">
+          Full article content below the fold...
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — Side by Side</h3>
+      <p>Video and key takeaways sit side-by-side above the fold. Full article below. Good for scanners who want the highlights without watching.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 20px; background: #1a1a2e;">
+      <!-- Mockup C: Article-First -->
+      <div>
+        <div style="color: #d6b283; font-size: 10px; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px;">Selling Resources</div>
+        <div style="color: #fff; font-size: 16px; font-weight: 600; margin-bottom: 10px;">Preparing Your Home for Professional Photography</div>
+        <div style="color: #aaa; font-size: 10px; line-height: 1.6; margin-bottom: 12px;">
+          First impressions matter. When buyers browse listings online, photos are the #1 factor that determines whether they schedule a showing...
+        </div>
+      </div>
+      <div style="background: #000; aspect-ratio: 16/9; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 12px; margin-bottom: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center;">▶</div>
+      </div>
+      <div style="color: #aaa; font-size: 10px; line-height: 1.6;">
+        More article content continues after the video...
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — Article-First</h3>
+      <p>Reads like a blog post with the video embedded mid-content. Strongest for SEO — Google sees article content immediately. Video feels like a bonus resource.</p>
+    </div>
+  </div>
+</div>
+
+<p class="subtitle" style="margin-top: 2rem; font-size: 0.9rem; opacity: 0.7;">Click to select — or tell me in the terminal. For pages without video (like the lockbox guide), the layout adapts naturally.</p>

@@ -4,7 +4,7 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
-import { getClosedListingsNearby } from "@/lib/listings-seo";
+import { getListingsNearby } from "@/lib/listings-seo";
 import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
 export const dynamic = 'force-dynamic'
@@ -84,7 +84,7 @@ function marketTemperature(monthsOfSupply: number) {
 }
 
 export default async function PropertyPage() {
-  const listings = await getClosedListingsNearby(32.671639, -97.142574);
+  const listings = await getListingsNearby(32.671639, -97.142574);
   const p = PARCEL;
   const temp = marketTemperature(MARKET_STATS.months_of_supply);
   const specsLine = `${p.bedrooms} bed · ${p.bathrooms_full} bath · ${fmtNum(p.living_area_sqft)} sqft · Built ${p.year_built}`;

@@ -90,35 +90,62 @@ export async function getClosedListingsByCounty(county: string): Promise<SeoList
   return transformListings(data ?? [])
 }
 
-export async function getClosedListingsNearby(
+// Status categories — matches app repo's useCompetitiveListings pattern
+const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent', 'Pending']
+const CLOSED_STATUSES = ['Closed']
+
+/**
+ * Fetch nearby listings for a property page: active + recent closed within radius.
+ * Mirrors the app repo's useCompetitiveListings query pattern:
+ * - Active statuses: no date constraint
+ * - Closed: within last 12 months (using listing_contract_date)
+ * - Uses mls_status for filtering (local MLS terminology)
+ * - Two parallel bbox queries for performance on 1.4M row table
+ */
+export async function getListingsNearby(
   lat: number,
   lng: number,
-  radiusMiles = 15,
-  maxResults = 200
+  radiusMiles = 1,
+  maxResults = 50
 ): Promise<SeoListingProps[]> {
-  // Bounding box pre-filter: ~69 mi per degree lat, adjusted for longitude at latitude
   const latDelta = radiusMiles / 69.0
   const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
+  const twelveMonthsAgo = new Date(
+    Date.now() - 365 * 24 * 60 * 60 * 1000
+  ).toISOString().split('T')[0] as string
 
-  // NOTE: Skips status_change_timestamp filter and ORDER BY for performance.
-  // The mls_listings table (1.4M rows) times out with timestamp range scans.
-  // Bounding box + status + limit is fast (~250ms) using the geo index.
-  const { data, error } = await supabase
+  // Active statuses — no date limit
+  const activeQuery = supabase
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
-    .eq('mls_name', MLS_NAME)
-    .eq('standard_status', 'Closed')
     .gte('latitude', lat - latDelta)
     .lte('latitude', lat + latDelta)
     .gte('longitude', lng - lngDelta)
     .lte('longitude', lng + lngDelta)
+    .in('mls_status', ACTIVE_STATUSES)
     .limit(maxResults)
 
-  if (error) {
-    console.warn('Error fetching nearby listings:', error)
-    return []
-  }
-  return transformListings(data ?? [])
+  // Closed within last 12 months (using listing_contract_date per app repo pattern)
+  const closedQuery = supabase
+    .from('mls_listings')
+    .select(SEO_LISTING_FIELDS)
+    .gte('latitude', lat - latDelta)
+    .lte('latitude', lat + latDelta)
+    .gte('longitude', lng - lngDelta)
+    .lte('longitude', lng + lngDelta)
+    .in('mls_status', CLOSED_STATUSES)
+    .gte('listing_contract_date', twelveMonthsAgo)
+    .limit(maxResults)
+
+  const [activeResult, closedResult] = await Promise.all([activeQuery, closedQuery])
+
+  if (activeResult.error) console.warn('Error fetching active listings:', activeResult.error)
+  if (closedResult.error) console.warn('Error fetching closed listings:', closedResult.error)
+
+  return [
+    ...transformListings(activeResult.data ?? []),
+    ...transformListings(closedResult.data ?? []),
+  ]
 }
 
 export async function getClosedListingsByBoundingBox(

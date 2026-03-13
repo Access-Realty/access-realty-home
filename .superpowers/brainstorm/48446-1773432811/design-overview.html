@@ -1,0 +1,152 @@
+<h2>Selling Resources — Design Overview</h2>
+<p class="subtitle">Complete architecture at a glance</p>
+
+<!-- Hub Page -->
+<div class="section">
+  <h3>1. Hub Page — <code>/directlist/selling-resources</code></h3>
+  <div class="mockup">
+    <div class="mockup-header">Selling Resources Hub</div>
+    <div class="mockup-body" style="padding: 0;">
+      <!-- Hero -->
+      <div style="background: #284b70; padding: 30px 24px; text-align: center;">
+        <div style="color: #d6b283; font-size: 10px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 8px;">DirectList Selling Resources</div>
+        <div style="color: #fff; font-size: 20px; font-weight: 600; margin-bottom: 8px;">Everything You Need to Sell With Confidence</div>
+        <div style="color: #c0d0e0; font-size: 12px;">Expert guides and videos to help you navigate every step of selling your home.</div>
+      </div>
+      <!-- Resource Grid -->
+      <div style="background: #f8f4ef; padding: 24px;">
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;">
+          <div style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            <div style="background: #1a1a2e; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center;">
+              <div style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 8px;">▶</div>
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-size: 11px; font-weight: 600; color: #284b70; margin-bottom: 4px;">Photography Prep</div>
+              <div style="font-size: 9px; color: #666; line-height: 1.4;">Get your home camera-ready for professional photos...</div>
+              <div style="font-size: 8px; color: #d6b283; margin-top: 6px;">📹 2:55 video + guide</div>
+            </div>
+          </div>
+          <div style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            <div style="background: #1a1a2e; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center;">
+              <div style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 8px;">▶</div>
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-size: 11px; font-weight: 600; color: #284b70; margin-bottom: 4px;">Pricing Strategy</div>
+              <div style="font-size: 9px; color: #666; line-height: 1.4;">Understand market pricing and set the right list price...</div>
+              <div style="font-size: 8px; color: #d6b283; margin-top: 6px;">📹 1:07 video + guide</div>
+            </div>
+          </div>
+          <div style="background: #fff; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.08);">
+            <div style="background: #e8e0d6; aspect-ratio: 16/10; display: flex; align-items: center; justify-content: center;">
+              <div style="font-size: 20px;">🔒</div>
+            </div>
+            <div style="padding: 10px;">
+              <div style="font-size: 11px; font-weight: 600; color: #284b70; margin-bottom: 4px;">How to Attach a Lockbox</div>
+              <div style="font-size: 9px; color: #666; line-height: 1.4;">Step-by-step guide to installing your lockbox...</div>
+              <div style="font-size: 8px; color: #d6b283; margin-top: 6px;">📖 Written guide</div>
+            </div>
+          </div>
+        </div>
+        <div style="text-align: center; font-size: 9px; color: #999; margin-top: 8px;">... + 8 more resource cards</div>
+      </div>
+      <!-- CTA -->
+      <div style="background: #284b70; padding: 20px; text-align: center;">
+        <div style="color: #fff; font-size: 13px; font-weight: 600; margin-bottom: 8px;">Ready to List Your Home?</div>
+        <div style="display: inline-block; background: #d6b283; color: #284b70; padding: 8px 20px; border-radius: 6px; font-size: 11px; font-weight: 600;">Get Started</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Individual Resource Page -->
+<div class="section">
+  <h3>2. Resource Page — <code>/directlist/selling-resources/[slug]</code></h3>
+  <div class="mockup">
+    <div class="mockup-header">Individual Resource (Article-First)</div>
+    <div class="mockup-body" style="padding: 0;">
+      <!-- Hero -->
+      <div style="background: #284b70; padding: 24px; text-align: center;">
+        <div style="color: #d6b283; font-size: 9px; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 6px;">Selling Resources</div>
+        <div style="color: #fff; font-size: 18px; font-weight: 600; margin-bottom: 6px;">Preparing Your Home for Professional Photography</div>
+        <div style="color: #c0d0e0; font-size: 11px;">First impressions start online. Here's how to make yours count.</div>
+      </div>
+      <!-- Article Content -->
+      <div style="background: #f8f4ef; padding: 24px;">
+        <div style="max-width: 480px; margin: 0 auto;">
+          <div style="font-size: 11px; color: #444; line-height: 1.7; margin-bottom: 16px;">
+            When buyers browse listings, photos are the #1 factor that determines whether they schedule a showing. Professional photography can make or break your listing's first impression...
+          </div>
+          <div style="font-size: 12px; font-weight: 600; color: #284b70; margin-bottom: 8px;">Why This Matters</div>
+          <div style="font-size: 11px; color: #444; line-height: 1.7; margin-bottom: 16px;">
+            Listings with professional photos sell 32% faster. Here's what you need to know to get your home camera-ready...
+          </div>
+          <!-- Embedded Video -->
+          <div style="background: #000; aspect-ratio: 16/9; border-radius: 8px; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+            <div style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid #fff; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 14px;">▶</div>
+          </div>
+          <div style="font-size: 9px; color: #999; margin-bottom: 16px;">Watch the full guide (2:55)</div>
+          <!-- More content -->
+          <div style="font-size: 12px; font-weight: 600; color: #284b70; margin-bottom: 8px;">Room-by-Room Checklist</div>
+          <div style="font-size: 11px; color: #444; line-height: 1.7; margin-bottom: 16px;">
+            ✓ Declutter surfaces and countertops<br>
+            ✓ Open all blinds for natural light<br>
+            ✓ Remove personal photos and items<br>
+            ✓ Clean floors and make beds<br>
+            ✓ Fresh flowers or plants in key areas
+          </div>
+        </div>
+      </div>
+      <!-- Related Resources -->
+      <div style="background: #f0ebe4; padding: 20px 24px;">
+        <div style="font-size: 13px; font-weight: 600; color: #284b70; margin-bottom: 12px; text-align: center;">You Might Also Find Helpful</div>
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+          <div style="background: #fff; border-radius: 6px; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+            <div style="font-size: 10px; font-weight: 600; color: #284b70;">What Counts as Square Footage</div>
+            <div style="font-size: 9px; color: #666; margin-top: 4px;">Know what areas count before your listing goes live</div>
+          </div>
+          <div style="background: #fff; border-radius: 6px; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+            <div style="font-size: 10px; font-weight: 600; color: #284b70;">What's Included in a Home Sale</div>
+            <div style="font-size: 9px; color: #666; margin-top: 4px;">Understand what stays and what goes</div>
+          </div>
+          <div style="background: #fff; border-radius: 6px; padding: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.06);">
+            <div style="font-size: 10px; font-weight: 600; color: #284b70;">Pricing Strategy Guide</div>
+            <div style="font-size: 9px; color: #666; margin-top: 4px;">Set the right price from day one</div>
+          </div>
+        </div>
+      </div>
+      <!-- CTA -->
+      <div style="background: #284b70; padding: 16px; text-align: center;">
+        <div style="color: #fff; font-size: 12px; font-weight: 600; margin-bottom: 6px;">Ready to List?</div>
+        <div style="display: inline-block; background: #d6b283; color: #284b70; padding: 6px 18px; border-radius: 6px; font-size: 10px; font-weight: 600;">Get Started with DirectList</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Footer Change -->
+<div class="section">
+  <h3>3. Footer Navigation Update</h3>
+  <div class="mockup">
+    <div class="mockup-header">DirectList Footer — New Link</div>
+    <div class="mockup-body" style="padding: 16px; background: #1a1a2e;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div>
+          <div style="color: #d6b283; font-size: 11px; font-weight: 600; margin-bottom: 8px;">DirectList</div>
+          <div style="color: #aaa; font-size: 10px; line-height: 2;">Logo + tagline</div>
+        </div>
+        <div>
+          <div style="color: #d6b283; font-size: 11px; font-weight: 600; margin-bottom: 8px;">Navigation</div>
+          <div style="color: #aaa; font-size: 10px; line-height: 2;">
+            Compare Plans<br>
+            FAQ<br>
+            <span style="color: #fff; font-weight: 600; border-left: 2px solid #d6b283; padding-left: 6px;">Selling Resources ← NEW</span>
+          </div>
+        </div>
+        <div>
+          <div style="color: #d6b283; font-size: 11px; font-weight: 600; margin-bottom: 8px;">Contact</div>
+          <div style="color: #aaa; font-size: 10px; line-height: 2;">Email / Phone</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
