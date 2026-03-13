@@ -19,10 +19,11 @@ const SEO_LISTING_FIELDS = `
   living_area,
   latitude,
   longitude,
-  standard_status,
+  mls_status,
   status_change_timestamp,
   listing_contract_date,
-  photo_urls
+  photo_urls,
+  bridge_raw_data->ConcessionsAmount
 `
 
 // Exported for testing
@@ -37,11 +38,12 @@ export function transformListings(data: any[]): SeoListingProps[] {
     bedrooms: row.bedrooms_total,
     bathrooms: Number(row.bathrooms_total_decimal),
     sqft: row.living_area,
-    status: row.standard_status,
+    status: row.mls_status,
     date: row.status_change_timestamp || row.listing_contract_date,
     photoUrl: row.photo_urls?.[0] ?? null,
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
+    concessions: row.ConcessionsAmount ? Number(row.ConcessionsAmount) : null,
   }))
 }
 
@@ -126,9 +128,10 @@ export async function getListingsNearby(
     .lte('longitude', lng + lngDelta)
     .in('mls_status', ACTIVE_STATUSES)
     .not('property_type', 'in', `(${LEASE_TYPES.join(',')})`)
+    .order('list_price', { ascending: false })
     .limit(maxResults)
 
-  // Closed within last 12 months, exclude leases
+  // Closed within last 12 months, exclude leases, most recent first
   // status_change_timestamp = best proxy for close date (close_date not in our table)
   const closedQuery = supabase
     .from('mls_listings')
@@ -140,6 +143,7 @@ export async function getListingsNearby(
     .eq('mls_status', 'Closed')
     .gte('status_change_timestamp', twelveMonthsAgo)
     .not('property_type', 'in', `(${LEASE_TYPES.join(',')})`)
+    .order('status_change_timestamp', { ascending: false })
     .limit(maxResults)
 
   const [activeResult, closedResult] = await Promise.all([activeQuery, closedQuery])

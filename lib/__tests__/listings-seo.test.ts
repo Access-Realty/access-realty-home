@@ -19,10 +19,11 @@ describe('transformListings', () => {
       living_area: 2555,
       latitude: 32.6716,
       longitude: -97.1426,
-      standard_status: 'Closed',
+      mls_status: 'Closed',
       status_change_timestamp: '2026-02-14T00:00:00Z',
       listing_contract_date: '2026-01-20',
       photo_urls: ['https://example.com/1.jpg', 'https://example.com/2.jpg'],
+      ConcessionsAmount: '5000',
     }
 
     const result = transformListings([row])
@@ -41,6 +42,7 @@ describe('transformListings', () => {
       photoUrl: 'https://example.com/1.jpg',
       latitude: 32.6716,
       longitude: -97.1426,
+      concessions: 5000,
     })
   })
 
@@ -56,16 +58,18 @@ describe('transformListings', () => {
       living_area: null,
       latitude: 32.7,
       longitude: -96.8,
-      standard_status: 'Closed',
+      mls_status: 'Closed',
       status_change_timestamp: null,
       listing_contract_date: '2026-01-01',
       photo_urls: null,
+      ConcessionsAmount: null,
     }
 
     const result = transformListings([row])
     expect(result[0].photoUrl).toBeNull()
     expect(result[0].sqft).toBeNull()
     expect(result[0].date).toBe('2026-01-01')
+    expect(result[0].concessions).toBeNull()
   })
 
   it('returns empty array for empty input', () => {

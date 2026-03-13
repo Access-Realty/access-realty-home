@@ -21,13 +21,15 @@ function formatDate(dateStr: string, status: string): string {
 const STATUS_COLORS: Record<string, string> = {
   Closed: 'bg-primary text-primary-foreground',
   Active: 'bg-green-600 text-white',
+  'Active Option Contract': 'bg-green-600 text-white',
+  'Active Contingent': 'bg-green-600 text-white',
   Pending: 'bg-amber-500 text-white',
 }
 
 export default function SeoListingCard(props: SeoListingProps) {
   const {
     address, city, postalCode, price, bedrooms, bathrooms,
-    sqft, status, date, photoUrl, highlighted,
+    sqft, status, date, photoUrl, concessions, highlighted,
   } = props
 
   const specsLine = formatSpecsLine(bedrooms, bathrooms, sqft)
@@ -67,6 +69,11 @@ export default function SeoListingCard(props: SeoListingProps) {
         <p className="text-sm text-muted-foreground mt-1.5 truncate">{address}</p>
         <p className="text-sm text-muted-foreground">{city}, TX {postalCode}</p>
         <p className="text-xs text-muted-foreground mt-1.5">{formatDate(date, status)}</p>
+        {concessions != null && concessions > 0 && status === 'Closed' && (
+          <p className="text-xs text-secondary mt-1">
+            Seller concessions: {formatPrice(concessions)}
+          </p>
+        )}
       </div>
     </div>
   )

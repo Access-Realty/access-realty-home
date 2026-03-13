@@ -17,6 +17,7 @@ const baseListing: SeoListingProps = {
   photoUrl: 'https://example.com/photo.jpg',
   latitude: 32.6716,
   longitude: -97.1426,
+  concessions: null,
 }
 
 describe('SeoListingCard', () => {

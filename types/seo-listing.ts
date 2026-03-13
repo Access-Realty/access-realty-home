@@ -10,10 +10,11 @@ export interface SeoListingProps {
   bedrooms: number
   bathrooms: number
   sqft: number | null
-  status: 'Closed' | 'Active' | 'Pending'
+  status: string            // mls_status value (Active, Closed, Pending, Active Option Contract, etc.)
   date: string              // ISO date string (status_change_timestamp or listing_contract_date)
   photoUrl: string | null   // First photo URL only — not the full array
   latitude: number
   longitude: number
+  concessions: number | null // Seller concessions amount (from bridge_raw_data->ConcessionsAmount)
   highlighted?: boolean     // True when corresponding map pin is active
 }

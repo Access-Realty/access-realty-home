@@ -17,6 +17,7 @@ const makeListing = (id: string, address: string): SeoListingProps => ({
   photoUrl: null,
   latitude: 32.67,
   longitude: -97.14,
+  concessions: null,
 })
 
 const listings = [
