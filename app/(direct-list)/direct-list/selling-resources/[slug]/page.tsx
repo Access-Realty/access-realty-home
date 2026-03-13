@@ -5,7 +5,7 @@ import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { HeroSection, Section, DirectListCTA } from '@/components/layout';
-import { resourcesBySlug, validSlugs, assetUrl } from '../resources';
+import { resourcesBySlug, validSlugs, assetUrl, formatDuration } from '../resources';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { RelatedResources } from '../components/RelatedResources';
 
@@ -83,8 +83,7 @@ export default async function SellingResourcePage({ params }: PageProps) {
                 title={resource.title}
               />
               <p className="text-sm text-muted-foreground mt-2">
-                Watch the full guide ({Math.floor(resource.video.durationSeconds / 60)}:
-                {(resource.video.durationSeconds % 60).toString().padStart(2, '0')})
+                Watch the full guide ({formatDuration(resource.video.durationSeconds)})
               </p>
             </div>
           )}
