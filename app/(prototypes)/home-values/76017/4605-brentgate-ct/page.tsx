@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { getClosedListingsByZip } from "@/lib/listings-seo";
+import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
 // ─── Real parcel data from parcels table ──────────────────────────────────────
 const PARCEL = {
@@ -47,70 +49,6 @@ const PARCEL = {
   owner_occupied: true,
 };
 
-// ─── Nearby closed comps (real MLS data, adapted to this zip) ─────────────────
-const COMPS = [
-  {
-    address: "4953 Van Zandt Dr",
-    city: "Fort Worth",
-    zip: "76244",
-    list_price: 600000,
-    sold_price: 585000,
-    sold_date: "2025-08-29",
-    living_area: 3190,
-    bedrooms: 4,
-    bathrooms: 2.5,
-    year_built: 2005,
-    lot_acres: 0.18,
-    dom: 34,
-    distance_mi: 1.2,
-  },
-  {
-    address: "5833 Trigg Dr",
-    city: "Westworth Village",
-    zip: "76114",
-    list_price: 775000,
-    sold_price: 762000,
-    sold_date: "2025-11-03",
-    living_area: 3441,
-    bedrooms: 4,
-    bathrooms: 3,
-    year_built: 2025,
-    lot_acres: 0.167,
-    dom: 22,
-    distance_mi: 2.8,
-  },
-  {
-    address: "3740 Arborlawn Dr",
-    city: "Fort Worth",
-    zip: "76109",
-    list_price: 749900,
-    sold_price: 725000,
-    sold_date: "2024-12-16",
-    living_area: 3421,
-    bedrooms: 3,
-    bathrooms: 4,
-    year_built: 1968,
-    lot_acres: 0.263,
-    dom: 47,
-    distance_mi: 3.4,
-  },
-  {
-    address: "8412 Island Ct",
-    city: "Fort Worth",
-    zip: "76137",
-    list_price: 560000,
-    sold_price: 545000,
-    sold_date: "2024-10-04",
-    living_area: 3846,
-    bedrooms: 5,
-    bathrooms: 4,
-    year_built: 2001,
-    lot_acres: 0.219,
-    dom: 28,
-    distance_mi: 4.1,
-  },
-];
-
 // ─── Market stats for 76017 ───────────────────────────────────────────────────
 const MARKET_STATS = {
   period: "Feb 2026",
@@ -143,7 +81,8 @@ function marketTemperature(monthsOfSupply: number) {
   return { label: "Buyer's Market", color: "text-info", bg: "bg-info/10" };
 }
 
-export default function PropertyPage() {
+export default async function PropertyPage() {
+  const listings = await getClosedListingsByZip("76017");
   const p = PARCEL;
   const temp = marketTemperature(MARKET_STATS.months_of_supply);
   const specsLine = `${p.bedrooms} bed · ${p.bathrooms_full} bath · ${fmtNum(p.living_area_sqft)} sqft · Built ${p.year_built}`;
@@ -304,47 +243,16 @@ export default function PropertyPage() {
       <Section variant="content" maxWidth="5xl">
         <div className="flex items-baseline justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">Recently Sold Near You</h2>
-          <Link href="/prototypes/home-values" className="text-sm text-primary hover:underline">
+          <Link href="/home-values" className="text-sm text-primary hover:underline">
             How comps work →
           </Link>
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-border">
-                <th className="text-left py-3 pr-4 font-semibold text-foreground">Address</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">Sold Price</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden sm:table-cell">Sq Ft</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden md:table-cell">$/Sq Ft</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">Beds/Baths</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden lg:table-cell">DOM</th>
-                <th className="text-right py-3 pl-4 font-semibold text-foreground hidden lg:table-cell">Sold Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPS.map((comp) => (
-                <tr key={comp.address} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
-                  <td className="py-3 pr-4">
-                    <div className="font-medium text-foreground">{comp.address}</div>
-                    <div className="text-xs text-muted-foreground">{comp.city} · {comp.distance_mi} mi away</div>
-                  </td>
-                  <td className="text-right py-3 px-4 font-semibold text-foreground">{fmt(comp.sold_price)}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden sm:table-cell">{fmtNum(comp.living_area)}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden md:table-cell">
-                    ${Math.round(comp.sold_price / comp.living_area)}
-                  </td>
-                  <td className="text-right py-3 px-4 text-muted-foreground">{comp.bedrooms}/{comp.bathrooms}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden lg:table-cell">{comp.dom}</td>
-                  <td className="text-right py-3 pl-4 text-muted-foreground hidden lg:table-cell">
-                    {new Date(comp.sold_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
+        <ListingsMapSection
+          listings={listings}
+          initialCenter={[-97.142574, 32.671639]}
+          initialZoom={14}
+          clusteringEnabled={false}
+        />
         <p className="text-xs text-muted-foreground mt-4">
           Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
         </p>
@@ -390,21 +298,6 @@ export default function PropertyPage() {
             <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
           </span>
           {temp.label} · {MARKET_STATS.months_of_supply} months of supply
-        </div>
-      </Section>
-
-      {/* ── 8. Our Track Record (placeholder for map) ─────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Our Track Record in Arlington</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Our team has closed transactions across Arlington and surrounding areas. Here&apos;s where we&apos;ve helped buyers and sellers.
-        </p>
-        <div className="bg-muted rounded-xl border border-border h-[300px] flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <div className="text-4xl mb-2">🗺️</div>
-            <p className="text-sm font-medium">Closed Deals Map</p>
-            <p className="text-xs">Deck.gl interactive map — static image on property pages</p>
-          </div>
         </div>
       </Section>
 
