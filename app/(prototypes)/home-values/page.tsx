@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { getClosedListingsByBoundingBox } from "@/lib/listings-seo";
+import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
 const DFW_STATS = {
   period: "Feb 2026",
@@ -72,7 +74,14 @@ function fmt(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 }
 
-export default function DFWOverviewPage() {
+export default async function DFWOverviewPage() {
+  const listings = await getClosedListingsByBoundingBox({
+    minLat: 32.2,
+    maxLat: 33.5,
+    minLng: -97.8,
+    maxLng: -96.3,
+  });
+
   return (
     <div className="bg-background">
       {/* Hero — no breadcrumbs at top level */}
@@ -191,17 +200,15 @@ export default function DFWOverviewPage() {
         </div>
       </Section>
 
-      {/* Map placeholder */}
+      {/* Interactive map */}
       <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-4">DFW Market Activity</h2>
-        <div className="bg-muted rounded-xl border border-border h-[500px] flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <div className="text-4xl mb-2">🗺️</div>
-            <p className="text-sm font-medium">Interactive Deck.gl Map — Entire DFW Metroplex</p>
-            <p className="text-xs">Heat map of sales activity · Click counties to drill in</p>
-            <p className="text-xs mt-1">5-county coverage: Dallas, Tarrant, Denton, Collin, Ellis</p>
-          </div>
-        </div>
+        <ListingsMapSection
+          listings={listings}
+          initialCenter={[-96.8, 32.8]}
+          initialZoom={9}
+          clusteringEnabled={true}
+          title="DFW Market Activity"
+        />
       </Section>
 
       {/* Email signup */}

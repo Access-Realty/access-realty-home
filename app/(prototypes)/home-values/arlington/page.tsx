@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { getClosedListingsByCity } from "@/lib/listings-seo";
+import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
 const CITY_STATS = {
   period: "Feb 2026",
@@ -38,7 +40,9 @@ function fmt(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 }
 
-export default function CityHubPage() {
+export default async function CityHubPage() {
+  const listings = await getClosedListingsByCity("Arlington");
+
   return (
     <div className="bg-background">
       {/* Breadcrumbs */}
@@ -111,15 +115,13 @@ export default function CityHubPage() {
 
       {/* Interactive map */}
       <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Arlington Sales Activity</h2>
-        <div className="bg-muted rounded-xl border border-border h-[450px] flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <div className="text-4xl mb-2">🗺️</div>
-            <p className="text-sm font-medium">Interactive Deck.gl Map — Closed Sales in Arlington</p>
-            <p className="text-xs">Color-coded: navy (our listings), light blue (our buyer deals), gray (all other sales)</p>
-            <p className="text-xs mt-1">Click pins for sale details · Filter by date range</p>
-          </div>
-        </div>
+        <ListingsMapSection
+          listings={listings}
+          initialCenter={[-97.11, 32.74]}
+          initialZoom={11}
+          clusteringEnabled={true}
+          title="Arlington Sales Activity"
+        />
       </Section>
 
       {/* Zip code breakdown table */}

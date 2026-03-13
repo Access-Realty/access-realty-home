@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { getClosedListingsByCounty } from '@/lib/listings-seo';
+import ListingsMapSection from '@/components/listings/ListingsMapSection';
 
 const COUNTY_STATS = {
   period: "Feb 2026",
@@ -38,7 +40,9 @@ function fmt(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 }
 
-export default function CountyHubPage() {
+export default async function CountyHubPage() {
+  const listings = await getClosedListingsByCounty('Tarrant');
+
   return (
     <div className="bg-background">
       {/* Breadcrumbs */}
@@ -108,15 +112,13 @@ export default function CountyHubPage() {
 
       {/* Interactive map */}
       <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Tarrant County Sales Activity</h2>
-        <div className="bg-muted rounded-xl border border-border h-[500px] flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <div className="text-4xl mb-2">🗺️</div>
-            <p className="text-sm font-medium">Interactive Deck.gl Map — All Tarrant County</p>
-            <p className="text-xs">Heat map of sales density · Click to drill into city/zip</p>
-            <p className="text-xs mt-1">Our closed deals highlighted in navy and light blue</p>
-          </div>
-        </div>
+        <ListingsMapSection
+          listings={listings}
+          initialCenter={[-97.30, 32.76]}
+          initialZoom={10}
+          clusteringEnabled={true}
+          title="Tarrant County Sales Activity"
+        />
       </Section>
 
       {/* City breakdown table */}

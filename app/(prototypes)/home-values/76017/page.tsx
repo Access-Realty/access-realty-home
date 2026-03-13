@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { getClosedListingsByZip } from "@/lib/listings-seo";
+import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
 // ─── Market stats ─────────────────────────────────────────────────────────────
 const STATS = {
@@ -17,16 +19,6 @@ const STATS = {
   closed_30: 48,
   closed_90: 156,
 };
-
-// ─── Recently sold in this zip ────────────────────────────────────────────────
-const RECENT_SALES = [
-  { address: "4605 Brentgate Ct", slug: "4605-brentgate-ct", price: 415000, sqft: 2555, beds: 3, baths: 2, dom: 18, date: "2026-02-14" },
-  { address: "3921 Wimbledon Dr", slug: "3921-wimbledon-dr", price: 372000, sqft: 2100, beds: 3, baths: 2, dom: 25, date: "2026-02-02" },
-  { address: "4412 Sycamore Ln", slug: "4412-sycamore-ln", price: 445000, sqft: 2830, beds: 4, baths: 2.5, dom: 12, date: "2026-01-28" },
-  { address: "1809 Pecan Valley Dr", slug: "1809-pecan-valley-dr", price: 338000, sqft: 1680, beds: 3, baths: 2, dom: 41, date: "2026-01-15" },
-  { address: "5110 Oakmont Trl", slug: "5110-oakmont-trl", price: 510000, sqft: 3200, beds: 4, baths: 3, dom: 8, date: "2026-01-10" },
-  { address: "2234 Green Oaks Blvd", slug: "2234-green-oaks-blvd", price: 295000, sqft: 1420, beds: 2, baths: 1, dom: 55, date: "2025-12-20" },
-];
 
 // ─── Recently built property pages ────────────────────────────────────────────
 const PROPERTY_PAGES = [
@@ -42,7 +34,9 @@ function fmt(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n);
 }
 
-export default function ZipHubPage() {
+export default async function ZipHubPage() {
+  const listings = await getClosedListingsByZip("76017");
+
   return (
     <div className="bg-background">
       {/* Breadcrumbs */}
@@ -117,56 +111,15 @@ export default function ZipHubPage() {
         </div>
       </Section>
 
-      {/* Interactive map placeholder */}
+      {/* Map + recent sales */}
       <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Recent Sales Map</h2>
-        <div className="bg-muted rounded-xl border border-border h-[400px] flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <div className="text-4xl mb-2">🗺️</div>
-            <p className="text-sm font-medium">Interactive Deck.gl Map</p>
-            <p className="text-xs">Recently sold homes in 76017 — color-coded by price range</p>
-            <p className="text-xs mt-1">Hub pages get the full interactive version</p>
-          </div>
-        </div>
-      </Section>
-
-      {/* Recently sold table */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Recently Sold in 76017</h2>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-border">
-                <th className="text-left py-3 pr-4 font-semibold text-foreground">Address</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">Sale Price</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden sm:table-cell">Sq Ft</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden md:table-cell">$/Sq Ft</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">Beds/Baths</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden lg:table-cell">DOM</th>
-                <th className="text-right py-3 pl-4 font-semibold text-foreground hidden lg:table-cell">Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {RECENT_SALES.map((sale) => (
-                <tr key={sale.slug} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
-                  <td className="py-3 pr-4">
-                    <Link href={`/prototypes/home-values/76017/${sale.slug}`} className="font-medium text-primary hover:underline">
-                      {sale.address}
-                    </Link>
-                  </td>
-                  <td className="text-right py-3 px-4 font-semibold text-foreground">{fmt(sale.price)}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden sm:table-cell">{sale.sqft.toLocaleString()}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden md:table-cell">${Math.round(sale.price / sale.sqft)}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground">{sale.beds}/{sale.baths}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden lg:table-cell">{sale.dom}</td>
-                  <td className="text-right py-3 pl-4 text-muted-foreground hidden lg:table-cell">
-                    {new Date(sale.date).toLocaleDateString("en-US", { month: "short", day: "numeric" })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <ListingsMapSection
+          listings={listings}
+          initialCenter={[-97.14, 32.67]}
+          initialZoom={13}
+          clusteringEnabled={false}
+          title="Recent Sales in 76017"
+        />
       </Section>
 
       {/* Browse property pages */}
