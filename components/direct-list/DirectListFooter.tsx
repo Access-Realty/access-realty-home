@@ -72,6 +72,14 @@ export function DirectListFooter() {
               </li>
               <li>
                 <Link
+                  href={bp("/direct-list/selling-resources")}
+                  className="hover:text-secondary transition-colors"
+                >
+                  Selling Resources
+                </Link>
+              </li>
+              <li>
+                <Link
                   href="/privacy"
                   className="hover:text-secondary transition-colors"
                 >
