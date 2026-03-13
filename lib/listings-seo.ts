@@ -25,10 +25,6 @@ const SEO_LISTING_FIELDS = `
   photo_urls
 `
 
-const TWELVE_MONTHS_AGO = new Date(
-  Date.now() - 365 * 24 * 60 * 60 * 1000
-).toISOString()
-
 // Exported for testing
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function transformListings(data: any[]): SeoListingProps[] {
@@ -50,6 +46,10 @@ export function transformListings(data: any[]): SeoListingProps[] {
 }
 
 function baseQuery() {
+  const twelveMonthsAgo = new Date(
+    Date.now() - 365 * 24 * 60 * 60 * 1000
+  ).toISOString()
+
   return supabase
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
@@ -57,12 +57,12 @@ function baseQuery() {
     .eq('standard_status', 'Closed')
     .not('latitude', 'is', null)
     .not('longitude', 'is', null)
-    .gte('status_change_timestamp', TWELVE_MONTHS_AGO)
+    .gte('status_change_timestamp', twelveMonthsAgo)
     .order('status_change_timestamp', { ascending: false })
 }
 
 export async function getClosedListingsByZip(zip: string): Promise<SeoListingProps[]> {
-  const { data, error } = await baseQuery().eq('postal_code', zip)
+  const { data, error } = await baseQuery().eq('postal_code', zip).limit(2000)
   if (error) {
     console.warn('Error fetching listings by zip:', error)
     return []
@@ -71,7 +71,7 @@ export async function getClosedListingsByZip(zip: string): Promise<SeoListingPro
 }
 
 export async function getClosedListingsByCity(city: string): Promise<SeoListingProps[]> {
-  const { data, error } = await baseQuery().eq('city', city)
+  const { data, error } = await baseQuery().eq('city', city).limit(5000)
   if (error) {
     console.warn('Error fetching listings by city:', error)
     return []

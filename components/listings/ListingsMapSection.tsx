@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useState, useCallback } from 'react'
+import { useState } from 'react'
 import ListingsMap from './ListingsMap'
 import ListingCardGrid from './ListingCardGrid'
 import type { SeoListingProps } from '@/types/seo-listing'
@@ -28,14 +28,6 @@ export default function ListingsMapSection({
   )
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
 
-  const handleVisibleListingsChange = useCallback((ids: string[]) => {
-    setVisibleIds(ids)
-  }, [])
-
-  const handleHighlightChange = useCallback((id: string | null) => {
-    setHighlightedId(id)
-  }, [])
-
   return (
     <div>
       {title && (
@@ -46,8 +38,8 @@ export default function ListingsMapSection({
         listings={listings}
         initialCenter={initialCenter}
         initialZoom={initialZoom}
-        onVisibleListingsChange={handleVisibleListingsChange}
-        onHighlightChange={handleHighlightChange}
+        onVisibleListingsChange={setVisibleIds}
+        onHighlightChange={setHighlightedId}
         clusteringEnabled={clusteringEnabled}
       />
 

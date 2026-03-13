@@ -40,6 +40,21 @@ export function formatSqft(sqft: number | null): string {
 }
 
 /**
+ * Format specs line for display (e.g., "3 bd · 2 ba · 2,450 sqft")
+ */
+export function formatSpecsLine(
+  beds: number | null,
+  baths: number | null,
+  sqft: number | null,
+): string {
+  return [
+    beds !== null ? `${beds} bd` : null,
+    baths !== null ? `${baths} ba` : null,
+    sqft ? formatSqft(sqft) : null,
+  ].filter(Boolean).join(' · ')
+}
+
+/**
  * Format address for display, preferring unparsed_address
  */
 export function formatAddress(listing: MlsListing): string {

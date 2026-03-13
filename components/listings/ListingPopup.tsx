@@ -1,15 +1,8 @@
 // ABOUTME: Lightweight listing popup for Mapbox map pin clicks
 // ABOUTME: Rendered inside react-map-gl <Popup> — must be compact
 
+import { formatPrice, formatSpecsLine } from '@/lib/listing-utils'
 import type { SeoListingProps } from '@/types/seo-listing'
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(price)
-}
 
 interface ListingPopupProps {
   listing: SeoListingProps
@@ -17,11 +10,7 @@ interface ListingPopupProps {
 }
 
 export default function ListingPopup({ listing, onClose }: ListingPopupProps) {
-  const specsLine = [
-    `${listing.bedrooms} bd`,
-    `${listing.bathrooms} ba`,
-    listing.sqft ? `${listing.sqft.toLocaleString()} sqft` : null,
-  ].filter(Boolean).join(' · ')
+  const specsLine = formatSpecsLine(listing.bedrooms, listing.bathrooms, listing.sqft)
 
   return (
     <div className="w-[260px]">

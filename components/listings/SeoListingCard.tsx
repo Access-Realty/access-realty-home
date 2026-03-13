@@ -2,15 +2,8 @@
 // ABOUTME: No navigation/links — informational only. Separate from ListingCard.tsx
 
 import Image from 'next/image'
+import { formatPrice, formatSpecsLine } from '@/lib/listing-utils'
 import type { SeoListingProps } from '@/types/seo-listing'
-
-function formatPrice(price: number): string {
-  return new Intl.NumberFormat('en-US', {
-    style: 'currency',
-    currency: 'USD',
-    maximumFractionDigits: 0,
-  }).format(price)
-}
 
 function formatDate(dateStr: string, status: string): string {
   const date = new Date(dateStr)
@@ -37,11 +30,7 @@ export default function SeoListingCard(props: SeoListingProps) {
     sqft, status, date, photoUrl, highlighted,
   } = props
 
-  const specsLine = [
-    `${bedrooms} bd`,
-    `${bathrooms} ba`,
-    sqft ? `${sqft.toLocaleString()} sqft` : null,
-  ].filter(Boolean).join(' · ')
+  const specsLine = formatSpecsLine(bedrooms, bathrooms, sqft)
 
   return (
     <div

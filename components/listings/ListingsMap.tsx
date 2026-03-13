@@ -12,6 +12,7 @@ import ListingPopup from './ListingPopup'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
+const BRAND_NAVY = '#284b70'
 
 interface ListingsMapProps {
   listings: SeoListingProps[]
@@ -27,7 +28,7 @@ const clusterLayer: Omit<CircleLayerSpecification, 'source'> = {
   type: 'circle',
   filter: ['has', 'point_count'],
   paint: {
-    'circle-color': '#284b70',
+    'circle-color': BRAND_NAVY,
     'circle-radius': ['step', ['get', 'point_count'], 18, 10, 24, 50, 32],
     'circle-opacity': 0.85,
     'circle-stroke-width': 2,
@@ -54,7 +55,7 @@ const unclusteredPointLayer: Omit<CircleLayerSpecification, 'source'> = {
   type: 'circle',
   filter: ['!', ['has', 'point_count']],
   paint: {
-    'circle-color': '#284b70',
+    'circle-color': BRAND_NAVY,
     'circle-radius': 7,
     'circle-stroke-width': 2,
     'circle-stroke-color': '#ffffff',
@@ -87,7 +88,13 @@ export default function ListingsMap({
   clusteringEnabled = true,
 }: ListingsMapProps) {
   const mapRef = useRef<MapRef>(null)
+  const lastVisibleIdsRef = useRef<string>('')
   const [selectedListing, setSelectedListing] = useState<SeoListingProps | null>(null)
+
+  const closePopup = useCallback(() => {
+    setSelectedListing(null)
+    onHighlightChange?.(null)
+  }, [onHighlightChange])
 
   const listingMap = useMemo(
     () => new globalThis.Map<string, SeoListingProps>(listings.map((l) => [l.listingId, l])),
@@ -111,6 +118,11 @@ export default function ListingsMap({
         l.latitude <= bounds.getNorth()
       )
       .map((l) => l.listingId)
+
+    // Skip update if visible set hasn't changed (avoids unnecessary grid re-renders)
+    const key = visibleIds.join(',')
+    if (key === lastVisibleIdsRef.current) return
+    lastVisibleIdsRef.current = key
 
     onVisibleListingsChange(visibleIds)
   }, [listings, onVisibleListingsChange])
@@ -157,11 +169,10 @@ export default function ListingsMap({
           onHighlightChange?.(listing.listingId)
         }
       } else {
-        setSelectedListing(null)
-        onHighlightChange?.(null)
+        closePopup()
       }
     },
-    [listingMap, onHighlightChange]
+    [listingMap, onHighlightChange, closePopup]
   )
 
   const handleMouseEnter = useCallback(() => {
@@ -218,19 +229,13 @@ export default function ListingsMap({
             longitude={selectedListing.longitude}
             latitude={selectedListing.latitude}
             anchor="bottom"
-            onClose={() => {
-              setSelectedListing(null)
-              onHighlightChange?.(null)
-            }}
+            onClose={closePopup}
             closeButton={false}
             maxWidth="280px"
           >
             <ListingPopup
               listing={selectedListing}
-              onClose={() => {
-                setSelectedListing(null)
-                onHighlightChange?.(null)
-              }}
+              onClose={closePopup}
             />
           </Popup>
         )}

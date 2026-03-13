@@ -3,7 +3,7 @@
 
 'use client'
 
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import SeoListingCard from './SeoListingCard'
 import type { SeoListingProps } from '@/types/seo-listing'
 
@@ -19,9 +19,11 @@ export default function ListingCardGrid({
   highlightedId,
 }: ListingCardGridProps) {
   const gridRef = useRef<HTMLDivElement>(null)
-  const visibleSet = new Set(visibleIds)
 
-  const visibleListings = listings.filter((l) => visibleSet.has(l.listingId))
+  const visibleListings = useMemo(() => {
+    const visibleSet = new Set(visibleIds)
+    return listings.filter((l) => visibleSet.has(l.listingId))
+  }, [listings, visibleIds])
 
   useEffect(() => {
     if (!highlightedId || !gridRef.current) return
