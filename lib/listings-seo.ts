@@ -96,13 +96,16 @@ export async function getClosedListingsNearby(
   radiusMiles = 15,
   maxResults = 200
 ): Promise<SeoListingProps[]> {
-  const { data, error } = await supabase
-    .rpc('get_nearby_closed_listings', {
-      center_lat: lat,
-      center_lng: lng,
-      radius_miles: radiusMiles,
-      max_results: maxResults,
-    })
+  // Bounding box pre-filter: ~69 mi per degree lat, ~54 mi per degree lng at DFW latitude
+  const latDelta = radiusMiles / 69.0
+  const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
+
+  const { data, error } = await baseQuery()
+    .gte('latitude', lat - latDelta)
+    .lte('latitude', lat + latDelta)
+    .gte('longitude', lng - lngDelta)
+    .lte('longitude', lng + lngDelta)
+    .limit(maxResults)
 
   if (error) {
     console.warn('Error fetching nearby listings:', error)
