@@ -3,7 +3,7 @@ module.exports = {
   siteUrl: 'https://access.realty',
   generateRobotsTxt: true,
   // Optional: exclude specific pages
-  exclude: ['/api/*', '/direct-list', '/direct-list/*'],
+  exclude: ['/api/*', '/direct-list', '/direct-list/*', '/home-values', '/home-values/*'],
   // Include dynamic Solutions pages
   additionalPaths: async (config) => [
     await config.transform(config, '/solutions/price-launch'),
