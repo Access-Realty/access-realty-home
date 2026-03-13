@@ -4,6 +4,8 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
+import { getClosedListingsByZip } from "@/lib/listings-seo";
+import ListingsMapSection from "@/components/listings/ListingsMapSection";
 
 // ─── Real parcel data from parcels table ──────────────────────────────────────
 const PARCEL = {
@@ -49,70 +51,6 @@ const PARCEL = {
   owner_occupied: true,
 };
 
-// ─── Nearby closed comps (plausible for Hurst/76053 area) ────────────────────
-const COMPS = [
-  {
-    address: "517 Circleview Dr",
-    city: "Hurst",
-    zip: "76053",
-    list_price: 365000,
-    sold_price: 358000,
-    sold_date: "2025-09-12",
-    living_area: 2180,
-    bedrooms: 4,
-    bathrooms: 2,
-    year_built: 1968,
-    lot_acres: 0.34,
-    dom: 19,
-    distance_mi: 0.6,
-  },
-  {
-    address: "1004 Oakwood Ln",
-    city: "Hurst",
-    zip: "76053",
-    list_price: 410000,
-    sold_price: 395000,
-    sold_date: "2025-08-03",
-    living_area: 2640,
-    bedrooms: 4,
-    bathrooms: 3,
-    year_built: 1975,
-    lot_acres: 0.41,
-    dom: 32,
-    distance_mi: 1.1,
-  },
-  {
-    address: "728 Hurstview Dr",
-    city: "Hurst",
-    zip: "76053",
-    list_price: 339900,
-    sold_price: 335000,
-    sold_date: "2025-10-18",
-    living_area: 1860,
-    bedrooms: 3,
-    bathrooms: 2,
-    year_built: 1964,
-    lot_acres: 0.29,
-    dom: 24,
-    distance_mi: 0.9,
-  },
-  {
-    address: "1320 Norwood Dr",
-    city: "Bedford",
-    zip: "76022",
-    list_price: 425000,
-    sold_price: 418000,
-    sold_date: "2025-07-22",
-    living_area: 2780,
-    bedrooms: 4,
-    bathrooms: 3,
-    year_built: 1982,
-    lot_acres: 0.36,
-    dom: 29,
-    distance_mi: 1.8,
-  },
-];
-
 // ─── Market stats for 76053 ───────────────────────────────────────────────────
 const MARKET_STATS = {
   period: "Feb 2026",
@@ -145,7 +83,8 @@ function marketTemperature(monthsOfSupply: number) {
   return { label: "Buyer's Market", color: "text-info", bg: "bg-info/10" };
 }
 
-export default function PropertyPage() {
+export default async function PropertyPage() {
+  const listings = await getClosedListingsByZip('76053')
   const p = PARCEL;
   const temp = marketTemperature(MARKET_STATS.months_of_supply);
   const specsLine = `${p.bedrooms} bed · ${p.bathrooms_full} bath · ${fmtNum(p.living_area_sqft)} sqft · Built ${p.year_built}`;
@@ -317,47 +256,16 @@ export default function PropertyPage() {
       <Section variant="content" maxWidth="5xl">
         <div className="flex items-baseline justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">Recently Sold Near You</h2>
-          <Link href="/prototypes/home-values" className="text-sm text-primary hover:underline">
+          <Link href="/home-values" className="text-sm text-primary hover:underline">
             How comps work →
           </Link>
         </div>
-
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b-2 border-border">
-                <th className="text-left py-3 pr-4 font-semibold text-foreground">Address</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">Sold Price</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden sm:table-cell">Sq Ft</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden md:table-cell">$/Sq Ft</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground">Beds/Baths</th>
-                <th className="text-right py-3 px-4 font-semibold text-foreground hidden lg:table-cell">DOM</th>
-                <th className="text-right py-3 pl-4 font-semibold text-foreground hidden lg:table-cell">Sold Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {COMPS.map((comp) => (
-                <tr key={comp.address} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
-                  <td className="py-3 pr-4">
-                    <div className="font-medium text-foreground">{comp.address}</div>
-                    <div className="text-xs text-muted-foreground">{comp.city} · {comp.distance_mi} mi away</div>
-                  </td>
-                  <td className="text-right py-3 px-4 font-semibold text-foreground">{fmt(comp.sold_price)}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden sm:table-cell">{fmtNum(comp.living_area)}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden md:table-cell">
-                    ${Math.round(comp.sold_price / comp.living_area)}
-                  </td>
-                  <td className="text-right py-3 px-4 text-muted-foreground">{comp.bedrooms}/{comp.bathrooms}</td>
-                  <td className="text-right py-3 px-4 text-muted-foreground hidden lg:table-cell">{comp.dom}</td>
-                  <td className="text-right py-3 pl-4 text-muted-foreground hidden lg:table-cell">
-                    {new Date(comp.sold_date).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
+        <ListingsMapSection
+          listings={listings}
+          initialCenter={[-97.194655, 32.834942]}
+          initialZoom={14}
+          clusteringEnabled={false}
+        />
         <p className="text-xs text-muted-foreground mt-4">
           Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
         </p>
@@ -406,21 +314,6 @@ export default function PropertyPage() {
             <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
           </span>
           {temp.label} · {MARKET_STATS.months_of_supply} months of supply
-        </div>
-      </Section>
-
-      {/* ── 8. Our Track Record (placeholder for map) ─────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-4">Our Track Record in Hurst</h2>
-        <p className="text-sm text-muted-foreground mb-6">
-          Our team has closed transactions across Hurst and the HEB corridor. Here&apos;s where we&apos;ve helped buyers and sellers.
-        </p>
-        <div className="bg-muted rounded-xl border border-border h-[300px] flex items-center justify-center">
-          <div className="text-center text-muted-foreground">
-            <div className="text-4xl mb-2">🗺️</div>
-            <p className="text-sm font-medium">Closed Deals Map</p>
-            <p className="text-xs">Deck.gl interactive map — static image on property pages</p>
-          </div>
         </div>
       </Section>
 
