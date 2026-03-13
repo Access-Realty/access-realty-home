@@ -96,11 +96,18 @@ export async function getClosedListingsNearby(
   radiusMiles = 15,
   maxResults = 200
 ): Promise<SeoListingProps[]> {
-  // Bounding box pre-filter: ~69 mi per degree lat, ~54 mi per degree lng at DFW latitude
+  // Bounding box pre-filter: ~69 mi per degree lat, adjusted for longitude at latitude
   const latDelta = radiusMiles / 69.0
   const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
 
-  const { data, error } = await baseQuery()
+  // NOTE: Skips status_change_timestamp filter and ORDER BY for performance.
+  // The mls_listings table (1.4M rows) times out with timestamp range scans.
+  // Bounding box + status + limit is fast (~250ms) using the geo index.
+  const { data, error } = await supabase
+    .from('mls_listings')
+    .select(SEO_LISTING_FIELDS)
+    .eq('mls_name', MLS_NAME)
+    .eq('standard_status', 'Closed')
     .gte('latitude', lat - latDelta)
     .lte('latitude', lat + latDelta)
     .gte('longitude', lng - lngDelta)
