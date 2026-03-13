@@ -90,17 +90,19 @@ export async function getClosedListingsByCounty(county: string): Promise<SeoList
   return transformListings(data ?? [])
 }
 
-// Status categories — matches app repo's useCompetitiveListings pattern
+// Status categories — matches app repo's useCompetitiveListings pattern (NTREIS mls_status values)
 const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent', 'Pending']
-const CLOSED_STATUSES = ['Closed']
+// Lease property types to exclude from all SEO queries
+const LEASE_TYPES = ['Residential Lease', 'Commercial Lease']
 
 /**
  * Fetch nearby listings for a property page: active + recent closed within radius.
  * Mirrors the app repo's useCompetitiveListings query pattern:
- * - Active statuses: no date constraint
- * - Closed: within last 12 months (using listing_contract_date)
- * - Uses mls_status for filtering (local MLS terminology)
+ * - Active statuses (no date constraint) + Closed (last 12 months via status_change_timestamp)
+ * - Uses mls_status for NTREIS-specific granularity
+ * - Excludes leases (Residential Lease, Commercial Lease)
  * - Two parallel bbox queries for performance on 1.4M row table
+ * - At 1mi radius, bbox is ~0.015° lat — small enough that timestamp filters are fast
  */
 export async function getListingsNearby(
   lat: number,
@@ -112,9 +114,9 @@ export async function getListingsNearby(
   const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
   const twelveMonthsAgo = new Date(
     Date.now() - 365 * 24 * 60 * 60 * 1000
-  ).toISOString().split('T')[0] as string
+  ).toISOString()
 
-  // Active statuses — no date limit
+  // Active statuses — no date limit, exclude leases
   const activeQuery = supabase
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
@@ -123,9 +125,11 @@ export async function getListingsNearby(
     .gte('longitude', lng - lngDelta)
     .lte('longitude', lng + lngDelta)
     .in('mls_status', ACTIVE_STATUSES)
+    .not('property_type', 'in', `(${LEASE_TYPES.join(',')})`)
     .limit(maxResults)
 
-  // Closed within last 12 months (using listing_contract_date per app repo pattern)
+  // Closed within last 12 months, exclude leases
+  // status_change_timestamp = best proxy for close date (close_date not in our table)
   const closedQuery = supabase
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
@@ -133,8 +137,9 @@ export async function getListingsNearby(
     .lte('latitude', lat + latDelta)
     .gte('longitude', lng - lngDelta)
     .lte('longitude', lng + lngDelta)
-    .in('mls_status', CLOSED_STATUSES)
-    .gte('listing_contract_date', twelveMonthsAgo)
+    .eq('mls_status', 'Closed')
+    .gte('status_change_timestamp', twelveMonthsAgo)
+    .not('property_type', 'in', `(${LEASE_TYPES.join(',')})`)
     .limit(maxResults)
 
   const [activeResult, closedResult] = await Promise.all([activeQuery, closedQuery])

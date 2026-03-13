@@ -70,6 +70,42 @@ When Bret references MLS records casually, he uses **human-readable MLS IDs**, n
 - `mls_listings.list_agent_mls_id` → uses human-readable format
 - `mls_listings.buyer_agent_key` → uses hash format
 
+### RESO Fields & Query Patterns
+
+Our MLS data comes from Bridge Interactive (NTREIS MLS) using RESO Data Dictionary v2.0. Reference: https://ddwiki.reso.org/display/DDW21/Property+Resource
+
+**Status fields:**
+- `standard_status` — RESO-normalized: `Active`, `Active Under Contract`, `Pending`, `Closed`, `Expired`, `Withdrawn`, `Canceled`
+- `mls_status` — NTREIS-specific: `Active`, `Active Option Contract`, `Active Contingent`, `Active KO`, `Pending`, `Closed`, `Expired`, `Withdrawn`, `Cancelled`, `Hold`
+- Use `mls_status` for NTREIS queries (matches app repo's `useCompetitiveListings` pattern)
+
+**Date fields (and when they're populated):**
+
+| Column | Type | Meaning | Populated for |
+|--------|------|---------|---------------|
+| `listing_contract_date` | date | When listing agreement was signed (original list date) | All statuses (100%) |
+| `purchase_contract_date` | date | When buyer's offer was accepted | Pending + Closed (~87% of closed) |
+| `status_change_timestamp` | timestamp | When MLS status last changed — **best proxy for close date** | All statuses (100%) |
+| `on_market_date` | date | When first put on market | Barely populated (~0%) |
+| `expiration_date` | date | When listing agreement expires | ~42% of closed |
+| `cancellation_date` | date | When listing was cancelled | Only cancelled |
+
+**Important:** `close_date` does NOT exist in our table (gap in Bridge sync). Use `status_change_timestamp` as the close date proxy for Closed listings.
+
+**Filtering leases:** Always exclude `property_type IN ('Residential Lease', 'Commercial Lease')` for sales queries.
+
+**Active listing statuses (for "nearby activity" queries):**
+```
+mls_status IN ('Active', 'Active Option Contract', 'Active Contingent', 'Pending')
+```
+
+**Recent closed (last 12 months):**
+```
+mls_status = 'Closed' AND status_change_timestamp > now() - interval '12 months'
+```
+
+**App repo reference:** `access-realty-app/src/hooks/useCompetitiveListings.ts` — uses `mls_status`, parallel bbox queries (active + time-limited), `listing_contract_date` for 90-day cutoff.
+
 ### Related Repos (for cross-repo reference)
 
 | Repo | Path | Purpose |
