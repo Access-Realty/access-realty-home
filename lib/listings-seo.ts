@@ -97,26 +97,44 @@ const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent'
 // Lease property types to exclude from all SEO queries
 const LEASE_TYPES = ['Residential Lease', 'Commercial Lease']
 
+const MIN_RESULTS = 20
+const RADIUS_STEPS = [1, 2, 5] // miles — start tight, expand if < MIN_RESULTS
+
 /**
  * Fetch nearby listings for a property page: active + recent closed within radius.
- * Mirrors the app repo's useCompetitiveListings query pattern:
- * - Active statuses (no date constraint) + Closed (last 12 months via status_change_timestamp)
+ * Starts at 1 mile, expands to 2mi then 5mi if fewer than 20 results.
+ * - Active statuses (no date constraint) + Closed (last 12 months)
  * - Uses mls_status for NTREIS-specific granularity
- * - Excludes leases (Residential Lease, Commercial Lease)
- * - Two parallel bbox queries for performance on 1.4M row table
- * - At 1mi radius, bbox is ~0.015° lat — small enough that timestamp filters are fast
+ * - Excludes leases
+ * - Two parallel bbox queries per radius step
  */
 export async function getListingsNearby(
   lat: number,
   lng: number,
-  radiusMiles = 1,
   maxResults = 50
 ): Promise<SeoListingProps[]> {
-  const latDelta = radiusMiles / 69.0
-  const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
   const twelveMonthsAgo = new Date(
     Date.now() - 365 * 24 * 60 * 60 * 1000
   ).toISOString()
+
+  for (const radiusMiles of RADIUS_STEPS) {
+    const results = await fetchNearbyAtRadius(lat, lng, radiusMiles, twelveMonthsAgo, maxResults)
+    if (results.length >= MIN_RESULTS || radiusMiles === RADIUS_STEPS[RADIUS_STEPS.length - 1]) {
+      return results
+    }
+  }
+  return []
+}
+
+async function fetchNearbyAtRadius(
+  lat: number,
+  lng: number,
+  radiusMiles: number,
+  twelveMonthsAgo: string,
+  maxResults: number
+): Promise<SeoListingProps[]> {
+  const latDelta = radiusMiles / 69.0
+  const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
 
   // Active statuses — no date limit, exclude leases
   const activeQuery = supabase
@@ -132,7 +150,6 @@ export async function getListingsNearby(
     .limit(maxResults)
 
   // Closed within last 12 months, exclude leases, most recent first
-  // status_change_timestamp = best proxy for close date (close_date not in our table)
   const closedQuery = supabase
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
@@ -148,8 +165,8 @@ export async function getListingsNearby(
 
   const [activeResult, closedResult] = await Promise.all([activeQuery, closedQuery])
 
-  if (activeResult.error) console.warn('Error fetching active listings:', activeResult.error)
-  if (closedResult.error) console.warn('Error fetching closed listings:', closedResult.error)
+  if (activeResult.error) console.warn('Error fetching nearby listings (active):', activeResult.error)
+  if (closedResult.error) console.warn('Error fetching nearby listings (closed):', closedResult.error)
 
   return [
     ...transformListings(activeResult.data ?? []),
