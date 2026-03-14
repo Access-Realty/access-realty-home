@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic'
 
 // ─── Real parcel data from parcels table ──────────────────────────────────────
 const PARCEL = {
+  id: "bbe800d6-f3b3-4e7c-8f04-9d79ec2609b8",
   street_address: "4605 Brentgate Ct",
   city: "Arlington",
   state: "TX",
@@ -87,7 +88,7 @@ function marketTemperature(monthsOfSupply: number) {
 export default async function PropertyPage() {
   const [listings, heroImage] = await Promise.all([
     getListingsNearby(32.671639, -97.142574),
-    getPropertyHeroImage(32.671639, -97.142574),
+    getPropertyHeroImage(PARCEL.id, 32.671639, -97.142574),
   ]);
   const p = PARCEL;
   const temp = marketTemperature(MARKET_STATS.months_of_supply);

@@ -96,27 +96,24 @@ const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 /**
  * Get the hero image URL for a subject property.
- * 1. Try Active listing first (current photos), then most recent with photos
- * 2. Excludes leases (low prices like $2,995 are rental listings)
- * 3. Fallback: Google Street View Static API
+ * 1. Query mls_listings linked to this parcel via parcel_id FK (the canonical association)
+ *    - Prefer Active listings (current photos), then most recent with photos
+ * 2. Fallback: Google Street View Static API
+ *
+ * NOTE: Does NOT match by coordinates — that produces false positives in dense neighborhoods.
+ * The parcel_id FK is maintained by database triggers (queue_parcel_stub_for_listing).
  */
 export async function getPropertyHeroImage(
+  parcelId: string,
   lat: number,
   lng: number,
 ): Promise<{ url: string; source: 'mls' | 'streetview' }> {
-  // Tiny bbox (~0.001° ≈ 350ft) to find listings at this exact property
-  const delta = 0.001
-
-  // Prefer Active listing (current photos are most relevant)
+  // Prefer Active listing photos (most current)
   const { data: activeData } = await supabase
     .from('mls_listings')
     .select('photo_urls')
-    .gte('latitude', lat - delta)
-    .lte('latitude', lat + delta)
-    .gte('longitude', lng - delta)
-    .lte('longitude', lng + delta)
+    .eq('parcel_id', parcelId)
     .in('mls_status', ['Active', 'Active Option Contract', 'Active Contingent', 'Pending'])
-    .not('property_type', 'in', '(Residential Lease,Commercial Lease)')
     .not('photo_urls', 'is', null)
     .order('status_change_timestamp', { ascending: false })
     .limit(1)
@@ -126,15 +123,11 @@ export async function getPropertyHeroImage(
     return { url: activePhoto, source: 'mls' }
   }
 
-  // Fall back to most recent listing with photos (any non-lease status)
+  // Fall back to most recent listing with photos for this parcel
   const { data } = await supabase
     .from('mls_listings')
     .select('photo_urls')
-    .gte('latitude', lat - delta)
-    .lte('latitude', lat + delta)
-    .gte('longitude', lng - delta)
-    .lte('longitude', lng + delta)
-    .not('property_type', 'in', '(Residential Lease,Commercial Lease)')
+    .eq('parcel_id', parcelId)
     .not('photo_urls', 'is', null)
     .order('status_change_timestamp', { ascending: false })
     .limit(1)
