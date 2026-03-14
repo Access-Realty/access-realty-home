@@ -96,8 +96,9 @@ const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
 
 /**
  * Get the hero image URL for a subject property.
- * 1. Try: find the most recent MLS listing at this location → use its first photo
- * 2. Fallback: Google Street View Static API at the property's coordinates
+ * 1. Try Active listing first (current photos), then most recent with photos
+ * 2. Excludes leases (low prices like $2,995 are rental listings)
+ * 3. Fallback: Google Street View Static API
  */
 export async function getPropertyHeroImage(
   lat: number,
@@ -105,6 +106,27 @@ export async function getPropertyHeroImage(
 ): Promise<{ url: string; source: 'mls' | 'streetview' }> {
   // Tiny bbox (~0.001° ≈ 350ft) to find listings at this exact property
   const delta = 0.001
+
+  // Prefer Active listing (current photos are most relevant)
+  const { data: activeData } = await supabase
+    .from('mls_listings')
+    .select('photo_urls')
+    .gte('latitude', lat - delta)
+    .lte('latitude', lat + delta)
+    .gte('longitude', lng - delta)
+    .lte('longitude', lng + delta)
+    .in('mls_status', ['Active', 'Active Option Contract', 'Active Contingent', 'Pending'])
+    .not('property_type', 'in', '(Residential Lease,Commercial Lease)')
+    .not('photo_urls', 'is', null)
+    .order('status_change_timestamp', { ascending: false })
+    .limit(1)
+
+  const activePhoto = activeData?.[0]?.photo_urls?.[0]
+  if (activePhoto) {
+    return { url: activePhoto, source: 'mls' }
+  }
+
+  // Fall back to most recent listing with photos (any non-lease status)
   const { data } = await supabase
     .from('mls_listings')
     .select('photo_urls')
@@ -112,6 +134,7 @@ export async function getPropertyHeroImage(
     .lte('latitude', lat + delta)
     .gte('longitude', lng - delta)
     .lte('longitude', lng + delta)
+    .not('property_type', 'in', '(Residential Lease,Commercial Lease)')
     .not('photo_urls', 'is', null)
     .order('status_change_timestamp', { ascending: false })
     .limit(1)
