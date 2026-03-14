@@ -98,7 +98,7 @@ const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent'
 const LEASE_TYPES = ['Residential Lease', 'Commercial Lease']
 
 const MIN_RESULTS = 20
-const RADIUS_STEPS = [1, 2, 5] // miles — start tight, expand if < MIN_RESULTS
+const RADIUS_STEPS = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5] // miles — 0.5mi steps
 
 /**
  * Fetch nearby listings for a property page: active + recent closed within radius.
