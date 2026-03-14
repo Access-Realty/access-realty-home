@@ -4,8 +4,9 @@
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
-import { getListingsNearby } from "@/lib/listings-seo";
+import { getListingsNearby, getPropertyHeroImage } from "@/lib/listings-seo";
 import ListingsMapSection from "@/components/listings/ListingsMapSection";
+import PropertyHero from "@/components/listings/PropertyHero";
 
 export const dynamic = 'force-dynamic'
 
@@ -84,7 +85,10 @@ function marketTemperature(monthsOfSupply: number) {
 }
 
 export default async function PropertyPage() {
-  const listings = await getListingsNearby(32.671639, -97.142574);
+  const [listings, heroImage] = await Promise.all([
+    getListingsNearby(32.671639, -97.142574),
+    getPropertyHeroImage(32.671639, -97.142574),
+  ]);
   const p = PARCEL;
   const temp = marketTemperature(MARKET_STATS.months_of_supply);
   const specsLine = `${p.bedrooms} bed · ${p.bathrooms_full} bath · ${fmtNum(p.living_area_sqft)} sqft · Built ${p.year_built}`;
@@ -111,6 +115,13 @@ export default async function PropertyPage() {
           </nav>
         </div>
       </div>
+
+      {/* ── 1b. Property Hero Image ──────────────────────────────────────── */}
+      <PropertyHero
+        imageUrl={heroImage.url}
+        address={p.street_address}
+        source={heroImage.source}
+      />
 
       {/* ── 2. Hero ────────────────────────────────────────────────────────── */}
       <section className="bg-primary pb-12">

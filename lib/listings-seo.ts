@@ -92,6 +92,43 @@ export async function getClosedListingsByCounty(county: string): Promise<SeoList
   return transformListings(data ?? [])
 }
 
+const GOOGLE_MAPS_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY
+
+/**
+ * Get the hero image URL for a subject property.
+ * 1. Try: find the most recent MLS listing at this location → use its first photo
+ * 2. Fallback: Google Street View Static API at the property's coordinates
+ */
+export async function getPropertyHeroImage(
+  lat: number,
+  lng: number,
+): Promise<{ url: string; source: 'mls' | 'streetview' }> {
+  // Tiny bbox (~0.001° ≈ 350ft) to find listings at this exact property
+  const delta = 0.001
+  const { data } = await supabase
+    .from('mls_listings')
+    .select('photo_urls')
+    .gte('latitude', lat - delta)
+    .lte('latitude', lat + delta)
+    .gte('longitude', lng - delta)
+    .lte('longitude', lng + delta)
+    .not('photo_urls', 'is', null)
+    .order('status_change_timestamp', { ascending: false })
+    .limit(1)
+
+  const firstPhoto = data?.[0]?.photo_urls?.[0]
+  if (firstPhoto) {
+    return { url: firstPhoto, source: 'mls' }
+  }
+
+  // Fallback: Google Street View
+  const streetViewUrl = GOOGLE_MAPS_KEY
+    ? `https://maps.googleapis.com/maps/api/streetview?size=1400x400&location=${lat},${lng}&key=${GOOGLE_MAPS_KEY}`
+    : ''
+
+  return { url: streetViewUrl, source: 'streetview' }
+}
+
 // Status categories — matches app repo's useCompetitiveListings pattern (NTREIS mls_status values)
 const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent', 'Pending']
 // Lease property types to exclude from all SEO queries
