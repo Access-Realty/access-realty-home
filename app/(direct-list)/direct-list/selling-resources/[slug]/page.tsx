@@ -8,6 +8,7 @@ import { HeroSection, Section, DirectListCTA } from '@/components/layout';
 import { resourcesBySlug, validSlugs, assetUrl, formatDuration } from '../resources';
 import { VideoPlayer } from '../components/VideoPlayer';
 import { RelatedResources } from '../components/RelatedResources';
+import { getContentComponent } from '../content';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -53,6 +54,8 @@ export default async function SellingResourcePage({ params }: PageProps) {
     notFound();
   }
 
+  const ContentComponent = getContentComponent(slug);
+
   return (
     <>
       <HeroSection maxWidth="3xl">
@@ -70,10 +73,13 @@ export default async function SellingResourcePage({ params }: PageProps) {
 
       <Section variant="content" maxWidth="3xl">
         <div className="space-y-6">
-          {/* Placeholder article content — replace with Descript script content */}
-          <p className="text-base text-muted-foreground leading-relaxed">
-            {resource.description} This guide walks you through everything you need to know.
-          </p>
+          {ContentComponent ? (
+            <ContentComponent />
+          ) : (
+            <p className="text-base text-muted-foreground leading-relaxed">
+              {resource.description} This guide walks you through everything you need to know.
+            </p>
+          )}
 
           {resource.video && (
             <div className="my-8">
@@ -87,11 +93,6 @@ export default async function SellingResourcePage({ params }: PageProps) {
               </p>
             </div>
           )}
-
-          {/* Placeholder for additional article content */}
-          <p className="text-base text-muted-foreground leading-relaxed">
-            More detailed content will be added from the Descript video scripts.
-          </p>
         </div>
       </Section>
 
