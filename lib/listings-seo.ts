@@ -120,7 +120,12 @@ export async function getListingsNearby(
   for (const radiusMiles of RADIUS_STEPS) {
     const results = await fetchNearbyAtRadius(lat, lng, radiusMiles, twelveMonthsAgo, maxResults)
     if (results.length >= MIN_RESULTS || radiusMiles === RADIUS_STEPS[RADIUS_STEPS.length - 1]) {
-      return results
+      // Sort by distance to subject property (closest first)
+      return results.sort((a, b) => {
+        const distA = (a.latitude - lat) ** 2 + (a.longitude - lng) ** 2
+        const distB = (b.latitude - lat) ** 2 + (b.longitude - lng) ** 2
+        return distA - distB
+      })
     }
   }
   return []
