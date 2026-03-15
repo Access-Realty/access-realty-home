@@ -75,4 +75,11 @@ export default withSentryConfig(nextConfig, {
 
   // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
+
+  // Disable release lifecycle to prevent deploy notifications in Sentry.
+  // Source maps are still uploaded and associated automatically.
+  release: {
+    create: false,
+    finalize: false,
+  },
 });

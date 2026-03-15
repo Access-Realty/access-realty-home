@@ -161,86 +161,101 @@ const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent'
 // Lease property types to exclude from all SEO queries
 const LEASE_TYPES = ['Residential Lease', 'Commercial Lease']
 
-const MIN_RESULTS = 20
-const RADIUS_STEPS = [0.5, 1, 1.5, 2, 2.5, 3, 3.5, 4, 4.5, 5] // miles — 0.5mi steps
+const MIN_ACTIVE = 8
+const MIN_CLOSED = 16
+const MAX_RADIUS = 5 // miles
+const STEP = 0.25    // mile increments when expanding
+
+export interface NearbyListingsResult {
+  active: SeoListingProps[]
+  closed: SeoListingProps[]
+}
 
 /**
- * Fetch nearby listings for a property page: active + recent closed within radius.
- * Starts at 1 mile, expands to 2mi then 5mi if fewer than 20 results.
- * - Active statuses (no date constraint) + Closed (last 12 months)
- * - Uses mls_status for NTREIS-specific granularity
- * - Excludes leases
- * - Two parallel bbox queries per radius step
+ * Fetch nearby listings for a property page — two independent adaptive searches.
+ * - Active: start 0.5mi, need 8+, expand in 0.25mi steps
+ * - Closed (last 12 months): start 0.5mi, need 16+, expand in 0.25mi steps
+ * Each search runs independently — active might stay at 0.5mi while closed expands to 2mi.
+ * Both sorted by distance to subject property.
  */
 export async function getListingsNearby(
   lat: number,
   lng: number,
-  maxResults = 50
-): Promise<SeoListingProps[]> {
+): Promise<NearbyListingsResult> {
   const twelveMonthsAgo = new Date(
     Date.now() - 365 * 24 * 60 * 60 * 1000
   ).toISOString()
 
-  for (const radiusMiles of RADIUS_STEPS) {
-    const results = await fetchNearbyAtRadius(lat, lng, radiusMiles, twelveMonthsAgo, maxResults)
-    if (results.length >= MIN_RESULTS || radiusMiles === RADIUS_STEPS[RADIUS_STEPS.length - 1]) {
-      // Sort by distance to subject property (closest first)
-      return results.sort((a, b) => {
-        const distA = (a.latitude - lat) ** 2 + (a.longitude - lng) ** 2
-        const distB = (b.latitude - lat) ** 2 + (b.longitude - lng) ** 2
-        return distA - distB
-      })
+  // Run both adaptive searches in parallel
+  const [active, closed] = await Promise.all([
+    adaptiveSearch(lat, lng, 'active', MIN_ACTIVE, twelveMonthsAgo),
+    adaptiveSearch(lat, lng, 'closed', MIN_CLOSED, twelveMonthsAgo),
+  ])
+
+  return { active, closed }
+}
+
+async function adaptiveSearch(
+  lat: number,
+  lng: number,
+  type: 'active' | 'closed',
+  minResults: number,
+  twelveMonthsAgo: string,
+): Promise<SeoListingProps[]> {
+  for (let radius = 0.5; radius <= MAX_RADIUS; radius += STEP) {
+    const results = await fetchAtRadius(lat, lng, radius, type, twelveMonthsAgo)
+    if (results.length >= minResults || radius + STEP > MAX_RADIUS) {
+      return sortByDistance(results, lat, lng)
     }
   }
   return []
 }
 
-async function fetchNearbyAtRadius(
+function sortByDistance(listings: SeoListingProps[], lat: number, lng: number): SeoListingProps[] {
+  return listings.sort((a, b) => {
+    const distA = (a.latitude - lat) ** 2 + (a.longitude - lng) ** 2
+    const distB = (b.latitude - lat) ** 2 + (b.longitude - lng) ** 2
+    return distA - distB
+  })
+}
+
+async function fetchAtRadius(
   lat: number,
   lng: number,
   radiusMiles: number,
+  type: 'active' | 'closed',
   twelveMonthsAgo: string,
-  maxResults: number
 ): Promise<SeoListingProps[]> {
   const latDelta = radiusMiles / 69.0
   const lngDelta = radiusMiles / (69.0 * Math.cos(lat * Math.PI / 180))
 
-  // Active statuses — no date limit, exclude leases
-  const activeQuery = supabase
+  let query = supabase
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
     .gte('latitude', lat - latDelta)
     .lte('latitude', lat + latDelta)
     .gte('longitude', lng - lngDelta)
     .lte('longitude', lng + lngDelta)
-    .in('mls_status', ACTIVE_STATUSES)
     .not('property_type', 'in', `(${LEASE_TYPES.join(',')})`)
-    .order('list_price', { ascending: false })
-    .limit(maxResults)
 
-  // Closed within last 12 months, exclude leases, most recent first
-  const closedQuery = supabase
-    .from('mls_listings')
-    .select(SEO_LISTING_FIELDS)
-    .gte('latitude', lat - latDelta)
-    .lte('latitude', lat + latDelta)
-    .gte('longitude', lng - lngDelta)
-    .lte('longitude', lng + lngDelta)
-    .eq('mls_status', 'Closed')
-    .gte('status_change_timestamp', twelveMonthsAgo)
-    .not('property_type', 'in', `(${LEASE_TYPES.join(',')})`)
-    .order('status_change_timestamp', { ascending: false })
-    .limit(maxResults)
+  if (type === 'active') {
+    query = query
+      .in('mls_status', ACTIVE_STATUSES)
+      .order('list_price', { ascending: false })
+  } else {
+    query = query
+      .eq('mls_status', 'Closed')
+      .gte('status_change_timestamp', twelveMonthsAgo)
+      .order('status_change_timestamp', { ascending: false })
+  }
 
-  const [activeResult, closedResult] = await Promise.all([activeQuery, closedQuery])
+  const { data, error } = await query.limit(50)
 
-  if (activeResult.error) console.warn('Error fetching nearby listings (active):', activeResult.error)
-  if (closedResult.error) console.warn('Error fetching nearby listings (closed):', closedResult.error)
-
-  return [
-    ...transformListings(activeResult.data ?? []),
-    ...transformListings(closedResult.data ?? []),
-  ]
+  if (error) {
+    console.warn(`Error fetching nearby ${type} listings:`, error)
+    return []
+  }
+  return transformListings(data ?? [])
 }
 
 export async function getClosedListingsByBoundingBox(
