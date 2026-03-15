@@ -83,7 +83,7 @@ export default function SeoListingCard(props: SeoListingProps) {
         )}
         {hasConcessions && (
           <p className="text-xs text-red-500 mt-0.5">
-            {formatCompact(concessions)} concessions
+            {formatCompact(concessions)} seller concessions
           </p>
         )}
 
