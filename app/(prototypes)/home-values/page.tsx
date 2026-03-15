@@ -205,7 +205,8 @@ export default async function DFWOverviewPage() {
       {/* Interactive map */}
       <Section variant="content" maxWidth="5xl">
         <ListingsMapSection
-          listings={listings}
+          activeListings={[]}
+          closedListings={listings}
           initialCenter={[-96.8, 32.8]}
           initialZoom={9}
           clusteringEnabled={true}

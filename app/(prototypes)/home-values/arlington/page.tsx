@@ -118,7 +118,8 @@ export default async function CityHubPage() {
       {/* Interactive map */}
       <Section variant="content" maxWidth="5xl">
         <ListingsMapSection
-          listings={listings}
+          activeListings={[]}
+          closedListings={listings}
           initialCenter={[-97.11, 32.74]}
           initialZoom={11}
           clusteringEnabled={true}

@@ -88,7 +88,7 @@ function marketTemperature(monthsOfSupply: number) {
 }
 
 export default async function PropertyPage() {
-  const [listings, heroImage] = await Promise.all([
+  const [nearbyListings, heroImage] = await Promise.all([
     getListingsNearby(32.834942, -97.194655),
     getPropertyHeroImage(PARCEL.id, 32.834942, -97.194655),
   ]);
@@ -275,7 +275,8 @@ export default async function PropertyPage() {
           </Link>
         </div>
         <ListingsMapSection
-          listings={listings}
+          activeListings={nearbyListings.active}
+          closedListings={nearbyListings.closed}
           initialCenter={[-97.194655, 32.834942]}
           initialZoom={14}
           clusteringEnabled={false}

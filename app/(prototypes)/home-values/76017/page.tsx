@@ -116,7 +116,8 @@ export default async function ZipHubPage() {
       {/* Map + recent sales */}
       <Section variant="content" maxWidth="5xl">
         <ListingsMapSection
-          listings={listings}
+          activeListings={[]}
+          closedListings={listings}
           initialCenter={[-97.14, 32.67]}
           initialZoom={13}
           clusteringEnabled={false}

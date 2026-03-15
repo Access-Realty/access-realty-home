@@ -115,7 +115,8 @@ export default async function CountyHubPage() {
       {/* Interactive map */}
       <Section variant="content" maxWidth="5xl">
         <ListingsMapSection
-          listings={listings}
+          activeListings={[]}
+          closedListings={listings}
           initialCenter={[-97.30, 32.76]}
           initialZoom={10}
           clusteringEnabled={true}
