@@ -166,9 +166,14 @@ const MIN_CLOSED = 16
 const MAX_RADIUS = 5 // miles
 const STEP = 0.25    // mile increments when expanding
 
+export interface NearbyListingsGroup {
+  listings: SeoListingProps[]
+  radiusMiles: number
+}
+
 export interface NearbyListingsResult {
-  active: SeoListingProps[]
-  closed: SeoListingProps[]
+  active: NearbyListingsGroup
+  closed: NearbyListingsGroup
 }
 
 /**
@@ -201,14 +206,14 @@ async function adaptiveSearch(
   type: 'active' | 'closed',
   minResults: number,
   twelveMonthsAgo: string,
-): Promise<SeoListingProps[]> {
+): Promise<NearbyListingsGroup> {
   for (let radius = 0.5; radius <= MAX_RADIUS; radius += STEP) {
     const results = await fetchAtRadius(lat, lng, radius, type, twelveMonthsAgo)
     if (results.length >= minResults || radius + STEP > MAX_RADIUS) {
-      return sortByDistance(results, lat, lng)
+      return { listings: sortByDistance(results, lat, lng), radiusMiles: radius }
     }
   }
-  return []
+  return { listings: [], radiusMiles: MAX_RADIUS }
 }
 
 function sortByDistance(listings: SeoListingProps[], lat: number, lng: number): SeoListingProps[] {

@@ -271,8 +271,10 @@ export default async function PropertyPage() {
           </Link>
         </div>
         <ListingsMapSection
-          activeListings={nearbyListings.active}
-          closedListings={nearbyListings.closed}
+          activeListings={nearbyListings.active.listings}
+          activeRadiusMiles={nearbyListings.active.radiusMiles}
+          closedListings={nearbyListings.closed.listings}
+          closedRadiusMiles={nearbyListings.closed.radiusMiles}
           initialCenter={[-96.793815, 33.272109]}
           initialZoom={14}
           clusteringEnabled={false}
