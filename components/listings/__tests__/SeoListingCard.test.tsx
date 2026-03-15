@@ -13,6 +13,8 @@ const baseListing: SeoListingProps = {
   bedrooms: 3,
   bathrooms: 2,
   sqft: 2555,
+  yearBuilt: 1978,
+  parking: 3,
   status: 'Closed',
   date: '2026-02-14T00:00:00Z',
   dom: 42,
@@ -49,6 +51,12 @@ describe('SeoListingCard', () => {
 
   it('formats date for Closed status', () => {
     render(<SeoListingCard {...baseListing} />)
-    expect(screen.getByText(/Sold/)).toBeDefined()
+    expect(screen.getByText(/Feb 2026/)).toBeDefined()
+  })
+
+  it('shows price reduction when original price is higher', () => {
+    render(<SeoListingCard {...baseListing} />)
+    // originalPrice is 425000, price is 415000 → shows reduction
+    expect(screen.getByText(/↓/)).toBeDefined()
   })
 })

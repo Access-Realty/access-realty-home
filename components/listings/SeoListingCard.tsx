@@ -2,20 +2,21 @@
 // ABOUTME: No navigation/links — informational only. Separate from ListingCard.tsx
 
 import Image from 'next/image'
-import { formatPrice, formatSpecsLine } from '@/lib/listing-utils'
+import { formatPrice } from '@/lib/listing-utils'
 import type { SeoListingProps } from '@/types/seo-listing'
 
-function formatDate(dateStr: string, status: string): string {
+function formatDate(dateStr: string): string {
   const date = new Date(dateStr)
-  const month = date.toLocaleDateString('en-US', { month: 'short' })
-  const year = date.getFullYear()
+  return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
+}
 
-  if (status === 'Closed') return `Sold ${month} ${year}`
-  if (status === 'Pending') return `Pending`
-
-  const daysAgo = Math.floor((Date.now() - date.getTime()) / (1000 * 60 * 60 * 24))
-  if (daysAgo <= 30) return `Listed ${daysAgo} days ago`
-  return `Listed ${month} ${year}`
+function formatPriceChange(price: number, originalPrice: number): { text: string; direction: 'down' | 'up' } {
+  const diff = Math.abs(originalPrice - price)
+  const formatted = formatPrice(diff)
+  if (price < originalPrice) {
+    return { text: `↓ ${formatted} from ${formatPrice(originalPrice)}`, direction: 'down' }
+  }
+  return { text: `↑ ${formatted} from ${formatPrice(originalPrice)}`, direction: 'up' }
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -29,12 +30,12 @@ const STATUS_COLORS: Record<string, string> = {
 export default function SeoListingCard(props: SeoListingProps) {
   const {
     address, city, postalCode, price, originalPrice, bedrooms, bathrooms,
-    sqft, status, date, dom, photoUrl, concessions, highlighted,
+    sqft, yearBuilt, parking, status, date, dom, photoUrl, concessions, highlighted,
   } = props
 
-  const specsLine = formatSpecsLine(bedrooms, bathrooms, sqft)
-  const hadPriceReduction = originalPrice != null && originalPrice > price
   const isClosed = status === 'Closed'
+  const hadPriceChange = originalPrice != null && originalPrice !== price
+  const priceChange = hadPriceChange ? formatPriceChange(price, originalPrice) : null
 
   return (
     <div
@@ -45,6 +46,7 @@ export default function SeoListingCard(props: SeoListingProps) {
           : 'border-border hover:shadow-md'
       }`}
     >
+      {/* Photo */}
       <div className="relative aspect-[4/3] bg-muted">
         {photoUrl ? (
           <Image
@@ -65,33 +67,53 @@ export default function SeoListingCard(props: SeoListingProps) {
           {status}
         </div>
       </div>
-      <div className="p-4">
-        {/* Price — show original with strikethrough if reduced */}
-        <div className="flex items-baseline gap-2">
-          <p className="text-lg font-bold text-foreground">{formatPrice(price)}</p>
-          {hadPriceReduction && (
-            <p className="text-sm text-muted-foreground line-through">{formatPrice(originalPrice)}</p>
-          )}
-        </div>
 
-        <p className="text-sm text-foreground mt-0.5 font-medium">{specsLine}</p>
-        <p className="text-sm text-muted-foreground mt-1.5 truncate">{address}</p>
-        <p className="text-sm text-muted-foreground">{city}, TX {postalCode}</p>
-
-        {/* Date + DOM */}
-        <div className="flex items-center gap-2 mt-1.5">
-          <p className="text-xs text-muted-foreground">{formatDate(date, status)}</p>
-          {dom != null && (
-            <p className="text-xs text-muted-foreground">· {dom} days on market</p>
-          )}
-        </div>
-
-        {/* Seller concessions (closed only) */}
-        {concessions != null && concessions > 0 && isClosed && (
-          <p className="text-xs text-secondary mt-1">
-            Seller concessions: {formatPrice(concessions)}
+      <div className="p-4 space-y-2">
+        {/* Price */}
+        <p className="text-xl font-bold text-foreground">{formatPrice(price)}</p>
+        {priceChange && (
+          <p className={`text-xs ${priceChange.direction === 'down' ? 'text-red-500' : 'text-green-600'}`}>
+            {priceChange.text}
           </p>
         )}
+
+        {/* Specs row 1: bed · bath · parking */}
+        <p className="text-sm text-foreground font-medium">
+          {[
+            bedrooms != null ? `${bedrooms} bd` : null,
+            bathrooms != null ? `${bathrooms} ba` : null,
+            parking != null ? `${parking} car` : null,
+          ].filter(Boolean).join(' · ')}
+        </p>
+
+        {/* Specs row 2: sqft · year built */}
+        <p className="text-sm text-muted-foreground">
+          {[
+            sqft ? `${sqft.toLocaleString()} sqft` : null,
+            yearBuilt ? `Built ${yearBuilt}` : null,
+          ].filter(Boolean).join(' · ')}
+        </p>
+
+        {/* Address */}
+        <p className="text-sm text-muted-foreground truncate">{address}</p>
+        <p className="text-sm text-muted-foreground">{city}, TX {postalCode}</p>
+
+        {/* Date + DOM — clean single line */}
+        <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1 border-t border-border/50">
+          <span>{formatDate(date)}</span>
+          {dom != null && (
+            <>
+              <span>·</span>
+              <span>{dom}d on market</span>
+            </>
+          )}
+          {concessions != null && concessions > 0 && isClosed && (
+            <>
+              <span>·</span>
+              <span className="text-secondary">{formatPrice(concessions)} concessions</span>
+            </>
+          )}
+        </div>
       </div>
     </div>
   )

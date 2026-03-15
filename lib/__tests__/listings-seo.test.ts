@@ -18,6 +18,9 @@ describe('transformListings', () => {
       bedrooms_total: 3,
       bathrooms_total_decimal: 2.0,
       living_area: 2555,
+      year_built: 1978,
+      garage_spaces: 3,
+      parking_total: 4,
       latitude: 32.6716,
       longitude: -97.1426,
       mls_status: 'Closed',
@@ -39,6 +42,8 @@ describe('transformListings', () => {
       bedrooms: 3,
       bathrooms: 2,
       sqft: 2555,
+      yearBuilt: 1978,
+      parking: 3, // prefers garage_spaces over parking_total
       status: 'Closed',
       date: '2026-02-14T00:00:00Z',
       dom: 25, // 2026-01-20 to 2026-02-14
@@ -60,6 +65,9 @@ describe('transformListings', () => {
       bedrooms_total: 2,
       bathrooms_total_decimal: 1,
       living_area: null,
+      year_built: null,
+      garage_spaces: null,
+      parking_total: null,
       latitude: 32.7,
       longitude: -96.8,
       mls_status: 'Closed',

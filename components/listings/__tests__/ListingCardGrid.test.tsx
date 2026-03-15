@@ -18,6 +18,8 @@ const makeListing = (id: string, address: string): SeoListingProps => ({
   latitude: 32.67,
   longitude: -97.14,
   originalPrice: null,
+  yearBuilt: null,
+  parking: null,
   dom: null,
   concessions: null,
 })

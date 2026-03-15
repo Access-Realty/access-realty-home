@@ -11,6 +11,8 @@ export interface SeoListingProps {
   bedrooms: number
   bathrooms: number
   sqft: number | null
+  yearBuilt: number | null
+  parking: number | null    // garage_spaces or parking_total
   status: string            // mls_status value (Active, Closed, Pending, Active Option Contract, etc.)
   date: string              // ISO date string (status_change_timestamp or listing_contract_date)
   dom: number | null        // Days on market (computed: status_change_timestamp - listing_contract_date)
