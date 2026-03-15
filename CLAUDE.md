@@ -106,6 +106,21 @@ mls_status = 'Closed' AND status_change_timestamp > now() - interval '12 months'
 
 **App repo reference:** `access-realty-app/src/hooks/useCompetitiveListings.ts` — uses `mls_status`, parallel bbox queries (active + time-limited), `listing_contract_date` for 90-day cutoff.
 
+### Database Schema Ownership
+
+**This repo MUST NOT modify the Supabase database schema.** All DDL lives in `access-realty-app/supabase/migrations/`. This includes:
+
+- Tables, columns, constraints
+- Indexes
+- Functions, triggers
+- RLS policies
+- Views, materialized views
+- Grants
+
+This repo should only contain application code that **reads from or writes to** the database via the Supabase client SDK. If a query needs a new index for performance, document the need and add the migration in the app repo.
+
+**Do not use `mcp__claude_ai_Supabase__execute_sql` or `mcp__claude_ai_Supabase__apply_migration` to run DDL statements (CREATE, DROP, ALTER, etc.) from this repo.** SELECT queries for debugging are OK.
+
 ### Related Repos (for cross-repo reference)
 
 | Repo | Path | Purpose |
