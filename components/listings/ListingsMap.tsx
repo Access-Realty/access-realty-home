@@ -12,7 +12,8 @@ import ListingPopup from './ListingPopup'
 import 'mapbox-gl/dist/mapbox-gl.css'
 
 const MAPBOX_TOKEN = process.env.NEXT_PUBLIC_MAPBOX_ACCESS_TOKEN
-const BRAND_NAVY = '#284b70'
+const BRAND_NAVY = '#284b70'  // Closed/sold
+const ACTIVE_GREEN = '#16a34a' // Active/Pending (green-600)
 
 interface ListingsMapProps {
   listings: SeoListingProps[]
@@ -55,7 +56,11 @@ const unclusteredPointLayer: Omit<CircleLayerSpecification, 'source'> = {
   type: 'circle',
   filter: ['!', ['has', 'point_count']],
   paint: {
-    'circle-color': BRAND_NAVY,
+    'circle-color': [
+      'match', ['get', 'status'],
+      'Closed', BRAND_NAVY,
+      ACTIVE_GREEN, // default: all non-closed statuses
+    ],
     'circle-radius': 7,
     'circle-stroke-width': 2,
     'circle-stroke-color': '#ffffff',
@@ -74,6 +79,7 @@ function listingsToGeoJSON(listings: SeoListingProps[]): GeoJSON.FeatureCollecti
       },
       properties: {
         listingId: l.listingId,
+        status: l.status,
       },
     })),
   }
