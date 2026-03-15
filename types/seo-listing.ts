@@ -7,11 +7,13 @@ export interface SeoListingProps {
   city: string
   postalCode: string
   price: number
+  originalPrice: number | null // original_list_price — compare with price to show reductions
   bedrooms: number
   bathrooms: number
   sqft: number | null
   status: string            // mls_status value (Active, Closed, Pending, Active Option Contract, etc.)
   date: string              // ISO date string (status_change_timestamp or listing_contract_date)
+  dom: number | null        // Days on market (computed: status_change_timestamp - listing_contract_date)
   photoUrl: string | null   // First photo URL only — not the full array
   latitude: number
   longitude: number

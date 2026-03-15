@@ -28,11 +28,13 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function SeoListingCard(props: SeoListingProps) {
   const {
-    address, city, postalCode, price, bedrooms, bathrooms,
-    sqft, status, date, photoUrl, concessions, highlighted,
+    address, city, postalCode, price, originalPrice, bedrooms, bathrooms,
+    sqft, status, date, dom, photoUrl, concessions, highlighted,
   } = props
 
   const specsLine = formatSpecsLine(bedrooms, bathrooms, sqft)
+  const hadPriceReduction = originalPrice != null && originalPrice > price
+  const isClosed = status === 'Closed'
 
   return (
     <div
@@ -64,12 +66,28 @@ export default function SeoListingCard(props: SeoListingProps) {
         </div>
       </div>
       <div className="p-4">
-        <p className="text-lg font-bold text-foreground">{formatPrice(price)}</p>
+        {/* Price — show original with strikethrough if reduced */}
+        <div className="flex items-baseline gap-2">
+          <p className="text-lg font-bold text-foreground">{formatPrice(price)}</p>
+          {hadPriceReduction && (
+            <p className="text-sm text-muted-foreground line-through">{formatPrice(originalPrice)}</p>
+          )}
+        </div>
+
         <p className="text-sm text-foreground mt-0.5 font-medium">{specsLine}</p>
         <p className="text-sm text-muted-foreground mt-1.5 truncate">{address}</p>
         <p className="text-sm text-muted-foreground">{city}, TX {postalCode}</p>
-        <p className="text-xs text-muted-foreground mt-1.5">{formatDate(date, status)}</p>
-        {concessions != null && concessions > 0 && status === 'Closed' && (
+
+        {/* Date + DOM */}
+        <div className="flex items-center gap-2 mt-1.5">
+          <p className="text-xs text-muted-foreground">{formatDate(date, status)}</p>
+          {dom != null && (
+            <p className="text-xs text-muted-foreground">· {dom} days on market</p>
+          )}
+        </div>
+
+        {/* Seller concessions (closed only) */}
+        {concessions != null && concessions > 0 && isClosed && (
           <p className="text-xs text-secondary mt-1">
             Seller concessions: {formatPrice(concessions)}
           </p>

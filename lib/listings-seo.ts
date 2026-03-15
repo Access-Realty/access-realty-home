@@ -14,6 +14,7 @@ const SEO_LISTING_FIELDS = `
   city,
   postal_code,
   list_price,
+  original_list_price,
   bedrooms_total,
   bathrooms_total_decimal,
   living_area,
@@ -26,6 +27,14 @@ const SEO_LISTING_FIELDS = `
   bridge_raw_data->ConcessionsAmount
 `
 
+function computeDom(statusChangeTimestamp: string | null, listingContractDate: string | null): number | null {
+  if (!listingContractDate) return null
+  const end = statusChangeTimestamp ? new Date(statusChangeTimestamp) : new Date()
+  const start = new Date(listingContractDate)
+  const days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
+  return days >= 0 ? days : null
+}
+
 // Exported for testing
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function transformListings(data: any[]): SeoListingProps[] {
@@ -35,11 +44,13 @@ export function transformListings(data: any[]): SeoListingProps[] {
     city: row.city,
     postalCode: row.postal_code,
     price: Number(row.list_price),
+    originalPrice: row.original_list_price ? Number(row.original_list_price) : null,
     bedrooms: row.bedrooms_total,
     bathrooms: Number(row.bathrooms_total_decimal),
     sqft: row.living_area,
     status: row.mls_status,
     date: row.status_change_timestamp || row.listing_contract_date,
+    dom: computeDom(row.status_change_timestamp, row.listing_contract_date),
     photoUrl: row.photo_urls?.[0] ?? null,
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
