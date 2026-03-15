@@ -10,13 +10,9 @@ function formatDate(dateStr: string): string {
   return date.toLocaleDateString('en-US', { month: 'short', year: 'numeric' })
 }
 
-function formatPriceChange(price: number, originalPrice: number): { text: string; direction: 'down' | 'up' } {
-  const diff = Math.abs(originalPrice - price)
-  const formatted = formatPrice(diff)
-  if (price < originalPrice) {
-    return { text: `↓ ${formatted} from ${formatPrice(originalPrice)}`, direction: 'down' }
-  }
-  return { text: `↑ ${formatted} from ${formatPrice(originalPrice)}`, direction: 'up' }
+function formatCompact(amount: number): string {
+  if (amount >= 1000) return `$${(amount / 1000).toFixed(0)}K`
+  return formatPrice(amount)
 }
 
 const STATUS_COLORS: Record<string, string> = {
@@ -29,13 +25,17 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function SeoListingCard(props: SeoListingProps) {
   const {
-    address, city, postalCode, price, originalPrice, bedrooms, bathrooms,
+    address, price, originalPrice, bedrooms, bathrooms,
     sqft, yearBuilt, parking, status, date, dom, photoUrl, concessions, highlighted,
   } = props
 
   const isClosed = status === 'Closed'
-  const hadPriceChange = originalPrice != null && originalPrice !== price
-  const priceChange = hadPriceChange ? formatPriceChange(price, originalPrice) : null
+  const hadReduction = originalPrice != null && originalPrice > price
+  const hadIncrease = originalPrice != null && originalPrice < price
+  const hasConcessions = concessions != null && concessions > 0 && isClosed
+
+  // Strip city/state/zip from address if present (e.g., "2125 Bird Street, Fort Worth TX 76111" → "2125 Bird Street")
+  const streetOnly = address?.split(',')[0] ?? address
 
   return (
     <div
@@ -51,7 +51,7 @@ export default function SeoListingCard(props: SeoListingProps) {
         {photoUrl ? (
           <Image
             src={photoUrl}
-            alt={address}
+            alt={streetOnly}
             fill
             className="object-cover"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
@@ -68,51 +68,48 @@ export default function SeoListingCard(props: SeoListingProps) {
         </div>
       </div>
 
-      <div className="p-4 space-y-2">
-        {/* Price */}
+      <div className="p-4">
+        {/* Price block — the full money story */}
         <p className="text-xl font-bold text-foreground">{formatPrice(price)}</p>
-        {priceChange && (
-          <p className={`text-xs ${priceChange.direction === 'down' ? 'text-red-500' : 'text-green-600'}`}>
-            {priceChange.text}
+        {hadReduction && (
+          <p className="text-xs text-amber-600 mt-0.5">
+            ↓ {formatCompact(originalPrice - price)} from {formatCompact(originalPrice)}
+          </p>
+        )}
+        {hadIncrease && (
+          <p className="text-xs text-green-600 mt-0.5">
+            ↑ {formatCompact(price - originalPrice)} from {formatCompact(originalPrice)}
+          </p>
+        )}
+        {hasConcessions && (
+          <p className="text-xs text-red-500 mt-0.5">
+            {formatCompact(concessions)} concessions
           </p>
         )}
 
-        {/* Specs row 1: bed · bath · parking */}
-        <p className="text-sm text-foreground font-medium">
-          {[
-            bedrooms != null ? `${bedrooms} bd` : null,
-            bathrooms != null ? `${bathrooms} ba` : null,
-            parking != null ? `${parking} car` : null,
-          ].filter(Boolean).join(' · ')}
-        </p>
+        {/* Specs */}
+        <div className="mt-3 space-y-1">
+          <p className="text-sm text-foreground font-medium">
+            {[
+              bedrooms != null ? `${bedrooms} bd` : null,
+              bathrooms != null ? `${bathrooms} ba` : null,
+              parking != null ? `${parking} car` : null,
+            ].filter(Boolean).join(' · ')}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {[
+              sqft ? `${sqft.toLocaleString()} sqft` : null,
+              yearBuilt ? `Built ${yearBuilt}` : null,
+            ].filter(Boolean).join(' · ')}
+          </p>
+        </div>
 
-        {/* Specs row 2: sqft · year built */}
-        <p className="text-sm text-muted-foreground">
-          {[
-            sqft ? `${sqft.toLocaleString()} sqft` : null,
-            yearBuilt ? `Built ${yearBuilt}` : null,
-          ].filter(Boolean).join(' · ')}
-        </p>
+        {/* Address — street only, no city/state/zip */}
+        <p className="text-sm text-muted-foreground mt-2 truncate">{streetOnly}</p>
 
-        {/* Address */}
-        <p className="text-sm text-muted-foreground truncate">{address}</p>
-        <p className="text-sm text-muted-foreground">{city}, TX {postalCode}</p>
-
-        {/* Date + DOM — clean single line */}
-        <div className="flex items-center gap-1.5 text-xs text-muted-foreground pt-1 border-t border-border/50">
-          <span>{formatDate(date)}</span>
-          {dom != null && (
-            <>
-              <span>·</span>
-              <span>{dom}d on market</span>
-            </>
-          )}
-          {concessions != null && concessions > 0 && isClosed && (
-            <>
-              <span>·</span>
-              <span className="text-secondary">{formatPrice(concessions)} concessions</span>
-            </>
-          )}
+        {/* Date + DOM */}
+        <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border/50">
+          {formatDate(date)}{dom != null && ` · ${dom} days`}
         </div>
       </div>
     </div>
