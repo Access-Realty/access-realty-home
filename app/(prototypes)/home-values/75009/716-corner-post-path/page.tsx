@@ -117,72 +117,24 @@ export default async function PropertyPage() {
         </div>
       </div>
 
-      {/* ── 1b. Property Hero Image ──────────────────────────────────────── */}
+      {/* ── 1b + 2. Immersive Property Hero ────────────────────────────── */}
       <PropertyHero
         imageUrl={heroImage.url}
         address={p.street_address}
+        city={p.city}
+        state={p.state}
+        zip={p.zip}
+        specs={specsLine}
+        lotSize={String(p.lot_size_acres)}
         source={heroImage.source}
+        avmValue={fmt(p.avm_value)}
+        avmLow={fmt(p.avm_low)}
+        avmHigh={fmt(p.avm_high)}
+        bedrooms={p.bedrooms}
+        bathrooms={p.bathrooms_full}
+        sqft={fmtNum(p.living_area_sqft)}
+        yearBuilt={p.year_built}
       />
-
-      {/* ── 2. Hero ────────────────────────────────────────────────────────── */}
-      <section className="bg-primary pb-12">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-[1fr_320px] gap-8 items-start">
-            <div>
-              <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">
-                {p.street_address}
-              </h1>
-              <p className="text-primary-foreground/80 text-lg mb-1">
-                {p.city}, {p.state} {p.zip}
-              </p>
-              <p className="text-primary-foreground/60 text-sm mb-6">
-                {specsLine} · {p.lot_size_acres} acres
-              </p>
-
-              {/* Key specs grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { label: "Bedrooms", value: p.bedrooms },
-                  { label: "Bathrooms", value: p.bathrooms_full },
-                  { label: "Sq Ft", value: fmtNum(p.living_area_sqft) },
-                  { label: "Year Built", value: p.year_built },
-                ].map((item) => (
-                  <div key={item.label} className="bg-white/10 rounded-lg px-4 py-3">
-                    <div className="text-primary-foreground/60 text-xs uppercase tracking-wider">{item.label}</div>
-                    <div className="text-primary-foreground text-xl font-bold">{item.value}</div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* AVM teaser / email gate */}
-            <div className="bg-card rounded-xl p-6 shadow-lg">
-              <h2 className="text-lg font-bold text-foreground mb-1">Estimated Home Value</h2>
-              <p className="text-sm text-muted-foreground mb-4">
-                Get a data-driven estimate for this property based on recent sales and market trends.
-              </p>
-              <div className="bg-muted rounded-lg p-4 mb-4 text-center">
-                <div className="text-3xl font-bold text-primary blur-sm select-none" aria-hidden="true">
-                  {fmt(p.avm_value)}
-                </div>
-                <div className="text-xs text-muted-foreground mt-1">Range: {fmt(p.avm_low)} – {fmt(p.avm_high)}</div>
-              </div>
-              <label className="block text-sm font-medium text-foreground mb-1">Your email</label>
-              <input
-                type="email"
-                placeholder="you@example.com"
-                className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
-              />
-              <button className="w-full bg-secondary text-secondary-foreground font-semibold py-2.5 rounded-lg hover:bg-secondary/90 transition-colors">
-                See Estimated Value
-              </button>
-              <p className="text-xs text-muted-foreground mt-2 text-center">
-                Free. No obligation. We&apos;ll send market updates too.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
 
       {/* ── 3. Property Details ────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
