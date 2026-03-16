@@ -46,13 +46,13 @@ export default async function ZipHubPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-20 pb-2">
           <nav aria-label="Geographic context" className="text-sm">
             <ol className="flex flex-wrap items-center gap-1.5 text-primary-foreground/60">
-              <li><Link href="/prototypes/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
+              <li><Link href="/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
               <li className="before:content-['·'] before:mx-1.5 text-primary-foreground/90">76017</li>
               <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/prototypes/home-values/arlington" className="hover:text-primary-foreground/90 transition-colors">Arlington</Link>
+                <Link href="/home-values/arlington" className="hover:text-primary-foreground/90 transition-colors">Arlington</Link>
               </li>
               <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/prototypes/home-values/tarrant-county" className="hover:text-primary-foreground/90 transition-colors">Tarrant County</Link>
+                <Link href="/home-values/tarrant-county" className="hover:text-primary-foreground/90 transition-colors">Tarrant County</Link>
               </li>
             </ol>
           </nav>
@@ -132,7 +132,7 @@ export default async function ZipHubPage() {
           {PROPERTY_PAGES.map((prop) => (
             <Link
               key={prop.slug}
-              href={`/prototypes/home-values/76017/${prop.slug}`}
+              href={`/home-values/76017/${prop.slug}`}
               className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:border-primary/30 transition-all"
             >
               <div className="font-medium text-foreground mb-1">{prop.address}</div>

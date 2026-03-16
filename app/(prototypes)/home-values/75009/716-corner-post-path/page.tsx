@@ -399,23 +399,21 @@ export default async function PropertyPage() {
         buttonHref="/direct-list/get-started"
       />
 
-      {/* ── Geographic Navigation ─────────────────────────────────────────── */}
+      {/* ── Browse Nearby ────────────────────────────────────────────────── */}
       <Section variant="tight" maxWidth="5xl">
-        <nav aria-label="Geographic context" className="text-sm">
-          <ol className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
-            <li><Link href="/prototypes/home-values" className="hover:text-foreground transition-colors">Home Values</Link></li>
-            <li className="before:content-['·'] before:mx-1.5">
-              <Link href="/prototypes/home-values/75009" className="hover:text-foreground transition-colors">75009</Link>
-            </li>
-            <li className="before:content-['·'] before:mx-1.5 text-foreground">{p.street_address}</li>
-            <li className="before:content-['·'] before:mx-1.5">
-              <Link href="/prototypes/home-values/celina" className="hover:text-foreground transition-colors">Celina</Link>
-            </li>
-            <li className="before:content-['·'] before:mx-1.5">
-              <Link href="/prototypes/home-values/collin-county" className="hover:text-foreground transition-colors">Collin County</Link>
-            </li>
-          </ol>
-        </nav>
+        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Browse nearby</p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: 'Home Values', href: '/home-values' },
+            { label: '75009', href: '/home-values/75009' },
+            { label: 'Celina', href: '/home-values/celina' },
+            { label: 'Collin County', href: '/home-values/collin-county' },
+          ].map((link) => (
+            <Link key={link.href} href={link.href} className="text-sm text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1 rounded-full transition-colors">
+              {link.label}
+            </Link>
+          ))}
+        </div>
       </Section>
     </div>
   );

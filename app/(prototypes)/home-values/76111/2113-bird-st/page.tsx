@@ -398,23 +398,21 @@ export default async function PropertyPage() {
         buttonHref="/direct-list/get-started"
       />
 
-      {/* ── Geographic Navigation ─────────────────────────────────────────── */}
+      {/* ── Browse Nearby ────────────────────────────────────────────────── */}
       <Section variant="tight" maxWidth="5xl">
-        <nav aria-label="Geographic context" className="text-sm">
-          <ol className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
-            <li><Link href="/prototypes/home-values" className="hover:text-foreground transition-colors">Home Values</Link></li>
-            <li className="before:content-['·'] before:mx-1.5">
-              <Link href="/prototypes/home-values/76111" className="hover:text-foreground transition-colors">76111</Link>
-            </li>
-            <li className="before:content-['·'] before:mx-1.5 text-foreground">{p.street_address}</li>
-            <li className="before:content-['·'] before:mx-1.5">
-              <Link href="/prototypes/home-values/fort-worth" className="hover:text-foreground transition-colors">Fort Worth</Link>
-            </li>
-            <li className="before:content-['·'] before:mx-1.5">
-              <Link href="/prototypes/home-values/tarrant-county" className="hover:text-foreground transition-colors">Tarrant County</Link>
-            </li>
-          </ol>
-        </nav>
+        <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Browse nearby</p>
+        <div className="flex flex-wrap gap-2">
+          {[
+            { label: 'Home Values', href: '/home-values' },
+            { label: '76111', href: '/home-values/76111' },
+            { label: 'Fort Worth', href: '/home-values/fort-worth' },
+            { label: 'Tarrant County', href: '/home-values/tarrant-county' },
+          ].map((link) => (
+            <Link key={link.href} href={link.href} className="text-sm text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1 rounded-full transition-colors">
+              {link.label}
+            </Link>
+          ))}
+        </div>
       </Section>
     </div>
   );

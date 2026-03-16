@@ -52,7 +52,7 @@ export default async function CountyHubPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-20 pb-2">
           <nav aria-label="Breadcrumb" className="text-sm">
             <ol className="flex flex-wrap items-center gap-1.5 text-primary-foreground/60">
-              <li><Link href="/prototypes/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
+              <li><Link href="/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
               <li className="before:content-['/'] before:mx-1.5 text-primary-foreground/90">Tarrant County</li>
             </ol>
           </nav>
@@ -143,7 +143,7 @@ export default async function CountyHubPage() {
               {CITIES.map((city) => (
                 <tr key={city.slug} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <td className="py-3 pr-4">
-                    <Link href={`/prototypes/home-values/${city.slug}`} className="font-medium text-primary hover:underline">
+                    <Link href={`/home-values/${city.slug}`} className="font-medium text-primary hover:underline">
                       {city.name}
                     </Link>
                   </td>

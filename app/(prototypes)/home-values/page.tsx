@@ -167,7 +167,7 @@ export default async function DFWOverviewPage() {
           {COUNTIES.map((county) => (
             <Link
               key={county.slug}
-              href={`/prototypes/home-values/${county.slug}`}
+              href={`/home-values/${county.slug}`}
               className="bg-card rounded-xl border border-border p-6 hover:shadow-md hover:border-primary/30 transition-all group"
             >
               <h3 className="text-lg font-bold text-foreground group-hover:text-primary transition-colors mb-1">
@@ -247,7 +247,7 @@ export default async function DFWOverviewPage() {
       <Section variant="content" maxWidth="5xl">
         <div className="grid md:grid-cols-2 gap-6">
           <Link
-            href="/prototypes/home-values/how-comps-work"
+            href="/home-values/how-comps-work"
             className="bg-card rounded-xl border border-border p-6 hover:shadow-md hover:border-primary/30 transition-all"
           >
             <div className="text-xs text-secondary font-semibold uppercase tracking-widest mb-2">Learn</div>

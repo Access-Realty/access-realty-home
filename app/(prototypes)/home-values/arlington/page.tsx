@@ -52,10 +52,10 @@ export default async function CityHubPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-20 pb-2">
           <nav aria-label="Geographic context" className="text-sm">
             <ol className="flex flex-wrap items-center gap-1.5 text-primary-foreground/60">
-              <li><Link href="/prototypes/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
+              <li><Link href="/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
               <li className="before:content-['·'] before:mx-1.5 text-primary-foreground/90">Arlington</li>
               <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/prototypes/home-values/tarrant-county" className="hover:text-primary-foreground/90 transition-colors">Tarrant County</Link>
+                <Link href="/home-values/tarrant-county" className="hover:text-primary-foreground/90 transition-colors">Tarrant County</Link>
               </li>
             </ol>
           </nav>
@@ -146,7 +146,7 @@ export default async function CityHubPage() {
               {ZIP_BREAKDOWNS.map((zip) => (
                 <tr key={zip.zip} className="border-b border-border/50 hover:bg-muted/50 transition-colors">
                   <td className="py-3 pr-4">
-                    <Link href={`/prototypes/home-values/${zip.zip}`} className="font-medium text-primary hover:underline">
+                    <Link href={`/home-values/${zip.zip}`} className="font-medium text-primary hover:underline">
                       {zip.zip}
                     </Link>
                   </td>
@@ -177,7 +177,7 @@ export default async function CityHubPage() {
           ].map((district) => (
             <Link
               key={district.slug}
-              href={`/prototypes/home-values/school-districts/${district.slug}`}
+              href={`/home-values/school-districts/${district.slug}`}
               className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:border-primary/30 transition-all"
             >
               <div className="flex items-baseline justify-between mb-1">

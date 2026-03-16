@@ -1,5 +1,5 @@
-// ABOUTME: Prototype — SEO property page for 4605 Brentgate Ct, Arlington TX
-// ABOUTME: Full template per design doc: breadcrumbs, hero, specs, comps, market stats, calculator, CTA
+// ABOUTME: Prototype — SEO property page for 2128 Adeline Dr, Keller TX
+// ABOUTME: Full template: hero, nearby market activity, market snapshot, property details, calculator, CTA
 
 import Link from "next/link";
 import { Section } from "@/components/layout";
@@ -12,58 +12,58 @@ export const dynamic = 'force-dynamic'
 
 // ─── Real parcel data from parcels table ──────────────────────────────────────
 const PARCEL = {
-  id: "bbe800d6-f3b3-4e7c-8f04-9d79ec2609b8",
-  street_address: "4605 Brentgate Ct",
-  city: "Arlington",
+  id: "4f47b435-4202-4e24-8318-1215b06ffefe",
+  street_address: "2128 Adeline Dr",
+  city: "Keller",
   state: "TX",
-  zip: "76017",
+  zip: "76248",
   county: "Tarrant",
-  latitude: 32.671639,
-  longitude: -97.142574,
+  latitude: 32.892777,
+  longitude: -97.235346,
   property_type_detail: "Single Family",
-  living_area_sqft: 2555,
-  bedrooms: 3,
-  bathrooms_full: 2,
-  bathrooms_total: 2.0,
-  stories: 1,
-  lot_size_acres: 0.294,
-  lot_size_sqft: 12798,
-  year_built: 1978,
-  subdivision_name: "Wimbledon North Addition",
-  garage: "Attached Garage",
+  living_area_sqft: 3973,
+  bedrooms: 4,
+  bathrooms_full: 4,
+  bathrooms_total: 4.0,
+  stories: 2,
+  lot_size_acres: 0.296,
+  lot_size_sqft: 12893,
+  year_built: 2006,
+  subdivision_name: "Fall Creek Estates Phase I",
+  garage: "Garage",
   garage_spaces: 3,
-  exterior_walls: "Brick",
-  roof_cover: "Wood Shake / Shingles",
+  exterior_walls: null as string | null,
+  roof_cover: null as string | null,
   heating_type: "Central",
   cooling_type: "Central",
-  assessed_total_value: 402008,
-  assessed_land_value: 70000,
-  assessed_improvement_value: 332008,
-  market_total_value: 402008,
-  tax_amount: 2295.56,
+  assessed_total_value: 651000,
+  assessed_land_value: 125800,
+  assessed_improvement_value: 525200,
+  market_total_value: 651000,
+  tax_amount: 10028.97,
   tax_year: 2024,
   assessment_year: 2025,
-  avm_value: 427251,
-  avm_low: 345343,
-  avm_high: 509159,
-  avm_confidence_score: 74,
-  avm_as_of_date: "2025-11-10",
+  avm_value: 677500,
+  avm_low: 532715,
+  avm_high: 822285,
+  avm_confidence_score: 70,
+  avm_as_of_date: "2025-09-03",
   last_sale_price: null as number | null,
-  last_transfer_date: null as string | null,
+  last_transfer_date: "2022-06-02",
   owner_occupied: true,
 };
 
-// ─── Market stats for 76017 ───────────────────────────────────────────────────
+// ─── Market stats for 76248 ───────────────────────────────────────────────────
 const MARKET_STATS = {
-  period: "Feb 2026",
-  median_sale_price: 385000,
-  median_price_change_yoy: 3.2,
-  avg_dom: 31,
-  months_of_supply: 2.8,
-  pct_list_price_received: 97.4,
-  active_inventory: 142,
-  closed_last_30: 48,
-  closed_last_90: 156,
+  period: "Mar 2026",
+  median_sale_price: 660000,
+  median_price_change_yoy: 1.8,
+  avg_dom: 38,
+  months_of_supply: 4.2,
+  pct_list_price_received: 96.8,
+  active_inventory: 147,
+  closed_last_30: 36,
+  closed_last_90: 113,
 };
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
@@ -87,8 +87,8 @@ function marketTemperature(monthsOfSupply: number) {
 
 export default async function PropertyPage() {
   const [nearbyListings, heroImage] = await Promise.all([
-    getListingsNearby(32.671639, -97.142574),
-    getPropertyHeroImage(PARCEL.id, 32.671639, -97.142574),
+    getListingsNearby(32.892777, -97.235346),
+    getPropertyHeroImage(PARCEL.id, 32.892777, -97.235346),
   ]);
   const p = PARCEL;
   const temp = marketTemperature(MARKET_STATS.months_of_supply);
@@ -96,7 +96,7 @@ export default async function PropertyPage() {
 
   return (
     <div className="bg-background">
-      {/* ── 1b + 2. Immersive Property Hero ────────────────────────────── */}
+      {/* ── Property Hero ─────────────────────────────────────────────────── */}
       <PropertyHero
         imageUrl={heroImage.url}
         address={p.street_address}
@@ -108,7 +108,7 @@ export default async function PropertyPage() {
         source={heroImage.source}
       />
 
-      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
+      {/* ── Nearby Market Activity ────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="flex items-baseline justify-between mb-6">
           <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
@@ -121,7 +121,7 @@ export default async function PropertyPage() {
           activeRadiusMiles={nearbyListings.active.radiusMiles}
           closedListings={nearbyListings.closed.listings}
           closedRadiusMiles={nearbyListings.closed.radiusMiles}
-          initialCenter={[-97.142574, 32.671639]}
+          initialCenter={[-97.235346, 32.892777]}
           initialZoom={14}
           clusteringEnabled={false}
           interactive={false}
@@ -131,25 +131,25 @@ export default async function PropertyPage() {
         </p>
       </Section>
 
-      {/* ── 6. Geographic Content Block (spun — showing resolved version) ── */}
+      {/* ── Geographic Content Block ──────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="prose prose-sm max-w-none text-foreground">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Arlington 76017 Market Overview</h2>
+          <h2 className="text-2xl font-bold text-foreground mb-4">Keller 76248 Market Overview</h2>
           <p className="text-muted-foreground leading-relaxed">
-            Homes in the 76017 zip code have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, representing a {MARKET_STATS.median_price_change_yoy}% gain compared to the prior year. The neighborhood sits in south Arlington, anchored by the Wimbledon North and Brentwood Park subdivisions — mature neighborhoods with established trees, larger lots, and proximity to both I-20 and the Parks Mall corridor.
+            The 76248 zip code covers central and northeast Keller — one of the most established residential corridors in the northeast Tarrant County suburbs. Anchored by the Keller ISD (consistently rated among the top districts in DFW), this zip draws families willing to pay a premium for school zoning, mature trees, and quiet cul-de-sac neighborhoods. Fall Creek Estates, where this home sits, is a 2000s-era subdivision of custom and semi-custom builds on quarter-acre lots — larger than the newer inventory in nearby Haslet or Alliance.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            Arlington&apos;s housing market continues to benefit from its central DFW location and relative affordability compared to north-side suburbs like Southlake or Colleyville. The city&apos;s investment in entertainment districts and mixed-use development has drawn renewed buyer interest, particularly among families and investors looking for value in Tarrant County.
+            Homes in 76248 have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, with appreciation moderating to +{MARKET_STATS.median_price_change_yoy}% year-over-year after the double-digit gains of 2021–2022. The market is balanced — {MARKET_STATS.months_of_supply} months of supply — with well-priced homes still moving in under 40 days, but overpriced inventory sitting. Buyers in this bracket are discerning and rate-sensitive; they&apos;re comparing Keller to Southlake&apos;s lower end and Roanoke&apos;s newer builds.
           </p>
           <p className="text-muted-foreground leading-relaxed">
-            Tarrant County assessed property values rose an average of 4.1% in 2025, though many homeowners successfully protested their valuations. The county appraisal district processes over 200,000 protests annually — the highest volume in the state.
+            Tarrant County assessed property values in Keller rose an average of 3.8% in 2025. With an effective tax rate above 1.5%, annual property tax on a {fmt(MARKET_STATS.median_sale_price)} home exceeds {fmt(MARKET_STATS.median_sale_price * 0.0154)} — a meaningful carrying cost that factors into both buy and sell decisions. Homeowners who protest successfully (and many do — the Tarrant Appraisal District processes over 200,000 protests annually) can reduce that burden meaningfully.
           </p>
         </div>
       </Section>
 
-      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
+      {/* ── Market Snapshot ───────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76017</h2>
+        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76248</h2>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
             { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
@@ -174,11 +174,10 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* ── 3. Property Details ────────────────────────────────────────────── */}
+      {/* ── Property Details ──────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-6">Property Details</h2>
         <div className="grid md:grid-cols-2 gap-6">
-          {/* Specs card */}
           <div className="bg-card rounded-xl border border-border p-6">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Property Specs</h3>
             <dl className="space-y-3">
@@ -192,10 +191,8 @@ export default async function PropertyPage() {
                 ["Year Built", p.year_built],
                 ["Subdivision", p.subdivision_name],
                 ["Garage", `${p.garage} — ${p.garage_spaces} spaces`],
-                ["Exterior", p.exterior_walls],
-                ["Roof", p.roof_cover],
                 ["Heating / Cooling", `${p.heating_type} / ${p.cooling_type}`],
-              ].map(([label, value]) => (
+              ].filter(([, value]) => value != null).map(([label, value]) => (
                 <div key={String(label)} className="flex justify-between border-b border-border/50 pb-2 last:border-0 last:pb-0">
                   <dt className="text-sm text-muted-foreground">{label}</dt>
                   <dd className="text-sm font-medium text-foreground">{value}</dd>
@@ -204,7 +201,6 @@ export default async function PropertyPage() {
             </dl>
           </div>
 
-          {/* Tax / assessment card */}
           <div className="bg-card rounded-xl border border-border p-6">
             <h3 className="text-sm font-semibold text-muted-foreground uppercase tracking-wider mb-4">Tax Assessment ({p.assessment_year})</h3>
             <dl className="space-y-3 mb-6">
@@ -243,7 +239,7 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* ── 9. Net Proceeds Calculator (placeholder) ──────────────────────── */}
+      {/* ── Net Proceeds Calculator ───────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-2">Net Proceeds Calculator</h2>
         <p className="text-sm text-muted-foreground mb-6">
@@ -255,27 +251,15 @@ export default async function PropertyPage() {
             <div className="space-y-4">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Sale Price</label>
-                <input
-                  type="text"
-                  defaultValue={fmt(p.avm_value)}
-                  className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                <input type="text" defaultValue={fmt(p.avm_value)} className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Remaining Mortgage</label>
-                <input
-                  type="text"
-                  defaultValue="$0"
-                  className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                <input type="text" defaultValue="$0" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Buyer Agent Commission</label>
-                <input
-                  type="text"
-                  defaultValue="2.5%"
-                  className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                <input type="text" defaultValue="2.5%" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
               </div>
             </div>
           </div>
@@ -306,7 +290,7 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* ── 10. DirectList CTA ─────────────────────────────────────────────── */}
+      {/* ── DirectList CTA ───────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="bg-card rounded-xl border border-border p-8 md:p-10 text-center">
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-3">
@@ -327,11 +311,11 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* ── 11. Email Signup ───────────────────────────────────────────────── */}
+      {/* ── Email Signup ──────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="grid md:grid-cols-[1fr_360px] gap-8 items-center">
           <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">Stay Informed on 76017</h2>
+            <h2 className="text-2xl font-bold text-foreground mb-2">Stay Informed on 76248</h2>
             <p className="text-muted-foreground">
               Get market updates for your area — recently sold homes, new listings nearby, and price trends for your zip code. Choose monthly or quarterly delivery.
             </p>
@@ -340,11 +324,7 @@ export default async function PropertyPage() {
             <div className="space-y-3">
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">Email</label>
-                <input
-                  type="email"
-                  placeholder="you@example.com"
-                  className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary"
-                />
+                <input type="email" placeholder="you@example.com" className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-primary" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-foreground mb-1">How often?</label>
@@ -367,7 +347,7 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* ── 12. Footer Disclaimers ─────────────────────────────────────────── */}
+      {/* ── Footer Disclaimers ────────────────────────────────────────────── */}
       <Section variant="tight" maxWidth="5xl">
         <div className="text-xs text-muted-foreground space-y-2 border-t border-border pt-6">
           <p>
@@ -382,7 +362,6 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* Bottom CTA flows into footer */}
       <DirectListCTA
         heading="Keep What's Yours"
         subheading="Full MLS listing. Flat fee. Professional support when you want it."
@@ -396,8 +375,8 @@ export default async function PropertyPage() {
         <div className="flex flex-wrap gap-2">
           {[
             { label: 'Home Values', href: '/home-values' },
-            { label: '76017', href: '/home-values/76017' },
-            { label: 'Arlington', href: '/home-values/arlington' },
+            { label: '76248', href: '/home-values/76248' },
+            { label: 'Keller', href: '/home-values/keller' },
             { label: 'Tarrant County', href: '/home-values/tarrant-county' },
           ].map((link) => (
             <Link key={link.href} href={link.href} className="text-sm text-primary bg-primary/5 hover:bg-primary/10 px-3 py-1 rounded-full transition-colors">
