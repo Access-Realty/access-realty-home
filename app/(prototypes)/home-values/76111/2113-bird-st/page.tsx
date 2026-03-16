@@ -261,10 +261,10 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* ── 5. Recently Sold Near You ──────────────────────────────────────── */}
+      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="flex items-baseline justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Recently Sold Near You</h2>
+          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
           <Link href="/home-values" className="text-sm text-primary hover:underline">
             How comps work →
           </Link>
@@ -277,6 +277,7 @@ export default async function PropertyPage() {
           initialCenter={[-97.314469, 32.777231]}
           initialZoom={14}
           clusteringEnabled={false}
+          interactive={false}
         />
         <p className="text-xs text-muted-foreground mt-4">
           Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.

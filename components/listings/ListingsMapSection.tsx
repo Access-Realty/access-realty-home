@@ -16,6 +16,7 @@ interface ListingsMapSectionProps {
   initialCenter: [number, number]
   initialZoom: number
   clusteringEnabled?: boolean
+  interactive?: boolean
   title?: string
 }
 
@@ -79,6 +80,7 @@ export default function ListingsMapSection({
   initialCenter,
   initialZoom,
   clusteringEnabled,
+  interactive = true,
   title,
 }: ListingsMapSectionProps) {
   const allListings = useMemo(
@@ -104,6 +106,7 @@ export default function ListingsMapSection({
         onVisibleListingsChange={setVisibleIds}
         onHighlightChange={setHighlightedId}
         clusteringEnabled={clusteringEnabled}
+        interactive={interactive}
       />
 
       <div className="mt-6 space-y-4">

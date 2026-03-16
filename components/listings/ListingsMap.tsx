@@ -22,6 +22,7 @@ interface ListingsMapProps {
   onVisibleListingsChange: (visibleIds: string[]) => void
   onHighlightChange?: (listingId: string | null) => void
   clusteringEnabled?: boolean
+  interactive?: boolean // false = locked view, no pan/zoom, fit to pins
 }
 
 const clusterLayer: Omit<CircleLayerSpecification, 'source'> = {
@@ -92,6 +93,7 @@ export default function ListingsMap({
   onVisibleListingsChange,
   onHighlightChange,
   clusteringEnabled = true,
+  interactive = true,
 }: ListingsMapProps) {
   const mapRef = useRef<MapRef>(null)
   const lastVisibleIdsRef = useRef<string>('')
@@ -134,12 +136,24 @@ export default function ListingsMap({
   }, [listings, onVisibleListingsChange])
 
   const handleMapLoad = useCallback(() => {
+    if (!interactive && listings.length > 0) {
+      // Fit bounds to all pins with padding
+      const map = mapRef.current?.getMap()
+      if (map) {
+        const lngs = listings.map(l => l.longitude)
+        const lats = listings.map(l => l.latitude)
+        map.fitBounds(
+          [[Math.min(...lngs), Math.min(...lats)], [Math.max(...lngs), Math.max(...lats)]],
+          { padding: 50, maxZoom: 15 }
+        )
+      }
+    }
     updateVisibleListings()
-  }, [updateVisibleListings])
+  }, [updateVisibleListings, interactive, listings])
 
   const handleMoveEnd = useCallback(() => {
-    updateVisibleListings()
-  }, [updateVisibleListings])
+    if (interactive) updateVisibleListings()
+  }, [updateVisibleListings, interactive])
 
   const handleClick = useCallback(
     (e: MapMouseEvent) => {
@@ -214,8 +228,13 @@ export default function ListingsMap({
         onMouseLeave={handleMouseLeave}
         interactiveLayerIds={['clusters', 'unclustered-point']}
         attributionControl={false}
+        dragPan={interactive}
+        scrollZoom={interactive}
+        doubleClickZoom={interactive}
+        touchZoomRotate={interactive}
+        dragRotate={false}
       >
-        <NavigationControl position="top-right" />
+        {interactive && <NavigationControl position="top-right" />}
 
         <Source
           id="listings"
