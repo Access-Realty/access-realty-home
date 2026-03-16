@@ -266,10 +266,17 @@ async function adaptiveSearch(
   for (let radius = 0.5; radius <= MAX_RADIUS; radius += STEP) {
     const results = await fetchAtRadius(lat, lng, radius, type, twelveMonthsAgo)
     if (results.length >= minResults || radius + STEP > MAX_RADIUS) {
-      return { listings: sortByDistance(results, lat, lng), radiusMiles: radius }
+      const sorted = type === 'active'
+        ? sortByDistance(results, lat, lng)
+        : sortByRecency(results)
+      return { listings: sorted, radiusMiles: radius }
     }
   }
   return { listings: [], radiusMiles: MAX_RADIUS }
+}
+
+function sortByRecency(listings: SeoListingProps[]): SeoListingProps[] {
+  return listings.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 }
 
 function sortByDistance(listings: SeoListingProps[], lat: number, lng: number): SeoListingProps[] {
