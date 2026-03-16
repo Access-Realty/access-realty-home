@@ -1,6 +1,7 @@
 // ABOUTME: Prototype — SEO property page for 716 Corner Post Path, Celina TX
 // ABOUTME: Full template per design doc: breadcrumbs, hero, specs, comps, market stats, calculator, CTA
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Section } from "@/components/layout";
 import { DirectListCTA } from "@/components/layout/DirectListCTA";
@@ -83,6 +84,22 @@ function marketTemperature(monthsOfSupply: number) {
   if (monthsOfSupply < 3) return { label: "Seller's Market", color: "text-success", bg: "bg-success/10" };
   if (monthsOfSupply < 5) return { label: "Balanced Market", color: "text-warning", bg: "bg-warning/10" };
   return { label: "Buyer's Market", color: "text-info", bg: "bg-info/10" };
+}
+
+export async function generateMetadata(): Promise<Metadata> {
+  const heroImage = await getPropertyHeroImage(PARCEL.id, PARCEL.latitude, PARCEL.longitude);
+  const title = `${PARCEL.street_address}, ${PARCEL.city} TX ${PARCEL.zip} | Home Value & Market Data`;
+  const description = `See estimated value, nearby sales, and market trends for ${PARCEL.street_address} in ${PARCEL.city}, TX. ${PARCEL.bedrooms} bed, ${PARCEL.bathrooms_full} bath, ${PARCEL.living_area_sqft.toLocaleString()} sqft home built ${PARCEL.year_built}.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title: `${PARCEL.street_address} | ${PARCEL.city}, TX ${PARCEL.zip}`,
+      description,
+      images: heroImage.url ? [heroImage.url] : undefined,
+    },
+  };
 }
 
 export default async function PropertyPage() {
