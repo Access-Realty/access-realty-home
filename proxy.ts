@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 const DIRECTLIST_HOSTS = ["direct-list.com", "www.direct-list.com"];
 
 // Paths that should pass through to their own routes (not prefixed with /direct-list)
-const SHARED_PATHS = ["/privacy", "/terms", "/api/", "/_next/", "/favicon"];
+const SHARED_PATHS = ["/privacy", "/terms", "/api/", "/_next/", "/favicon", "/home-values/"];
 
 export function proxy(request: NextRequest) {
   const hostname = request.headers.get("host")?.split(":")[0] || "";
