@@ -136,6 +136,72 @@ export default async function PropertyPage() {
         yearBuilt={p.year_built}
       />
 
+      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
+          <Link href="/home-values" className="text-sm text-primary hover:underline">
+            How comps work →
+          </Link>
+        </div>
+        <ListingsMapSection
+          activeListings={nearbyListings.active.listings}
+          activeRadiusMiles={nearbyListings.active.radiusMiles}
+          closedListings={nearbyListings.closed.listings}
+          closedRadiusMiles={nearbyListings.closed.radiusMiles}
+          initialCenter={[-97.142574, 32.671639]}
+          initialZoom={14}
+          clusteringEnabled={false}
+          interactive={false}
+        />
+        <p className="text-xs text-muted-foreground mt-4">
+          Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
+        </p>
+      </Section>
+
+      {/* ── 6. Geographic Content Block (spun — showing resolved version) ── */}
+      <Section variant="content" maxWidth="5xl">
+        <div className="prose prose-sm max-w-none text-foreground">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Arlington 76017 Market Overview</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Homes in the 76017 zip code have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, representing a {MARKET_STATS.median_price_change_yoy}% gain compared to the prior year. The neighborhood sits in south Arlington, anchored by the Wimbledon North and Brentwood Park subdivisions — mature neighborhoods with established trees, larger lots, and proximity to both I-20 and the Parks Mall corridor.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Arlington&apos;s housing market continues to benefit from its central DFW location and relative affordability compared to north-side suburbs like Southlake or Colleyville. The city&apos;s investment in entertainment districts and mixed-use development has drawn renewed buyer interest, particularly among families and investors looking for value in Tarrant County.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Tarrant County assessed property values rose an average of 4.1% in 2025, though many homeowners successfully protested their valuations. The county appraisal district processes over 200,000 protests annually — the highest volume in the state.
+          </p>
+        </div>
+      </Section>
+
+      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76017</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
+            { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
+            { label: "Sale-to-List Ratio", value: `${MARKET_STATS.pct_list_price_received}%`, sub: "of asking price received" },
+            { label: "Active Listings", value: String(MARKET_STATS.active_inventory), sub: `${MARKET_STATS.closed_last_30} closed last 30 days` },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-card rounded-xl border border-border p-5">
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</div>
+              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg}`}>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
+            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
+          </span>
+          {temp.label} · {MARKET_STATS.months_of_supply} months of supply
+        </div>
+      </Section>
+
       {/* ── 3. Property Details ────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-6">Property Details</h2>
@@ -202,72 +268,6 @@ export default async function PropertyPage() {
               </p>
             </div>
           </div>
-        </div>
-      </Section>
-
-      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <div className="flex items-baseline justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
-          <Link href="/home-values" className="text-sm text-primary hover:underline">
-            How comps work →
-          </Link>
-        </div>
-        <ListingsMapSection
-          activeListings={nearbyListings.active.listings}
-          activeRadiusMiles={nearbyListings.active.radiusMiles}
-          closedListings={nearbyListings.closed.listings}
-          closedRadiusMiles={nearbyListings.closed.radiusMiles}
-          initialCenter={[-97.142574, 32.671639]}
-          initialZoom={14}
-          clusteringEnabled={false}
-          interactive={false}
-        />
-        <p className="text-xs text-muted-foreground mt-4">
-          Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
-        </p>
-      </Section>
-
-      {/* ── 6. Geographic Content Block (spun — showing resolved version) ── */}
-      <Section variant="content" maxWidth="5xl">
-        <div className="prose prose-sm max-w-none text-foreground">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Arlington 76017 Market Overview</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Homes in the 76017 zip code have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, representing a {MARKET_STATS.median_price_change_yoy}% gain compared to the prior year. The neighborhood sits in south Arlington, anchored by the Wimbledon North and Brentwood Park subdivisions — mature neighborhoods with established trees, larger lots, and proximity to both I-20 and the Parks Mall corridor.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Arlington&apos;s housing market continues to benefit from its central DFW location and relative affordability compared to north-side suburbs like Southlake or Colleyville. The city&apos;s investment in entertainment districts and mixed-use development has drawn renewed buyer interest, particularly among families and investors looking for value in Tarrant County.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Tarrant County assessed property values rose an average of 4.1% in 2025, though many homeowners successfully protested their valuations. The county appraisal district processes over 200,000 protests annually — the highest volume in the state.
-          </p>
-        </div>
-      </Section>
-
-      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76017</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
-            { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
-            { label: "Sale-to-List Ratio", value: `${MARKET_STATS.pct_list_price_received}%`, sub: "of asking price received" },
-            { label: "Active Listings", value: String(MARKET_STATS.active_inventory), sub: `${MARKET_STATS.closed_last_30} closed last 30 days` },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-card rounded-xl border border-border p-5">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</div>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg}`}>
-          <span className="relative flex h-2.5 w-2.5">
-            <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
-            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
-          </span>
-          {temp.label} · {MARKET_STATS.months_of_supply} months of supply
         </div>
       </Section>
 

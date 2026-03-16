@@ -132,6 +132,72 @@ export default async function PropertyPage() {
         yearBuilt={p.year_built}
       />
 
+      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
+          <Link href="/home-values" className="text-sm text-primary hover:underline">
+            How comps work →
+          </Link>
+        </div>
+        <ListingsMapSection
+          activeListings={nearbyListings.active.listings}
+          activeRadiusMiles={nearbyListings.active.radiusMiles}
+          closedListings={nearbyListings.closed.listings}
+          closedRadiusMiles={nearbyListings.closed.radiusMiles}
+          initialCenter={[-97.314469, 32.777231]}
+          initialZoom={14}
+          clusteringEnabled={false}
+          interactive={false}
+        />
+        <p className="text-xs text-muted-foreground mt-4">
+          Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
+        </p>
+      </Section>
+
+      {/* ── 6. Geographic Content Block ────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <div className="prose prose-sm max-w-none text-foreground">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Fort Worth 76111 Market Overview</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            The 76111 zip code covers Fort Worth&apos;s near northside — a neighborhood with deep roots and a rapidly changing skyline. Sitting just north of downtown and minutes from the historic Stockyards district, this area has long been a working-class community of small-lot bungalows built in the 1940s and 1950s. Over the past decade, new infill construction has transformed pockets of the neighborhood, with modern two-story builds like this 2018 home rising on lots that once held single-story cottages.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Homes in 76111 have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, up {MARKET_STATS.median_price_change_yoy}% year-over-year. The mix is wide — renovated bungalows in the low $200s sit blocks away from new construction pushing past $500K. Proximity to downtown Fort Worth, the Trinity River trail system, and the ongoing Stockyards redevelopment continues to draw buyers who want walkability and character without north-side suburban prices.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Tarrant County assessed property values rose an average of 4.1% in 2025, though many homeowners successfully protested their valuations. With an effective tax rate above 1.8% in this zip code, tax burden is a real factor — and one more reason sellers here are looking for ways to keep more of their equity at closing.
+          </p>
+        </div>
+      </Section>
+
+      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76111</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
+            { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
+            { label: "Sale-to-List Ratio", value: `${MARKET_STATS.pct_list_price_received}%`, sub: "of asking price received" },
+            { label: "Active Listings", value: String(MARKET_STATS.active_inventory), sub: `${MARKET_STATS.closed_last_30} closed last 30 days` },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-card rounded-xl border border-border p-5">
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</div>
+              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg}`}>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
+            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
+          </span>
+          {temp.label} · {MARKET_STATS.months_of_supply} months of supply
+        </div>
+      </Section>
+
       {/* ── 3. Property Details ────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-6">Property Details</h2>
@@ -210,72 +276,6 @@ export default async function PropertyPage() {
           <div className="text-xs text-muted-foreground mt-1">
             Transferred {new Date(p.last_transfer_date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}
           </div>
-        </div>
-      </Section>
-
-      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <div className="flex items-baseline justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
-          <Link href="/home-values" className="text-sm text-primary hover:underline">
-            How comps work →
-          </Link>
-        </div>
-        <ListingsMapSection
-          activeListings={nearbyListings.active.listings}
-          activeRadiusMiles={nearbyListings.active.radiusMiles}
-          closedListings={nearbyListings.closed.listings}
-          closedRadiusMiles={nearbyListings.closed.radiusMiles}
-          initialCenter={[-97.314469, 32.777231]}
-          initialZoom={14}
-          clusteringEnabled={false}
-          interactive={false}
-        />
-        <p className="text-xs text-muted-foreground mt-4">
-          Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
-        </p>
-      </Section>
-
-      {/* ── 6. Geographic Content Block ────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <div className="prose prose-sm max-w-none text-foreground">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Fort Worth 76111 Market Overview</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            The 76111 zip code covers Fort Worth&apos;s near northside — a neighborhood with deep roots and a rapidly changing skyline. Sitting just north of downtown and minutes from the historic Stockyards district, this area has long been a working-class community of small-lot bungalows built in the 1940s and 1950s. Over the past decade, new infill construction has transformed pockets of the neighborhood, with modern two-story builds like this 2018 home rising on lots that once held single-story cottages.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Homes in 76111 have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, up {MARKET_STATS.median_price_change_yoy}% year-over-year. The mix is wide — renovated bungalows in the low $200s sit blocks away from new construction pushing past $500K. Proximity to downtown Fort Worth, the Trinity River trail system, and the ongoing Stockyards redevelopment continues to draw buyers who want walkability and character without north-side suburban prices.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Tarrant County assessed property values rose an average of 4.1% in 2025, though many homeowners successfully protested their valuations. With an effective tax rate above 1.8% in this zip code, tax burden is a real factor — and one more reason sellers here are looking for ways to keep more of their equity at closing.
-          </p>
-        </div>
-      </Section>
-
-      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76111</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
-            { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
-            { label: "Sale-to-List Ratio", value: `${MARKET_STATS.pct_list_price_received}%`, sub: "of asking price received" },
-            { label: "Active Listings", value: String(MARKET_STATS.active_inventory), sub: `${MARKET_STATS.closed_last_30} closed last 30 days` },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-card rounded-xl border border-border p-5">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</div>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg}`}>
-          <span className="relative flex h-2.5 w-2.5">
-            <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
-            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
-          </span>
-          {temp.label} · {MARKET_STATS.months_of_supply} months of supply
         </div>
       </Section>
 

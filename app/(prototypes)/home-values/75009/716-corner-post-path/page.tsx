@@ -136,6 +136,72 @@ export default async function PropertyPage() {
         yearBuilt={p.year_built}
       />
 
+      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <div className="flex items-baseline justify-between mb-6">
+          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
+          <Link href="/home-values" className="text-sm text-primary hover:underline">
+            How comps work →
+          </Link>
+        </div>
+        <ListingsMapSection
+          activeListings={nearbyListings.active.listings}
+          activeRadiusMiles={nearbyListings.active.radiusMiles}
+          closedListings={nearbyListings.closed.listings}
+          closedRadiusMiles={nearbyListings.closed.radiusMiles}
+          initialCenter={[-96.793815, 33.272109]}
+          initialZoom={14}
+          clusteringEnabled={false}
+          interactive={false}
+        />
+        <p className="text-xs text-muted-foreground mt-4">
+          Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
+        </p>
+      </Section>
+
+      {/* ── 6. Geographic Content Block ────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <div className="prose prose-sm max-w-none text-foreground">
+          <h2 className="text-2xl font-bold text-foreground mb-4">Celina 75009 Market Overview</h2>
+          <p className="text-muted-foreground leading-relaxed">
+            Celina has emerged as one of the fastest-growing cities in Collin County, with the 75009 zip code at the center of that momentum. Homes here have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, reflecting a {MARKET_STATS.median_price_change_yoy}% year-over-year gain. Light Farms, the master-planned community where 716 Corner Post Path is located, anchors the area with resort-style amenities, miles of trails, and a neighborhood feel that draws families from across the Metroplex.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Prosper ISD serves most of 75009, consistently ranking among the top school districts in North Texas. That alone drives demand — particularly among relocating families who prioritize schools in their home search. The new construction corridor along US-380 and the Dallas North Tollway extension has brought national builders and mixed-use development to Celina&apos;s doorstep, transforming what was recently farmland into one of DFW&apos;s most sought-after suburban markets.
+          </p>
+          <p className="text-muted-foreground leading-relaxed">
+            Collin County assessed property values have risen sharply over the past several years, and homeowners in newer subdivisions like Light Farms often face assessed values that trail their original purchase price by relatively little. With an effective tax rate above 1.7%, annual tax bills in this zip code can surprise owners who moved from lower-rate counties.
+          </p>
+        </div>
+      </Section>
+
+      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
+      <Section variant="content" maxWidth="5xl">
+        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 75009</h2>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {[
+            { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
+            { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
+            { label: "Sale-to-List Ratio", value: `${MARKET_STATS.pct_list_price_received}%`, sub: "of asking price received" },
+            { label: "Active Listings", value: String(MARKET_STATS.active_inventory), sub: `${MARKET_STATS.closed_last_30} closed last 30 days` },
+          ].map((stat) => (
+            <div key={stat.label} className="bg-card rounded-xl border border-border p-5">
+              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</div>
+              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
+              <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg}`}>
+          <span className="relative flex h-2.5 w-2.5">
+            <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
+            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
+          </span>
+          {temp.label} · {MARKET_STATS.months_of_supply} months of supply
+        </div>
+      </Section>
+
       {/* ── 3. Property Details ────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-6">Property Details</h2>
@@ -211,72 +277,6 @@ export default async function PropertyPage() {
             <span className="text-sm text-muted-foreground">Last Sale — {new Date(p.last_transfer_date).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}</span>
             <span className="text-lg font-bold text-foreground">{fmt(p.last_sale_price)}</span>
           </div>
-        </div>
-      </Section>
-
-      {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <div className="flex items-baseline justify-between mb-6">
-          <h2 className="text-2xl font-bold text-foreground">Nearby Market Activity</h2>
-          <Link href="/home-values" className="text-sm text-primary hover:underline">
-            How comps work →
-          </Link>
-        </div>
-        <ListingsMapSection
-          activeListings={nearbyListings.active.listings}
-          activeRadiusMiles={nearbyListings.active.radiusMiles}
-          closedListings={nearbyListings.closed.listings}
-          closedRadiusMiles={nearbyListings.closed.radiusMiles}
-          initialCenter={[-96.793815, 33.272109]}
-          initialZoom={14}
-          clusteringEnabled={false}
-          interactive={false}
-        />
-        <p className="text-xs text-muted-foreground mt-4">
-          Comparable sales sourced from NTREIS MLS. Actual comparability depends on property condition, upgrades, and features not captured in public records.
-        </p>
-      </Section>
-
-      {/* ── 6. Geographic Content Block ────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <div className="prose prose-sm max-w-none text-foreground">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Celina 75009 Market Overview</h2>
-          <p className="text-muted-foreground leading-relaxed">
-            Celina has emerged as one of the fastest-growing cities in Collin County, with the 75009 zip code at the center of that momentum. Homes here have sold at a median price of {fmt(MARKET_STATS.median_sale_price)} over the past 12 months, reflecting a {MARKET_STATS.median_price_change_yoy}% year-over-year gain. Light Farms, the master-planned community where 716 Corner Post Path is located, anchors the area with resort-style amenities, miles of trails, and a neighborhood feel that draws families from across the Metroplex.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Prosper ISD serves most of 75009, consistently ranking among the top school districts in North Texas. That alone drives demand — particularly among relocating families who prioritize schools in their home search. The new construction corridor along US-380 and the Dallas North Tollway extension has brought national builders and mixed-use development to Celina&apos;s doorstep, transforming what was recently farmland into one of DFW&apos;s most sought-after suburban markets.
-          </p>
-          <p className="text-muted-foreground leading-relaxed">
-            Collin County assessed property values have risen sharply over the past several years, and homeowners in newer subdivisions like Light Farms often face assessed values that trail their original purchase price by relatively little. With an effective tax rate above 1.7%, annual tax bills in this zip code can surprise owners who moved from lower-rate counties.
-          </p>
-        </div>
-      </Section>
-
-      {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 75009</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-          {[
-            { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
-            { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
-            { label: "Sale-to-List Ratio", value: `${MARKET_STATS.pct_list_price_received}%`, sub: "of asking price received" },
-            { label: "Active Listings", value: String(MARKET_STATS.active_inventory), sub: `${MARKET_STATS.closed_last_30} closed last 30 days` },
-          ].map((stat) => (
-            <div key={stat.label} className="bg-card rounded-xl border border-border p-5">
-              <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{stat.label}</div>
-              <div className="text-2xl font-bold text-foreground">{stat.value}</div>
-              <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
-            </div>
-          ))}
-        </div>
-
-        <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg}`}>
-          <span className="relative flex h-2.5 w-2.5">
-            <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
-            <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${temp.color === "text-success" ? "bg-success" : temp.color === "text-warning" ? "bg-warning" : "bg-info"}`} />
-          </span>
-          {temp.label} · {MARKET_STATS.months_of_supply} months of supply
         </div>
       </Section>
 
