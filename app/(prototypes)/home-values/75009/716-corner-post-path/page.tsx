@@ -391,14 +391,6 @@ export default async function PropertyPage() {
         </div>
       </Section>
 
-      {/* Bottom CTA flows into footer */}
-      <DirectListCTA
-        heading="Keep What's Yours"
-        subheading="Full MLS listing. Flat fee. Professional support when you want it."
-        buttonText="Get Started Now"
-        buttonHref="/direct-list/get-started"
-      />
-
       {/* ── Browse Nearby ────────────────────────────────────────────────── */}
       <Section variant="tight" maxWidth="5xl">
         <p className="text-xs text-muted-foreground uppercase tracking-wider mb-2">Browse nearby</p>
@@ -415,6 +407,14 @@ export default async function PropertyPage() {
           ))}
         </div>
       </Section>
+
+      {/* Bottom CTA flows into footer */}
+      <DirectListCTA
+        heading="Keep What's Yours"
+        subheading="Full MLS listing. Flat fee. Professional support when you want it."
+        buttonText="Get Started Now"
+        buttonHref="/direct-list/get-started"
+      />
     </div>
   );
 }
