@@ -1,9 +1,9 @@
-// ABOUTME: Viewport-synced grid of SeoListingCards below the map
-// ABOUTME: Only shows listings visible in the current map viewport
+// ABOUTME: Horizontal looping carousel of SeoListingCards
+// ABOUTME: Replaces vertical grid — swipe sideways, wraps around at ends
 
 'use client'
 
-import { useRef, useEffect, useMemo } from 'react'
+import { useRef, useCallback, useMemo } from 'react'
 import SeoListingCard from './SeoListingCard'
 import type { SeoListingProps } from '@/types/seo-listing'
 
@@ -18,42 +18,75 @@ export default function ListingCardGrid({
   visibleIds,
   highlightedId,
 }: ListingCardGridProps) {
-  const gridRef = useRef<HTMLDivElement>(null)
+  const scrollRef = useRef<HTMLDivElement>(null)
 
   const visibleListings = useMemo(() => {
     const visibleSet = new Set(visibleIds)
     return listings.filter((l) => visibleSet.has(l.listingId))
   }, [listings, visibleIds])
 
-  useEffect(() => {
-    if (!highlightedId || !gridRef.current) return
-    const card = gridRef.current.querySelector(`[data-listing-id="${highlightedId}"]`)
-    if (card && typeof card.scrollIntoView === 'function') {
-      card.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+  const scroll = useCallback((direction: 'left' | 'right') => {
+    const container = scrollRef.current
+    if (!container) return
+
+    const cardWidth = 300
+    const scrollAmount = direction === 'left' ? -cardWidth : cardWidth
+
+    // If at the end, loop to start (and vice versa)
+    if (direction === 'right' && container.scrollLeft >= container.scrollWidth - container.clientWidth - 10) {
+      container.scrollTo({ left: 0, behavior: 'smooth' })
+    } else if (direction === 'left' && container.scrollLeft <= 10) {
+      container.scrollTo({ left: container.scrollWidth, behavior: 'smooth' })
+    } else {
+      container.scrollBy({ left: scrollAmount, behavior: 'smooth' })
     }
-  }, [highlightedId])
+  }, [])
+
+  if (visibleListings.length === 0) return null
 
   return (
-    <div ref={gridRef}>
-      <p className="text-sm text-muted-foreground mb-4">
-        Showing {visibleListings.length} of {listings.length} nearby listings
-      </p>
+    <div className="relative group/carousel">
+      {/* Left arrow */}
+      <button
+        onClick={() => scroll('left')}
+        className="absolute left-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 shadow-lg border border-border hover:bg-white hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
+        aria-label="Previous"
+      >
+        <svg className="w-5 h-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        </svg>
+      </button>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+      {/* Right arrow */}
+      <button
+        onClick={() => scroll('right')}
+        className="absolute right-0 top-1/2 -translate-y-1/2 z-10 hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-white/90 shadow-lg border border-border hover:bg-white hover:scale-105 transition-all opacity-0 group-hover/carousel:opacity-100"
+        aria-label="Next"
+      >
+        <svg className="w-5 h-5 text-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+        </svg>
+      </button>
+
+      {/* Scrollable card row */}
+      <div
+        ref={scrollRef}
+        className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-2 scrollbar-hide"
+        // eslint-disable-next-line access-realty/no-inline-styles
+        style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+      >
         {visibleListings.map((listing) => (
-          <SeoListingCard
+          <div
             key={listing.listingId}
-            {...listing}
-            highlighted={listing.listingId === highlightedId}
-          />
+            className="flex-shrink-0 w-[260px] sm:w-[280px] snap-start"
+          >
+            <SeoListingCard
+              {...listing}
+              highlighted={listing.listingId === highlightedId}
+            />
+          </div>
         ))}
       </div>
-
-      {visibleListings.length === 0 && listings.length > 0 && (
-        <p className="text-center text-muted-foreground py-8">
-          Pan or zoom the map to see listings in this area.
-        </p>
-      )}
     </div>
   )
 }
