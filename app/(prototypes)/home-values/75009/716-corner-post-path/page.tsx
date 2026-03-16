@@ -96,27 +96,6 @@ export default async function PropertyPage() {
 
   return (
     <div className="bg-background">
-      {/* ── 1. Breadcrumbs ─────────────────────────────────────────────────── */}
-      <div className="bg-primary">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-20 pb-2">
-          <nav aria-label="Geographic context" className="text-sm">
-            <ol className="flex flex-wrap items-center gap-1.5 text-primary-foreground/60">
-              <li><Link href="/prototypes/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
-              <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/prototypes/home-values/75009" className="hover:text-primary-foreground/90 transition-colors">75009</Link>
-              </li>
-              <li className="before:content-['·'] before:mx-1.5 text-primary-foreground/90">{p.street_address}</li>
-              <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/prototypes/home-values/celina" className="hover:text-primary-foreground/90 transition-colors">Celina</Link>
-              </li>
-              <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/prototypes/home-values/collin-county" className="hover:text-primary-foreground/90 transition-colors">Collin County</Link>
-              </li>
-            </ol>
-          </nav>
-        </div>
-      </div>
-
       {/* ── 1b + 2. Immersive Property Hero ────────────────────────────── */}
       <PropertyHero
         imageUrl={heroImage.url}
@@ -127,13 +106,6 @@ export default async function PropertyPage() {
         specs={specsLine}
         lotSize={String(p.lot_size_acres)}
         source={heroImage.source}
-        avmValue={fmt(p.avm_value)}
-        avmLow={fmt(p.avm_low)}
-        avmHigh={fmt(p.avm_high)}
-        bedrooms={p.bedrooms}
-        bathrooms={p.bathrooms_full}
-        sqft={fmtNum(p.living_area_sqft)}
-        yearBuilt={p.year_built}
       />
 
       {/* ── 5. Nearby Market Activity ──────────────────────────────────────── */}
@@ -426,6 +398,25 @@ export default async function PropertyPage() {
         buttonText="Get Started Now"
         buttonHref="/direct-list/get-started"
       />
+
+      {/* ── Geographic Navigation ─────────────────────────────────────────── */}
+      <Section variant="tight" maxWidth="5xl">
+        <nav aria-label="Geographic context" className="text-sm">
+          <ol className="flex flex-wrap items-center gap-1.5 text-muted-foreground">
+            <li><Link href="/prototypes/home-values" className="hover:text-foreground transition-colors">Home Values</Link></li>
+            <li className="before:content-['·'] before:mx-1.5">
+              <Link href="/prototypes/home-values/75009" className="hover:text-foreground transition-colors">75009</Link>
+            </li>
+            <li className="before:content-['·'] before:mx-1.5 text-foreground">{p.street_address}</li>
+            <li className="before:content-['·'] before:mx-1.5">
+              <Link href="/prototypes/home-values/celina" className="hover:text-foreground transition-colors">Celina</Link>
+            </li>
+            <li className="before:content-['·'] before:mx-1.5">
+              <Link href="/prototypes/home-values/collin-county" className="hover:text-foreground transition-colors">Collin County</Link>
+            </li>
+          </ol>
+        </nav>
+      </Section>
     </div>
   );
 }
