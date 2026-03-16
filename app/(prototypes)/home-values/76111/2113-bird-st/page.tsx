@@ -174,7 +174,7 @@ export default async function PropertyPage() {
       {/* ── 7. Market Snapshot ─────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-6">Market Snapshot — 76111</h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {[
             { label: "Median Sale Price", value: fmt(MARKET_STATS.median_sale_price), sub: `${MARKET_STATS.median_price_change_yoy > 0 ? "+" : ""}${MARKET_STATS.median_price_change_yoy}% YoY` },
             { label: "Avg Days on Market", value: String(MARKET_STATS.avg_dom), sub: "days to contract" },
