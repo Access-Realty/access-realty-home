@@ -26,17 +26,66 @@ const SEO_LISTING_FIELDS = `
   mls_status,
   status_change_timestamp,
   listing_contract_date,
+  purchase_contract_date,
+  cancellation_date,
   photo_urls,
   photos_count,
   bridge_raw_data->ConcessionsAmount
 `
 
-function computeDom(statusChangeTimestamp: string | null, listingContractDate: string | null): number | null {
-  if (!listingContractDate) return null
-  const end = statusChangeTimestamp ? new Date(statusChangeTimestamp) : new Date()
-  const start = new Date(listingContractDate)
+function daysBetween(a: string, b: string): number | null {
+  const start = new Date(b)
+  const end = new Date(a)
   const days = Math.floor((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24))
   return days >= 0 ? days : null
+}
+
+/**
+ * Compute DOM per status — how long the property was available to buy.
+ * Matches Zoho CRM formula logic:
+ * - Active: now() - listing_contract_date
+ * - Active Option Contract: status_change_timestamp - listing_contract_date
+ * - Pending / Closed: purchase_contract_date - listing_contract_date
+ * - Expired: status_change_timestamp - listing_contract_date
+ * - Cancelled: cancellation_date - listing_contract_date
+ * - Withdrawn: 0
+ */
+function computeDom(row: {
+  mls_status: string | null
+  listing_contract_date: string | null
+  status_change_timestamp: string | null
+  purchase_contract_date: string | null
+  cancellation_date: string | null
+}): number | null {
+  if (!row.listing_contract_date) return null
+
+  switch (row.mls_status) {
+    case 'Active':
+      return daysBetween(new Date().toISOString(), row.listing_contract_date)
+    case 'Active Option Contract':
+    case 'Active Contingent':
+    case 'Active KO':
+      return row.status_change_timestamp
+        ? daysBetween(row.status_change_timestamp, row.listing_contract_date)
+        : null
+    case 'Pending':
+    case 'Closed':
+      return row.purchase_contract_date
+        ? daysBetween(row.purchase_contract_date, row.listing_contract_date)
+        : null
+    case 'Expired':
+      return row.status_change_timestamp
+        ? daysBetween(row.status_change_timestamp, row.listing_contract_date)
+        : null
+    case 'Cancelled':
+      return row.cancellation_date
+        ? daysBetween(row.cancellation_date, row.listing_contract_date)
+        : null
+    case 'Withdrawn':
+      return 0
+    default:
+      return null
+  }
 }
 
 // Exported for testing
@@ -56,7 +105,7 @@ export function transformListings(data: any[]): SeoListingProps[] {
     parking: row.garage_spaces ?? row.parking_total ?? null,
     status: row.mls_status,
     date: row.status_change_timestamp || row.listing_contract_date,
-    dom: computeDom(row.status_change_timestamp, row.listing_contract_date),
+    dom: computeDom(row),
     photoUrl: row.photo_urls?.[0] ?? null,
     photosCount: row.photos_count ?? row.photo_urls?.length ?? 0,
     latitude: Number(row.latitude),
