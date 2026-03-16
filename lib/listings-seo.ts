@@ -27,6 +27,7 @@ const SEO_LISTING_FIELDS = `
   status_change_timestamp,
   listing_contract_date,
   photo_urls,
+  photos_count,
   bridge_raw_data->ConcessionsAmount
 `
 
@@ -57,6 +58,7 @@ export function transformListings(data: any[]): SeoListingProps[] {
     date: row.status_change_timestamp || row.listing_contract_date,
     dom: computeDom(row.status_change_timestamp, row.listing_contract_date),
     photoUrl: row.photo_urls?.[0] ?? null,
+    photosCount: row.photos_count ?? row.photo_urls?.length ?? 0,
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
     concessions: row.ConcessionsAmount ? Number(row.ConcessionsAmount) : null,

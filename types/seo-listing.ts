@@ -17,6 +17,7 @@ export interface SeoListingProps {
   date: string              // ISO date string (status_change_timestamp or listing_contract_date)
   dom: number | null        // Days on market (computed: status_change_timestamp - listing_contract_date)
   photoUrl: string | null   // First photo URL only — not the full array
+  photosCount: number       // Total photos available (for "View X photos" prompt)
   latitude: number
   longitude: number
   concessions: number | null // Seller concessions amount (from bridge_raw_data->ConcessionsAmount)

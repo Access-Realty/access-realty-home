@@ -15,6 +15,7 @@ const makeListing = (id: string, address: string): SeoListingProps => ({
   status: 'Closed',
   date: '2026-02-14T00:00:00Z',
   photoUrl: null,
+  photosCount: 0,
   latitude: 32.67,
   longitude: -97.14,
   originalPrice: null,

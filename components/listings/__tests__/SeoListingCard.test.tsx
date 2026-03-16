@@ -19,6 +19,7 @@ const baseListing: SeoListingProps = {
   date: '2026-02-14T00:00:00Z',
   dom: 42,
   photoUrl: 'https://example.com/photo.jpg',
+  photosCount: 24,
   latitude: 32.6716,
   longitude: -97.1426,
   concessions: null,

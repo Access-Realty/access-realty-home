@@ -27,6 +27,7 @@ describe('transformListings', () => {
       status_change_timestamp: '2026-02-14T00:00:00Z',
       listing_contract_date: '2026-01-20',
       photo_urls: ['https://example.com/1.jpg', 'https://example.com/2.jpg'],
+      photos_count: 25,
       ConcessionsAmount: '5000',
     }
 
@@ -43,11 +44,12 @@ describe('transformListings', () => {
       bathrooms: 2,
       sqft: 2555,
       yearBuilt: 1978,
-      parking: 3, // prefers garage_spaces over parking_total
+      parking: 3,
       status: 'Closed',
       date: '2026-02-14T00:00:00Z',
-      dom: 25, // 2026-01-20 to 2026-02-14
+      dom: 25,
       photoUrl: 'https://example.com/1.jpg',
+      photosCount: 25,
       latitude: 32.6716,
       longitude: -97.1426,
       concessions: 5000,
@@ -74,6 +76,7 @@ describe('transformListings', () => {
       status_change_timestamp: null,
       listing_contract_date: '2026-01-01',
       photo_urls: null,
+      photos_count: null,
       ConcessionsAmount: null,
     }
 
