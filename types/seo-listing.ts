@@ -21,5 +21,7 @@ export interface SeoListingProps {
   latitude: number
   longitude: number
   concessions: number | null // Seller concessions amount (from bridge_raw_data->ConcessionsAmount)
+  listOfficeMlsId: string | null  // Per NTREIS 17.05: listing firm identification
+  listAgentMlsId: string | null   // Per NTREIS 17.05: listing agent identification
   highlighted?: boolean     // True when corresponding map pin is active
 }

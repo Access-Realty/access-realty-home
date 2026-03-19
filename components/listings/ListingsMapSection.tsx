@@ -44,6 +44,8 @@ export default function ListingsMapSection({
     () => allListings.map((l) => l.listingId)
   )
   const [highlightedId, setHighlightedId] = useState<string | null>(null)
+  const [soldPricesUnlocked, setSoldPricesUnlocked] = useState(false)
+  const [email, setEmail] = useState('')
 
   return (
     <div>
@@ -90,10 +92,42 @@ export default function ListingsMapSection({
                 {closedRadiusMiles != null && ` within ${formatRadius(closedRadiusMiles)}`}
               </span>
             </div>
+
+            {/* Email gate for sold prices — per NTREIS 17.11 */}
+            {!soldPricesUnlocked && (
+              <div className="bg-card border border-border rounded-xl p-4 mb-4 flex flex-col sm:flex-row items-center gap-3">
+                <p className="text-sm text-muted-foreground flex-1">
+                  Enter your email to see sold prices and concessions data.
+                </p>
+                <form
+                  className="flex gap-2 w-full sm:w-auto"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    if (email.includes('@')) setSoldPricesUnlocked(true)
+                  }}
+                >
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="you@example.com"
+                    className="bg-muted border border-border rounded-lg px-3 py-2 text-sm flex-1 sm:w-56 focus:outline-none focus:ring-2 focus:ring-primary"
+                  />
+                  <button
+                    type="submit"
+                    className="bg-primary text-primary-foreground font-semibold px-4 py-2 rounded-lg text-sm hover:bg-primary/90 transition-colors whitespace-nowrap"
+                  >
+                    Unlock Prices
+                  </button>
+                </form>
+              </div>
+            )}
+
             <ListingCardGrid
               listings={closedListings}
               visibleIds={visibleIds}
               highlightedId={highlightedId}
+              priceGated={!soldPricesUnlocked}
             />
           </div>
         )}

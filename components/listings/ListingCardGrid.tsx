@@ -11,12 +11,14 @@ interface ListingCardGridProps {
   listings: SeoListingProps[]
   visibleIds: string[]
   highlightedId: string | null
+  priceGated?: boolean
 }
 
 export default function ListingCardGrid({
   listings,
   visibleIds,
   highlightedId,
+  priceGated = false,
 }: ListingCardGridProps) {
   const scrollRef = useRef<HTMLDivElement>(null)
 
@@ -83,6 +85,7 @@ export default function ListingCardGrid({
             <SeoListingCard
               {...listing}
               highlighted={listing.listingId === highlightedId}
+              priceGated={priceGated}
             />
           </div>
         ))}

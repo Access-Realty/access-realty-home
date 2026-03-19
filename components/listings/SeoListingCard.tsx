@@ -1,5 +1,5 @@
 // ABOUTME: Atomic listing card for SEO property pages — photo, price, specs, status badge
-// ABOUTME: Click photo to open full-screen carousel. No navigation links.
+// ABOUTME: Closed listing prices are gated (blurred) until email provided. Shows MLS attribution per NTREIS 17.05/17.07.
 
 'use client'
 
@@ -24,25 +24,41 @@ const STATUS_COLORS: Record<string, string> = {
   Active: 'bg-green-600 text-white',
   'Active Option Contract': 'bg-green-600 text-white',
   'Active Contingent': 'bg-green-600 text-white',
-  Pending: 'bg-amber-500 text-white',
+  'Active KO': 'bg-green-600 text-white',
 }
 
-export default function SeoListingCard(props: SeoListingProps) {
+// Status display labels (17.10 requires explanation of status symbols)
+const STATUS_LABELS: Record<string, string> = {
+  Active: 'Active',
+  'Active Option Contract': 'Option Contract',
+  'Active Contingent': 'Contingent',
+  'Active KO': 'Kick Out',
+  Closed: 'Sold',
+}
+
+interface SeoListingCardProps extends SeoListingProps {
+  priceGated?: boolean // true = blur sold prices until email gate crossed
+}
+
+export default function SeoListingCard(props: SeoListingCardProps) {
   const {
     listingId, address, price, originalPrice, bedrooms, bathrooms,
     sqft, yearBuilt, parking, status, date, dom, photoUrl, photosCount,
-    concessions, highlighted,
+    concessions, listOfficeMlsId, listAgentMlsId, highlighted,
+    priceGated = false,
   } = props
 
   const [showModal, setShowModal] = useState(false)
 
   const isClosed = status === 'Closed'
+  const showPrice = !isClosed || !priceGated
   const hadReduction = originalPrice != null && originalPrice > price
   const hadIncrease = originalPrice != null && originalPrice < price
-  const hasConcessions = concessions != null && concessions > 0 && isClosed
+  const hasConcessions = concessions != null && concessions > 0 && isClosed && showPrice
   const hasPhotos = photoUrl && photosCount > 0
 
   const streetOnly = address?.split(',')[0] ?? address
+  const statusLabel = STATUS_LABELS[status] || status
 
   return (
     <>
@@ -54,7 +70,7 @@ export default function SeoListingCard(props: SeoListingProps) {
             : 'border-border hover:shadow-md'
         }`}
       >
-        {/* Photo — clickable when photos available */}
+        {/* Photo */}
         <div
           className={`relative aspect-[4/3] bg-muted ${hasPhotos ? 'cursor-pointer group' : ''}`}
           onClick={() => hasPhotos && setShowModal(true)}
@@ -75,9 +91,8 @@ export default function SeoListingCard(props: SeoListingProps) {
             </div>
           )}
           <div className={`absolute top-2 left-2 px-2 py-0.5 rounded text-xs font-semibold ${STATUS_COLORS[status] || 'bg-gray-500 text-white'}`}>
-            {status}
+            {statusLabel}
           </div>
-          {/* Photo count badge */}
           {hasPhotos && photosCount > 1 && (
             <div className="absolute bottom-2 right-2 bg-black/60 text-white text-xs px-2 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity">
               {photosCount} photos
@@ -86,21 +101,29 @@ export default function SeoListingCard(props: SeoListingProps) {
         </div>
 
         <div className="p-4">
-          {/* Price block */}
-          <p className="text-xl font-bold text-foreground">{formatPrice(price)}</p>
-          {hadReduction && (
-            <p className="text-xs text-amber-600 mt-0.5">
-              ↓ {formatCompact(originalPrice - price)} from {formatCompact(originalPrice)}
-            </p>
-          )}
-          {hadIncrease && (
-            <p className="text-xs text-green-600 mt-0.5">
-              ↑ {formatCompact(price - originalPrice)} from {formatCompact(originalPrice)}
-            </p>
-          )}
-          {hasConcessions && (
-            <p className="text-xs text-red-500 mt-0.5">
-              {formatCompact(concessions)} seller concessions
+          {/* Price — gated for closed listings */}
+          {showPrice ? (
+            <>
+              <p className="text-xl font-bold text-foreground">{formatPrice(price)}</p>
+              {hadReduction && (
+                <p className="text-xs text-amber-600 mt-0.5">
+                  ↓ {formatCompact(originalPrice - price)} from {formatCompact(originalPrice)}
+                </p>
+              )}
+              {hadIncrease && (
+                <p className="text-xs text-green-600 mt-0.5">
+                  ↑ {formatCompact(price - originalPrice)} from {formatCompact(originalPrice)}
+                </p>
+              )}
+              {hasConcessions && (
+                <p className="text-xs text-red-500 mt-0.5">
+                  {formatCompact(concessions)} seller concessions
+                </p>
+              )}
+            </>
+          ) : (
+            <p className="text-lg font-bold text-primary/40 blur-sm select-none" aria-hidden="true">
+              $000,000
             </p>
           )}
 
@@ -121,17 +144,23 @@ export default function SeoListingCard(props: SeoListingProps) {
             </p>
           </div>
 
-          {/* Address — street only */}
+          {/* Address */}
           <p className="text-sm text-muted-foreground mt-2 truncate">{streetOnly}</p>
 
           {/* Date + DOM */}
           <div className="text-xs text-muted-foreground mt-2 pt-2 border-t border-border/50">
             {formatDate(date)}{dom != null && ` · ${dom} days`}
           </div>
+
+          {/* MLS Attribution — per NTREIS 17.05 */}
+          {(listOfficeMlsId || listAgentMlsId) && (
+            <p className="text-[10px] text-muted-foreground/60 mt-1.5 truncate">
+              {[listOfficeMlsId, listAgentMlsId].filter(Boolean).join(' · ')}
+            </p>
+          )}
         </div>
       </div>
 
-      {/* Photo modal */}
       {showModal && photoUrl && (
         <PhotoModal
           listingId={listingId}

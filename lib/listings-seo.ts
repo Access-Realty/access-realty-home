@@ -30,6 +30,8 @@ const SEO_LISTING_FIELDS = `
   cancellation_date,
   photo_urls,
   photos_count,
+  list_office_mls_id,
+  list_agent_mls_id,
   bridge_raw_data->ConcessionsAmount
 `
 
@@ -111,6 +113,8 @@ export function transformListings(data: any[]): SeoListingProps[] {
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
     concessions: row.ConcessionsAmount ? Number(row.ConcessionsAmount) : null,
+    listOfficeMlsId: row.list_office_mls_id ?? null,
+    listAgentMlsId: row.list_agent_mls_id ?? null,
   }))
 }
 
@@ -213,7 +217,8 @@ export async function getPropertyHeroImage(
 }
 
 // Status categories — matches app repo's useCompetitiveListings pattern (NTREIS mls_status values)
-const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active Contingent', 'Pending']
+// Per NTREIS Rules 17.10: only A, AO, AK, AC may be shown as available listings
+const ACTIVE_STATUSES = ['Active', 'Active Option Contract', 'Active KO', 'Active Contingent']
 // Lease property types to exclude from all SEO queries
 const LEASE_TYPES = ['Residential Lease', 'Commercial Lease']
 
