@@ -44,7 +44,7 @@ export default function SeoListingCard(props: SeoListingCardProps) {
   const {
     listingId, address, price, originalPrice, bedrooms, bathrooms,
     sqft, yearBuilt, parking, status, date, dom, photoUrl, photosCount,
-    concessions, listOfficeMlsId, listAgentMlsId, highlighted,
+    concessions, listOfficeName, listAgentName, listOfficeMlsId, listAgentMlsId, highlighted,
     priceGated = false,
   } = props
 
@@ -152,12 +152,12 @@ export default function SeoListingCard(props: SeoListingCardProps) {
             {formatDate(date)}{dom != null && ` · ${dom} days`}
           </div>
 
-          {/* MLS Attribution — per NTREIS 17.05 */}
-          {(listOfficeMlsId || listAgentMlsId) && (
-            <p className="text-[10px] text-muted-foreground/60 mt-1.5 truncate">
-              {[listOfficeMlsId, listAgentMlsId].filter(Boolean).join(' · ')}
-            </p>
-          )}
+          {/* MLS Attribution — per NTREIS 17.05/17.07 (Zillow-style) */}
+          <p className="text-[10px] text-muted-foreground/60 mt-1.5 truncate">
+            MLS# {listingId}
+            {(listAgentName || listAgentMlsId) && `, ${listAgentName || listAgentMlsId}`}
+            . NTREIS
+          </p>
         </div>
       </div>
 

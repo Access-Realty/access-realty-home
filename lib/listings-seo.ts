@@ -32,7 +32,9 @@ const SEO_LISTING_FIELDS = `
   photos_count,
   list_office_mls_id,
   list_agent_mls_id,
-  bridge_raw_data->ConcessionsAmount
+  bridge_raw_data->ConcessionsAmount,
+  bridge_raw_data->ListAgentFullName,
+  bridge_raw_data->ListOfficeName
 `
 
 function daysBetween(a: string, b: string): number | null {
@@ -113,6 +115,8 @@ export function transformListings(data: any[]): SeoListingProps[] {
     latitude: Number(row.latitude),
     longitude: Number(row.longitude),
     concessions: row.ConcessionsAmount ? Number(row.ConcessionsAmount) : null,
+    listOfficeName: row.ListOfficeName ?? null,
+    listAgentName: row.ListAgentFullName ?? null,
     listOfficeMlsId: row.list_office_mls_id ?? null,
     listAgentMlsId: row.list_agent_mls_id ?? null,
   }))

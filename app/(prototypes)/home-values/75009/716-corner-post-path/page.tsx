@@ -397,13 +397,13 @@ export default async function PropertyPage() {
       <Section variant="tight" maxWidth="5xl">
         <div className="text-xs text-muted-foreground space-y-2 border-t border-border pt-6">
           <p>
+            <strong>MLS Data:</strong> Based on information from the North Texas Real Estate Information Systems, Inc. Listing information is deemed reliable but not guaranteed. This information is for consumers&apos; personal, non-commercial use and may not be used for any purpose other than to identify prospective properties consumers may be interested in purchasing.
+          </p>
+          <p>
             <strong>AVM Disclaimer:</strong> Automated Valuation Models (AVMs) provide estimates based on public records, recent sales, and statistical modeling. They do not account for property condition, renovations, or unique features. An AVM is a starting point — not a substitute for a professional pricing strategy.
           </p>
           <p>
             <strong>Fair Housing:</strong> We are committed to the letter and spirit of federal, state, and local fair housing law. We do not discriminate on the basis of race, color, religion, sex, handicap, familial status, national origin, sexual orientation, or gender identity.
-          </p>
-          <p>
-            Property data sourced from Collin County Appraisal District and NTREIS MLS. Data believed reliable but not guaranteed. Last updated {MARKET_STATS.period}.
           </p>
         </div>
       </Section>

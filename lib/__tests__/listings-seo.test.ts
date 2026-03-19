@@ -55,6 +55,8 @@ describe('transformListings', () => {
       latitude: 32.6716,
       longitude: -97.1426,
       concessions: 5000,
+      listOfficeName: null,
+      listAgentName: null,
       listOfficeMlsId: null,
       listAgentMlsId: null,
     })

@@ -23,6 +23,8 @@ const makeListing = (id: string, address: string): SeoListingProps => ({
   parking: null,
   dom: null,
   concessions: null,
+  listOfficeName: null,
+  listAgentName: null,
   listOfficeMlsId: null,
   listAgentMlsId: null,
 })

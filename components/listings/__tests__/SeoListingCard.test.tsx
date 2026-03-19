@@ -23,6 +23,8 @@ const baseListing: SeoListingProps = {
   latitude: 32.6716,
   longitude: -97.1426,
   concessions: null,
+  listOfficeName: null,
+  listAgentName: null,
   listOfficeMlsId: null,
   listAgentMlsId: null,
 }
