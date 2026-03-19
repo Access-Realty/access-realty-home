@@ -122,6 +122,35 @@ export function transformListings(data: any[]): SeoListingProps[] {
   }))
 }
 
+/**
+ * Enrich listings with agent names from mls_agents table.
+ * Fills in listAgentName for listings where bridge_raw_data didn't have it.
+ */
+async function enrichAgentNames(listings: SeoListingProps[]): Promise<SeoListingProps[]> {
+  // Find listings missing agent names but having MLS IDs
+  const needsLookup = listings.filter(l => !l.listAgentName && l.listAgentMlsId)
+  if (needsLookup.length === 0) return listings
+
+  const mlsIds = [...new Set(needsLookup.map(l => l.listAgentMlsId!))]
+
+  const { data } = await supabase
+    .from('mls_agents')
+    .select('member_mls_id, member_full_name')
+    .eq('mls_name', MLS_NAME)
+    .in('member_mls_id', mlsIds)
+
+  if (!data || data.length === 0) return listings
+
+  const nameMap = new globalThis.Map(data.map(a => [a.member_mls_id, a.member_full_name]))
+
+  return listings.map(l => {
+    if (!l.listAgentName && l.listAgentMlsId && nameMap.has(l.listAgentMlsId)) {
+      return { ...l, listAgentName: nameMap.get(l.listAgentMlsId)! }
+    }
+    return l
+  })
+}
+
 function baseQuery() {
   const twelveMonthsAgo = new Date(
     Date.now() - 365 * 24 * 60 * 60 * 1000
@@ -332,7 +361,8 @@ async function fetchAtRadius(
     console.warn(`Error fetching nearby ${type} listings:`, error)
     return []
   }
-  return transformListings(data ?? [])
+  const listings = transformListings(data ?? [])
+  return enrichAgentNames(listings)
 }
 
 export async function getClosedListingsByBoundingBox(
