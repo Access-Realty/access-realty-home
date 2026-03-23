@@ -1,5 +1,5 @@
 // ABOUTME: Prototype — County hub page for Tarrant County, TX
-// ABOUTME: LIVE market stats from MLS data + city breakdowns, tax context, editorial content
+// ABOUTME: LIVE market stats from MLS data — served on direct-list.com
 
 import Link from "next/link"
 import { Section } from "@/components/layout"
@@ -48,7 +48,7 @@ export default async function CountyHubPage() {
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-20 pb-2">
           <nav aria-label="Breadcrumb" className="text-sm">
             <ol className="flex flex-wrap items-center gap-1.5 text-primary-foreground/60">
-              <li><Link href="/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
+              <li><Link href="/direct-list/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
               <li className="before:content-['/'] before:mx-1.5 text-primary-foreground/90">Tarrant County</li>
             </ol>
           </nav>
@@ -134,17 +134,14 @@ export default async function CountyHubPage() {
         />
       </Section>
 
-      {/* City breakdown table — population stays hardcoded, market data is editorial placeholder */}
+      {/* City breakdown */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-6">Tarrant County by City</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          City-level breakdowns will be computed from the same MLS data once cron aggregation is in place.
-        </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {CITIES.map((city) => (
             <Link
               key={city.slug}
-              href={`/home-values/${city.slug}`}
+              href={`/direct-list/home-values/${city.slug}`}
               className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:border-primary/30 transition-all group"
             >
               <h3 className="text-base font-bold text-foreground group-hover:text-primary transition-colors">
