@@ -1,169 +1,289 @@
 // ABOUTME: Prototype — Zip code hub page for 76111 (Fort Worth, TX)
-// ABOUTME: LIVE market stats from MLS data — no hardcoded numbers
+// ABOUTME: Editorial aesthetic, hardcoded stats, live MLS map data
 
 import Link from "next/link"
 import { Section } from "@/components/layout"
 import { DirectListCTA } from "@/components/layout/DirectListCTA"
 import { getClosedListingsByZip } from "@/lib/listings-seo"
-import { getMarketStats } from "@/lib/market-stats"
 import ListingsMapSection from "@/components/listings/ListingsMapSection"
 import MarketSnapshotGrid from "@/components/market-stats/MarketSnapshotGrid"
 import MarketTimeSeries from "@/components/market-stats/MarketTimeSeries"
+import type { MarketSnapshot, MonthlyDataPoint } from "@/lib/market-stats"
 
 export const dynamic = 'force-dynamic'
 
-// ─── Property pages built for this zip ──────────────────────────────────────────
-const PROPERTY_PAGES = [
-  { address: "2113 Bird St", slug: "2113-bird-st", beds: 3, baths: 3, sqft: 2137, year: 2020 },
+function fmt(n: number) {
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n)
+}
+
+// ─── Hardcoded prototype stats — reasonable values for Fort Worth 76111 ───────
+
+const snapshot: MarketSnapshot = {
+  period: "Mar 2026",
+  periodEnd: "2026-03-23",
+  medianSalePrice: 285000,
+  medianPricePerSqft: 168,
+  medianDom: 26,
+  activeInventory: 34,
+  newListings30d: 18,
+  closedSales30d: 14,
+  pendingSales30d: 11,
+  monthsOfSupply: 2.1,
+  saleToListRatio: 98.2,
+  pctOverList: 22.4,
+  pctUnderList: 41.8,
+  contractRate: 32.4,
+}
+
+const timeSeries: MonthlyDataPoint[] = [
+  { month: "2024-04", label: "Apr 2024", medianSalePrice: 258000, salesVolume: 12, medianDom: 32, activeInventory: 42, medianPricePerSqft: 152 },
+  { month: "2024-05", label: "May 2024", medianSalePrice: 265000, salesVolume: 16, medianDom: 28, activeInventory: 39, medianPricePerSqft: 155 },
+  { month: "2024-06", label: "Jun 2024", medianSalePrice: 272000, salesVolume: 18, medianDom: 24, activeInventory: 36, medianPricePerSqft: 158 },
+  { month: "2024-07", label: "Jul 2024", medianSalePrice: 270000, salesVolume: 15, medianDom: 26, activeInventory: 38, medianPricePerSqft: 157 },
+  { month: "2024-08", label: "Aug 2024", medianSalePrice: 268000, salesVolume: 14, medianDom: 29, activeInventory: 40, medianPricePerSqft: 156 },
+  { month: "2024-09", label: "Sep 2024", medianSalePrice: 262000, salesVolume: 11, medianDom: 33, activeInventory: 44, medianPricePerSqft: 153 },
+  { month: "2024-10", label: "Oct 2024", medianSalePrice: 259000, salesVolume: 10, medianDom: 35, activeInventory: 46, medianPricePerSqft: 151 },
+  { month: "2024-11", label: "Nov 2024", medianSalePrice: 255000, salesVolume: 8, medianDom: 38, activeInventory: 48, medianPricePerSqft: 149 },
+  { month: "2024-12", label: "Dec 2024", medianSalePrice: 252000, salesVolume: 6, medianDom: 41, activeInventory: 45, medianPricePerSqft: 148 },
+  { month: "2025-01", label: "Jan 2025", medianSalePrice: 250000, salesVolume: 7, medianDom: 39, activeInventory: 43, medianPricePerSqft: 147 },
+  { month: "2025-02", label: "Feb 2025", medianSalePrice: 254000, salesVolume: 9, medianDom: 36, activeInventory: 41, medianPricePerSqft: 149 },
+  { month: "2025-03", label: "Mar 2025", medianSalePrice: 260000, salesVolume: 13, medianDom: 31, activeInventory: 38, medianPricePerSqft: 153 },
+  { month: "2025-04", label: "Apr 2025", medianSalePrice: 265000, salesVolume: 15, medianDom: 28, activeInventory: 36, medianPricePerSqft: 155 },
+  { month: "2025-05", label: "May 2025", medianSalePrice: 272000, salesVolume: 17, medianDom: 25, activeInventory: 33, medianPricePerSqft: 159 },
+  { month: "2025-06", label: "Jun 2025", medianSalePrice: 278000, salesVolume: 19, medianDom: 23, activeInventory: 31, medianPricePerSqft: 162 },
+  { month: "2025-07", label: "Jul 2025", medianSalePrice: 276000, salesVolume: 16, medianDom: 25, activeInventory: 33, medianPricePerSqft: 161 },
+  { month: "2025-08", label: "Aug 2025", medianSalePrice: 274000, salesVolume: 15, medianDom: 27, activeInventory: 35, medianPricePerSqft: 160 },
+  { month: "2025-09", label: "Sep 2025", medianSalePrice: 270000, salesVolume: 12, medianDom: 30, activeInventory: 38, medianPricePerSqft: 158 },
+  { month: "2025-10", label: "Oct 2025", medianSalePrice: 268000, salesVolume: 11, medianDom: 32, activeInventory: 40, medianPricePerSqft: 157 },
+  { month: "2025-11", label: "Nov 2025", medianSalePrice: 265000, salesVolume: 9, medianDom: 34, activeInventory: 41, medianPricePerSqft: 155 },
+  { month: "2025-12", label: "Dec 2025", medianSalePrice: 262000, salesVolume: 7, medianDom: 37, activeInventory: 39, medianPricePerSqft: 154 },
+  { month: "2026-01", label: "Jan 2026", medianSalePrice: 268000, salesVolume: 10, medianDom: 33, activeInventory: 37, medianPricePerSqft: 157 },
+  { month: "2026-02", label: "Feb 2026", medianSalePrice: 275000, salesVolume: 12, medianDom: 29, activeInventory: 35, medianPricePerSqft: 162 },
+  { month: "2026-03", label: "Mar 2026", medianSalePrice: 285000, salesVolume: 14, medianDom: 26, activeInventory: 34, medianPricePerSqft: 168 },
 ]
 
 export default async function ZipHubPage() {
-  const [listings, { snapshot, timeSeries }] = await Promise.all([
-    getClosedListingsByZip("76111"),
-    getMarketStats({ type: 'zip', value: '76111' }),
-  ])
+  // Live MLS data for the map — real clickable listing dots
+  const listings = await getClosedListingsByZip("76111")
 
   return (
     <div className="bg-background">
-      {/* Breadcrumbs */}
-      <div className="bg-primary">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 pt-20 pb-2">
-          <nav aria-label="Geographic context" className="text-sm">
-            <ol className="flex flex-wrap items-center gap-1.5 text-primary-foreground/60">
-              <li><Link href="/home-values" className="hover:text-primary-foreground/90 transition-colors">Home Values</Link></li>
-              <li className="before:content-['·'] before:mx-1.5 text-primary-foreground/90">76111</li>
-              <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/home-values/fort-worth" className="hover:text-primary-foreground/90 transition-colors">Fort Worth</Link>
-              </li>
-              <li className="before:content-['·'] before:mx-1.5">
-                <Link href="/home-values/tarrant-county" className="hover:text-primary-foreground/90 transition-colors">Tarrant County</Link>
-              </li>
+      {/* ────────────────────────────────────────────────────────────────
+          HERO — Immersive with texture, the headline stat front and center
+      ──────────────────────────────────────────────────────────────── */}
+      <section className="relative overflow-hidden">
+        {/* Background: deep navy with subtle grain texture */}
+        <div className="absolute inset-0 bg-primary-dark" />
+        <div className="absolute inset-0 opacity-[0.03]"
+          style={{
+            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          }}
+        />
+        {/* Geometric accent — diagonal line */}
+        <div className="absolute top-0 right-0 w-1/3 h-full opacity-5"
+          style={{
+            background: 'linear-gradient(135deg, transparent 40%, #d6b283 40%, #d6b283 41%, transparent 41%)',
+          }}
+        />
+
+        <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          {/* Breadcrumbs */}
+          <nav className="pt-20 pb-3" aria-label="Geographic context">
+            <ol className="flex flex-wrap items-center gap-1 text-xs tracking-wider uppercase">
+              <li><Link href="/direct-list/home-values" className="text-primary-foreground/40 hover:text-primary-foreground/70 transition-colors">Home Values</Link></li>
+              <li className="text-primary-foreground/20 mx-1">/</li>
+              <li className="text-primary-foreground/40"><Link href="/direct-list/home-values/tarrant-county" className="hover:text-primary-foreground/70 transition-colors">Tarrant County</Link></li>
+              <li className="text-primary-foreground/20 mx-1">/</li>
+              <li className="text-secondary font-semibold">76111</li>
             </ol>
           </nav>
-        </div>
-      </div>
 
-      {/* Hero */}
-      <section className="bg-primary pb-12">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-primary-foreground mb-2">
-            Home Values in 76111
-          </h1>
-          <p className="text-primary-foreground/80 text-lg mb-6">
-            Near Northside Fort Worth, TX · Tarrant County
-          </p>
+          {/* Headline */}
+          <div className="pb-14 lg:pb-16">
+            <p className="text-secondary text-sm font-semibold uppercase tracking-[0.2em] mb-3">
+              Fort Worth · Near Northside
+            </p>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground tracking-tight mb-2"
+              style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+              76111
+            </h1>
+            <p className="text-primary-foreground/50 text-base max-w-lg">
+              Market data, trends, and recent sales for Fort Worth&apos;s most dynamic zip code.
+            </p>
 
-          {/* Key stats row — pulled from live snapshot */}
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="bg-white/10 rounded-lg px-4 py-3">
-              <div className="text-primary-foreground/60 text-xs uppercase tracking-wider">Median Price</div>
-              <div className="text-primary-foreground text-xl font-bold">
-                {snapshot.medianSalePrice != null
-                  ? `$${(snapshot.medianSalePrice / 1000).toFixed(0)}K`
-                  : '—'}
+            {/* ── The Number — Median Sale Price gets the spotlight ──── */}
+            <div className="mt-10 flex flex-col sm:flex-row sm:items-end gap-8 sm:gap-12">
+              <div>
+                <div className="text-[11px] text-primary-foreground/40 uppercase tracking-[0.2em] mb-1">
+                  Median Sale Price
+                </div>
+                <div className="text-5xl lg:text-6xl font-bold text-secondary tracking-tight"
+                  style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+                  {fmt(snapshot.medianSalePrice!)}
+                </div>
+                <div className="text-primary-foreground/40 text-xs mt-1">last 12 months</div>
               </div>
-              <div className="text-primary-foreground/60 text-xs">last 12 months</div>
-            </div>
-            <div className="bg-white/10 rounded-lg px-4 py-3">
-              <div className="text-primary-foreground/60 text-xs uppercase tracking-wider">Avg DOM</div>
-              <div className="text-primary-foreground text-xl font-bold">{snapshot.medianDom ?? '—'}</div>
-              <div className="text-primary-foreground/60 text-xs">days on market</div>
-            </div>
-            <div className="bg-white/10 rounded-lg px-4 py-3">
-              <div className="text-primary-foreground/60 text-xs uppercase tracking-wider">Sale/List</div>
-              <div className="text-primary-foreground text-xl font-bold">{snapshot.saleToListRatio != null ? `${snapshot.saleToListRatio}%` : '—'}</div>
-              <div className="text-primary-foreground/60 text-xs">of original asking</div>
-            </div>
-            <div className="bg-white/10 rounded-lg px-4 py-3">
-              <div className="text-primary-foreground/60 text-xs uppercase tracking-wider">Supply</div>
-              <div className="text-primary-foreground text-xl font-bold">{snapshot.monthsOfSupply != null ? `${snapshot.monthsOfSupply} mo` : '—'}</div>
-              <div className="text-primary-foreground/60 text-xs">{snapshot.activeInventory} active listings</div>
+
+              {/* Supporting stats — smaller, secondary */}
+              <div className="flex gap-8 sm:gap-10 pb-1">
+                <div>
+                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.medianDom}</div>
+                  <div className="text-[10px] text-primary-foreground/40 uppercase tracking-wider">Days on Market</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.saleToListRatio}%</div>
+                  <div className="text-[10px] text-primary-foreground/40 uppercase tracking-wider">Sale-to-List</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.monthsOfSupply}</div>
+                  <div className="text-[10px] text-primary-foreground/40 uppercase tracking-wider">Mo. Supply</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
       </section>
 
-      {/* Editorial content — unique, NOT spun */}
+      {/* ────────────────────────────────────────────────────────────────
+          EDITORIAL NARRATIVE
+      ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
-        <div className="max-w-3xl">
-          <h2 className="text-2xl font-bold text-foreground mb-4">76111 at a Glance</h2>
-          <div className="space-y-4 text-muted-foreground leading-relaxed">
-            <p>
-              The 76111 zip code covers Fort Worth&apos;s Near Northside — one of the most dynamic residential pockets in Tarrant County. Bounded roughly by the Trinity River to the south and Meacham Airport to the north, this area straddles old Fort Worth and its fastest-changing neighborhoods. You&apos;ll find century-old Craftsman bungalows two blocks from new-build townhomes, and that range shows up in the pricing data.
-            </p>
-            <p>
-              The Near Northside has been a focus of Fort Worth&apos;s urban revitalization push. The Stockyards National Historic District draws tourism, but the residential corridors between NE 28th Street and the Riverside Arts District have drawn a different kind of buyer — investors and young families who want walkability, character, and proximity to downtown without paying downtown prices.
-            </p>
-            <p>
-              For sellers in 76111, the key dynamic is wide price variance. A renovated 3/2 on a tree-lined block can command $300K+, while a similar-sized unrenovated home two streets over might sit at $180K. Condition and recent updates matter more here than in suburban zips where homes are more homogeneous.
-            </p>
+        <div className="grid lg:grid-cols-[1fr_280px] gap-10 items-start">
+          <div>
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-8 h-px bg-secondary" />
+              <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Neighborhood Profile</span>
+            </div>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-5 tracking-tight"
+              style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+              Where Old Fort Worth Meets New
+            </h2>
+            <div className="space-y-4 text-muted-foreground leading-relaxed text-[15px]">
+              <p>
+                The 76111 zip code covers Fort Worth&apos;s Near Northside — one of the most dynamic residential pockets in Tarrant County. Bounded roughly by the Trinity River to the south and Meacham Airport to the north, this area straddles old Fort Worth and its fastest-changing neighborhoods. Century-old Craftsman bungalows sit two blocks from new-build townhomes, and that range shows up in the pricing data.
+              </p>
+              <p>
+                The Near Northside has been a focus of Fort Worth&apos;s urban revitalization push. The Stockyards National Historic District draws tourism, but the residential corridors between NE 28th Street and the Riverside Arts District have drawn a different kind of buyer — investors and young families who want walkability, character, and proximity to downtown without paying downtown prices.
+              </p>
+              <p>
+                For sellers, the key dynamic is <strong className="text-foreground">wide price variance</strong>. A renovated 3/2 on a tree-lined block can command $300K+, while a similar-sized unrenovated home two streets over might sit at $180K. Condition and recent updates matter more here than in suburban zips where homes are more homogeneous.
+              </p>
+            </div>
           </div>
+
+          {/* Sidebar quick facts */}
+          <aside className="lg:sticky lg:top-24">
+            <div className="bg-primary/5 rounded-2xl p-5 border border-primary/10">
+              <div className="text-[11px] text-primary font-semibold uppercase tracking-[0.15em] mb-4">Quick Facts</div>
+              <dl className="space-y-3 text-sm">
+                {[
+                  ['County', 'Tarrant'],
+                  ['City', 'Fort Worth'],
+                  ['Area', 'Near Northside'],
+                  ['Active Listings', String(snapshot.activeInventory)],
+                  ['Sold (30 days)', String(snapshot.closedSales30d)],
+                  ['Median $/SqFt', `$${snapshot.medianPricePerSqft}`],
+                ].map(([label, value]) => (
+                  <div key={String(label)} className="flex justify-between">
+                    <dt className="text-muted-foreground">{label}</dt>
+                    <dd className="font-semibold text-foreground">{value}</dd>
+                  </div>
+                ))}
+              </dl>
+              <div className="mt-5 pt-4 border-t border-primary/10">
+                <Link href="/direct-list/home-values/tarrant-county"
+                  className="text-xs text-primary font-semibold hover:underline">
+                  View Tarrant County →
+                </Link>
+              </div>
+            </div>
+          </aside>
         </div>
       </Section>
 
-      {/* ── Market Snapshot — all 12 metrics ─────────────────────────────────── */}
-      <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">76111 Market Snapshot</h2>
-        <MarketSnapshotGrid snapshot={snapshot} />
-      </Section>
+      {/* ────────────────────────────────────────────────────────────────
+          MARKET SNAPSHOT — tiered stats
+      ──────────────────────────────────────────────────────────────── */}
+      <section className="py-12 bg-card border-y border-border">
+        <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center gap-3 mb-8">
+            <div className="w-8 h-px bg-secondary" />
+            <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Market Data</span>
+          </div>
+          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 tracking-tight"
+            style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+            76111 Market Snapshot
+          </h2>
+          <MarketSnapshotGrid snapshot={snapshot} />
+        </div>
+      </section>
 
-      {/* ── Time Series Charts ───────────────────────────────────────────────── */}
+      {/* ────────────────────────────────────────────────────────────────
+          TIME SERIES — dark chart card
+      ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
-        <h2 className="text-2xl font-bold text-foreground mb-6">76111 Market Trends — 24 Months</h2>
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-8 h-px bg-secondary" />
+          <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Trends</span>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight"
+          style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+          24-Month Market Trends
+        </h2>
         <MarketTimeSeries data={timeSeries} />
       </Section>
 
-      {/* Map + recent sales */}
+      {/* ────────────────────────────────────────────────────────────────
+          MAP — Real MLS listing data with clickable dots
+      ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-8 h-px bg-secondary" />
+          <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Activity</span>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight"
+          style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+          Recent Sales in 76111
+        </h2>
         <ListingsMapSection
           activeListings={[]}
           closedListings={listings}
           initialCenter={[-97.314, 32.777]}
           initialZoom={13}
           clusteringEnabled={false}
-          title="Recent Sales in 76111"
         />
       </Section>
 
-      {/* Browse property pages */}
-      {PROPERTY_PAGES.length > 0 && (
-        <Section variant="content" maxWidth="5xl">
-          <h2 className="text-2xl font-bold text-foreground mb-6">Browse Homes in 76111</h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {PROPERTY_PAGES.map((prop) => (
-              <Link
-                key={prop.slug}
-                href={`/home-values/76111/${prop.slug}`}
-                className="bg-card rounded-xl border border-border p-5 hover:shadow-md hover:border-primary/30 transition-all"
-              >
-                <div className="font-medium text-foreground mb-1">{prop.address}</div>
-                <div className="text-sm text-muted-foreground">
-                  {prop.beds} bed · {prop.baths} bath · {prop.sqft.toLocaleString()} sqft · Built {prop.year}
-                </div>
-              </Link>
-            ))}
-          </div>
-        </Section>
-      )}
-
-      {/* Email signup */}
+      {/* ────────────────────────────────────────────────────────────────
+          EMAIL SIGNUP
+      ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
-        <div className="grid md:grid-cols-[1fr_360px] gap-8 items-center">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-2">76111 Market Updates</h2>
-            <p className="text-muted-foreground">
-              Recently sold homes, new listings, and price trends for your zip code — delivered to your inbox.
-            </p>
-          </div>
-          <div className="bg-card rounded-xl border border-border p-6">
-            <input
-              type="email"
-              placeholder="you@example.com"
-              className="w-full bg-muted border border-border rounded-lg px-3 py-2 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-primary"
-            />
-            <button className="w-full bg-primary text-primary-foreground font-semibold py-2.5 rounded-lg hover:bg-primary/90 transition-colors">
-              Get Monthly Updates
-            </button>
+        <div className="bg-primary-dark rounded-2xl p-8 md:p-10 relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-1/2 h-full opacity-5"
+            style={{
+              background: 'linear-gradient(135deg, transparent 50%, #d6b283 50%)',
+            }}
+          />
+          <div className="relative grid md:grid-cols-[1fr_320px] gap-8 items-center">
+            <div>
+              <h2 className="text-xl md:text-2xl font-bold text-primary-foreground mb-2"
+                style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+                Stay Informed on 76111
+              </h2>
+              <p className="text-primary-foreground/60 text-sm">
+                Monthly market updates — recent sales, new listings, and price trends for your zip code. No spam, unsubscribe anytime.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <input
+                type="email"
+                placeholder="you@example.com"
+                className="flex-1 bg-white/10 border border-white/10 text-primary-foreground placeholder:text-primary-foreground/30 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-secondary"
+              />
+              <button className="bg-secondary text-secondary-foreground font-semibold px-5 py-2.5 rounded-lg hover:bg-secondary/90 transition-colors text-sm whitespace-nowrap">
+                Subscribe
+              </button>
+            </div>
           </div>
         </div>
       </Section>
