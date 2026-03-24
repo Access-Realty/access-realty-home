@@ -1,22 +1,22 @@
 // ABOUTME: Prototype — Zip code hub page for 76111 (Fort Worth, TX)
-// ABOUTME: Editorial Real Estate aesthetic — visual rhythm, tiered stats, personality
+// ABOUTME: Editorial aesthetic, hardcoded stats, live MLS map data
 
 import Link from "next/link"
 import { Section } from "@/components/layout"
 import { DirectListCTA } from "@/components/layout/DirectListCTA"
+import { getClosedListingsByZip } from "@/lib/listings-seo"
+import ListingsMapSection from "@/components/listings/ListingsMapSection"
 import MarketSnapshotGrid from "@/components/market-stats/MarketSnapshotGrid"
 import MarketTimeSeries from "@/components/market-stats/MarketTimeSeries"
 import type { MarketSnapshot, MonthlyDataPoint } from "@/lib/market-stats"
 
-const PROPERTY_PAGES = [
-  { address: "2113 Bird St", slug: "2113-bird-st", beds: 3, baths: 3, sqft: 2137, year: 2020 },
-]
+export const dynamic = 'force-dynamic'
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n)
 }
 
-// ─── Hardcoded prototype data — reasonable values for Fort Worth 76111 ────────
+// ─── Hardcoded prototype stats — reasonable values for Fort Worth 76111 ───────
 
 const snapshot: MarketSnapshot = {
   period: "Mar 2026",
@@ -62,7 +62,9 @@ const timeSeries: MonthlyDataPoint[] = [
   { month: "2026-03", label: "Mar 2026", medianSalePrice: 285000, salesVolume: 14, medianDom: 26, activeInventory: 34, medianPricePerSqft: 168 },
 ]
 
-export default function ZipHubPage() {
+export default async function ZipHubPage() {
+  // Live MLS data for the map — real clickable listing dots
+  const listings = await getClosedListingsByZip("76111")
 
   return (
     <div className="bg-background">
@@ -117,9 +119,7 @@ export default function ZipHubPage() {
                 </div>
                 <div className="text-5xl lg:text-6xl font-bold text-secondary tracking-tight"
                   style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
-                  {snapshot.medianSalePrice != null
-                    ? fmt(snapshot.medianSalePrice)
-                    : '—'}
+                  {fmt(snapshot.medianSalePrice!)}
                 </div>
                 <div className="text-primary-foreground/40 text-xs mt-1">last 12 months</div>
               </div>
@@ -127,19 +127,15 @@ export default function ZipHubPage() {
               {/* Supporting stats — smaller, secondary */}
               <div className="flex gap-8 sm:gap-10 pb-1">
                 <div>
-                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.medianDom ?? '—'}</div>
+                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.medianDom}</div>
                   <div className="text-[10px] text-primary-foreground/40 uppercase tracking-wider">Days on Market</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary-foreground">
-                    {snapshot.saleToListRatio != null ? `${snapshot.saleToListRatio}%` : '—'}
-                  </div>
+                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.saleToListRatio}%</div>
                   <div className="text-[10px] text-primary-foreground/40 uppercase tracking-wider">Sale-to-List</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-primary-foreground">
-                    {snapshot.monthsOfSupply != null ? `${snapshot.monthsOfSupply}` : '—'}
-                  </div>
+                  <div className="text-2xl font-bold text-primary-foreground">{snapshot.monthsOfSupply}</div>
                   <div className="text-[10px] text-primary-foreground/40 uppercase tracking-wider">Mo. Supply</div>
                 </div>
               </div>
@@ -149,7 +145,7 @@ export default function ZipHubPage() {
       </section>
 
       {/* ────────────────────────────────────────────────────────────────
-          EDITORIAL NARRATIVE — the storytelling that gives this page soul
+          EDITORIAL NARRATIVE
       ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="grid lg:grid-cols-[1fr_280px] gap-10 items-start">
@@ -186,7 +182,7 @@ export default function ZipHubPage() {
                   ['Area', 'Near Northside'],
                   ['Active Listings', String(snapshot.activeInventory)],
                   ['Sold (30 days)', String(snapshot.closedSales30d)],
-                  ['Median $/SqFt', snapshot.medianPricePerSqft != null ? `$${snapshot.medianPricePerSqft}` : '—'],
+                  ['Median $/SqFt', `$${snapshot.medianPricePerSqft}`],
                 ].map(([label, value]) => (
                   <div key={String(label)} className="flex justify-between">
                     <dt className="text-muted-foreground">{label}</dt>
@@ -206,7 +202,7 @@ export default function ZipHubPage() {
       </Section>
 
       {/* ────────────────────────────────────────────────────────────────
-          MARKET SNAPSHOT — tiered stats with visual hierarchy
+          MARKET SNAPSHOT — tiered stats
       ──────────────────────────────────────────────────────────────── */}
       <section className="py-12 bg-card border-y border-border">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
@@ -223,7 +219,7 @@ export default function ZipHubPage() {
       </section>
 
       {/* ────────────────────────────────────────────────────────────────
-          TIME SERIES — dark chart card with gold accent lines
+          TIME SERIES — dark chart card
       ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="flex items-center gap-3 mb-8">
@@ -237,48 +233,32 @@ export default function ZipHubPage() {
         <MarketTimeSeries data={timeSeries} />
       </Section>
 
-      {/* MAP section removed — will use pre-computed data when available */}
-
       {/* ────────────────────────────────────────────────────────────────
-          BROWSE HOMES — property page links
+          MAP — Real MLS listing data with clickable dots
       ──────────────────────────────────────────────────────────────── */}
-      {PROPERTY_PAGES.length > 0 && (
-        <section className="py-12 bg-card border-y border-border">
-          <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-            <div className="flex items-center gap-3 mb-8">
-              <div className="w-8 h-px bg-secondary" />
-              <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Properties</span>
-            </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight"
-              style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
-              Browse Homes in 76111
-            </h2>
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-              {PROPERTY_PAGES.map((prop) => (
-                <Link
-                  key={prop.slug}
-                  href={`/direct-list/home-values/76111/${prop.slug}`}
-                  className="group bg-background rounded-xl border border-border p-5 hover:border-secondary/50 hover:shadow-lg transition-all duration-200"
-                >
-                  <div className="font-semibold text-foreground group-hover:text-primary transition-colors mb-1">
-                    {prop.address}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    {prop.beds} bed · {prop.baths} bath · {prop.sqft.toLocaleString()} sqft · Built {prop.year}
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      <Section variant="content" maxWidth="5xl">
+        <div className="flex items-center gap-3 mb-8">
+          <div className="w-8 h-px bg-secondary" />
+          <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Activity</span>
+        </div>
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight"
+          style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+          Recent Sales in 76111
+        </h2>
+        <ListingsMapSection
+          activeListings={[]}
+          closedListings={listings}
+          initialCenter={[-97.314, 32.777]}
+          initialZoom={13}
+          clusteringEnabled={false}
+        />
+      </Section>
 
       {/* ────────────────────────────────────────────────────────────────
-          EMAIL SIGNUP — refined, not desperate
+          EMAIL SIGNUP
       ──────────────────────────────────────────────────────────────── */}
       <Section variant="content" maxWidth="5xl">
         <div className="bg-primary-dark rounded-2xl p-8 md:p-10 relative overflow-hidden">
-          {/* Subtle diagonal accent */}
           <div className="absolute top-0 right-0 w-1/2 h-full opacity-5"
             style={{
               background: 'linear-gradient(135deg, transparent 50%, #d6b283 50%)',
