@@ -1,5 +1,5 @@
-// ABOUTME: Display grid for the 12 snapshot market metrics
-// ABOUTME: Server component — no client interactivity needed
+// ABOUTME: Editorial-style market snapshot display with tiered visual hierarchy
+// ABOUTME: Hero stats get prominence, supporting metrics in a compact grid
 
 import type { MarketSnapshot } from '@/lib/market-stats'
 
@@ -23,26 +23,10 @@ function fmtNum(n: number | null): string {
 }
 
 function marketTemperature(monthsOfSupply: number | null) {
-  if (monthsOfSupply == null) return { label: 'Insufficient Data', color: 'text-muted-foreground', bg: 'bg-muted' }
-  if (monthsOfSupply < 3) return { label: "Seller's Market", color: 'text-success', bg: 'bg-success/10' }
-  if (monthsOfSupply < 5) return { label: 'Balanced Market', color: 'text-amber-600', bg: 'bg-amber-50' }
-  return { label: "Buyer's Market", color: 'text-sky-600', bg: 'bg-sky-50' }
-}
-
-interface StatCardProps {
-  label: string
-  value: string
-  sub?: string
-}
-
-function StatCard({ label, value, sub }: StatCardProps) {
-  return (
-    <div className="bg-card rounded-xl border border-border p-4">
-      <div className="text-xs text-muted-foreground uppercase tracking-wider mb-1">{label}</div>
-      <div className="text-xl font-bold text-foreground">{value}</div>
-      {sub && <div className="text-xs text-muted-foreground mt-0.5">{sub}</div>}
-    </div>
-  )
+  if (monthsOfSupply == null) return { label: 'Insufficient Data', emoji: '·', color: 'text-muted-foreground', accent: 'border-border' }
+  if (monthsOfSupply < 3) return { label: "Seller's Market", emoji: '↑', color: 'text-success', accent: 'border-success' }
+  if (monthsOfSupply < 5) return { label: 'Balanced Market', emoji: '→', color: 'text-amber-600', accent: 'border-amber-500' }
+  return { label: "Buyer's Market", emoji: '↓', color: 'text-sky-600', accent: 'border-sky-500' }
 }
 
 export default function MarketSnapshotGrid({ snapshot }: { snapshot: MarketSnapshot }) {
@@ -51,49 +35,80 @@ export default function MarketSnapshotGrid({ snapshot }: { snapshot: MarketSnaps
 
   return (
     <div>
-      {/* Market temperature badge */}
-      <div className={`inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium ${temp.color} ${temp.bg} mb-6`}>
-        <span className="relative flex h-2.5 w-2.5">
-          <span className={`absolute inline-flex h-full w-full rounded-full opacity-75 ${
-            temp.color === 'text-success' ? 'bg-success' :
-            temp.color === 'text-amber-600' ? 'bg-amber-500' :
-            temp.color === 'text-sky-600' ? 'bg-sky-500' : 'bg-gray-400'
-          }`} />
-          <span className={`relative inline-flex rounded-full h-2.5 w-2.5 ${
-            temp.color === 'text-success' ? 'bg-success' :
-            temp.color === 'text-amber-600' ? 'bg-amber-500' :
-            temp.color === 'text-sky-600' ? 'bg-sky-500' : 'bg-gray-400'
-          }`} />
-        </span>
-        {temp.label}{s.monthsOfSupply != null && ` · ${s.monthsOfSupply} months of supply`}
+      {/* ── Market Temperature ────────────────────────────────────────── */}
+      <div className={`border-l-4 ${temp.accent} pl-4 mb-8`}>
+        <div className={`text-sm font-semibold ${temp.color} uppercase tracking-widest`}>
+          {temp.emoji} {temp.label}
+        </div>
+        <div className="text-sm text-muted-foreground mt-0.5">
+          {s.monthsOfSupply != null ? `${s.monthsOfSupply} months of supply` : 'Not enough data to determine'} · Data through {s.period}
+        </div>
       </div>
 
-      {/* Headline metrics — 4 across */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-        <StatCard label="Median Sale Price" value={fmt(s.medianSalePrice)} sub="last 12 months" />
-        <StatCard label="Median $/SqFt" value={s.medianPricePerSqft != null ? `$${s.medianPricePerSqft}` : '—'} sub="last 12 months" />
-        <StatCard label="Median Days on Market" value={s.medianDom != null ? `${s.medianDom} days` : '—'} sub="list to contract" />
-        <StatCard label="Sale-to-List Ratio" value={fmtPct(s.saleToListRatio)} sub="sold price vs. original ask" />
+      {/* ── Hero Stats — the numbers people came for ──────────────────── */}
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-px bg-border rounded-2xl overflow-hidden mb-6">
+        {[
+          {
+            label: 'Median Sale Price',
+            value: fmt(s.medianSalePrice),
+            sub: 'last 12 months',
+            highlight: true,
+          },
+          {
+            label: 'Price per Sq Ft',
+            value: s.medianPricePerSqft != null ? `$${s.medianPricePerSqft}` : '—',
+            sub: 'median $/sqft',
+            highlight: false,
+          },
+          {
+            label: 'Days on Market',
+            value: s.medianDom != null ? `${s.medianDom}` : '—',
+            sub: 'list to contract',
+            highlight: false,
+          },
+          {
+            label: 'Sale-to-List',
+            value: fmtPct(s.saleToListRatio),
+            sub: 'of original asking',
+            highlight: false,
+          },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-card p-5 lg:p-6">
+            <div className="text-[11px] text-muted-foreground uppercase tracking-widest font-medium mb-2">
+              {stat.label}
+            </div>
+            <div className={`text-2xl lg:text-3xl font-bold tracking-tight ${
+              stat.highlight ? 'text-primary' : 'text-foreground'
+            }`} style={stat.highlight ? { fontFamily: 'var(--font-cormorant), Georgia, serif' } : undefined}>
+              {stat.value}
+            </div>
+            <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Activity metrics — 4 across */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-3">
-        <StatCard label="Active Listings" value={fmtNum(s.activeInventory)} sub="currently on market" />
-        <StatCard label="New Listings" value={fmtNum(s.newListings30d)} sub="last 30 days" />
-        <StatCard label="Closed Sales" value={fmtNum(s.closedSales30d)} sub="last 30 days" />
-        <StatCard label="Pending Sales" value={fmtNum(s.pendingSales30d)} sub="last 30 days" />
+      {/* ── Activity & Dynamics — compact two-row grid ────────────────── */}
+      <div className="grid grid-cols-4 lg:grid-cols-8 gap-px bg-border/50 rounded-xl overflow-hidden">
+        {[
+          { label: 'Active', value: fmtNum(s.activeInventory), sub: 'listings' },
+          { label: 'New', value: fmtNum(s.newListings30d), sub: '30 days' },
+          { label: 'Closed', value: fmtNum(s.closedSales30d), sub: '30 days' },
+          { label: 'Pending', value: fmtNum(s.pendingSales30d), sub: '30 days' },
+          { label: 'Supply', value: s.monthsOfSupply != null ? `${s.monthsOfSupply}` : '—', sub: 'months' },
+          { label: 'Contract Rate', value: fmtPct(s.contractRate), sub: 'monthly' },
+          { label: 'Over List', value: fmtPct(s.pctOverList), sub: 'sold above' },
+          { label: 'Under List', value: fmtPct(s.pctUnderList), sub: 'sold below' },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-card/80 px-3 py-3.5 text-center">
+            <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{stat.label}</div>
+            <div className="text-lg font-bold text-foreground mt-0.5">{stat.value}</div>
+            <div className="text-[10px] text-muted-foreground">{stat.sub}</div>
+          </div>
+        ))}
       </div>
 
-      {/* Market dynamics — 4 across */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <StatCard label="Months of Supply" value={s.monthsOfSupply != null ? `${s.monthsOfSupply}` : '—'} sub="lower = hotter market" />
-        <StatCard label="Contract Rate" value={fmtPct(s.contractRate)} sub="monthly pending / active" />
-        <StatCard label="Sold Over List" value={fmtPct(s.pctOverList)} sub="above original ask" />
-        <StatCard label="Sold Under List" value={fmtPct(s.pctUnderList)} sub="below original ask" />
-      </div>
-
-      <p className="text-xs text-muted-foreground mt-4">
-        Data through {s.period}. Source: NTREIS MLS. Excludes leases.
+      <p className="text-[11px] text-muted-foreground mt-4 tracking-wide">
+        Source: NTREIS MLS · Excludes leases · {s.period}
       </p>
     </div>
   )
