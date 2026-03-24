@@ -72,12 +72,11 @@ const nextConfig: NextConfig = {
 export default withSentryConfig(nextConfig, {
   org: process.env.SENTRY_ORG,
   project: process.env.SENTRY_PROJECT,
-
-  // Only print logs for uploading source maps in CI
   silent: !process.env.CI,
+  telemetry: false,
 
-  // Disable release lifecycle to prevent deploy notifications in Sentry.
-  // Source maps are still uploaded and associated automatically.
+  // Source maps only — no release lifecycle, no deploy emails.
+  // Matches the approach in the app repo's Sentry Vite plugin.
   release: {
     create: false,
     finalize: false,
