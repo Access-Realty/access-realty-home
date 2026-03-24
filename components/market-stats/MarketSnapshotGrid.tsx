@@ -79,7 +79,7 @@ export default function MarketSnapshotGrid({ snapshot }: { snapshot: MarketSnaps
             </div>
             <div className={`text-2xl lg:text-3xl font-bold tracking-tight ${
               stat.highlight ? 'text-primary' : 'text-foreground'
-            }`} style={stat.highlight ? { fontFamily: 'var(--font-cormorant), Georgia, serif' } : undefined}>
+            }`}>
               {stat.value}
             </div>
             <div className="text-xs text-muted-foreground mt-1">{stat.sub}</div>

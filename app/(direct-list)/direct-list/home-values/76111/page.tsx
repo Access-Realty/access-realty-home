@@ -110,8 +110,7 @@ export default async function ZipHubPage() {
             <p className="text-secondary text-sm font-semibold uppercase tracking-[0.2em] mb-3">
               Fort Worth · Near Northside
             </p>
-            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground tracking-tight mb-2"
-              style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold text-primary-foreground tracking-tight mb-2">
               76111
             </h1>
             <p className="text-primary-foreground/50 text-base max-w-lg">
@@ -125,7 +124,7 @@ export default async function ZipHubPage() {
                   Median Sale Price
                 </div>
                 <div className="text-5xl lg:text-6xl font-bold text-secondary tracking-tight"
-                  style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+      >
                   {fmt(snapshot.medianSalePrice!)}
                 </div>
                 <div className="text-primary-foreground/40 text-xs mt-1">last 12 months</div>
@@ -161,8 +160,7 @@ export default async function ZipHubPage() {
               <div className="w-8 h-px bg-secondary" />
               <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Neighborhood Profile</span>
             </div>
-            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-5 tracking-tight"
-              style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+            <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-5 tracking-tight">
               Where Old Fort Worth Meets New
             </h2>
             <div className="space-y-4 text-muted-foreground leading-relaxed text-[15px]">
@@ -218,7 +216,7 @@ export default async function ZipHubPage() {
             <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Market Data</span>
           </div>
           <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-8 tracking-tight"
-            style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+>
             76111 Market Snapshot
           </h2>
           <MarketSnapshotGrid snapshot={snapshot} />
@@ -234,7 +232,7 @@ export default async function ZipHubPage() {
           <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Trends</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight"
-          style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+>
           24-Month Market Trends
         </h2>
         <MarketTimeSeries data={timeSeries} />
@@ -249,7 +247,7 @@ export default async function ZipHubPage() {
           <span className="text-[11px] text-secondary font-semibold uppercase tracking-[0.2em]">Activity</span>
         </div>
         <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-6 tracking-tight"
-          style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+>
           Recent Sales in 76111
         </h2>
         <ListingsMapSection
@@ -276,7 +274,7 @@ export default async function ZipHubPage() {
           <div className="relative grid md:grid-cols-[1fr_320px] gap-8 items-center">
             <div>
               <h2 className="text-xl md:text-2xl font-bold text-primary-foreground mb-2"
-                style={{ fontFamily: 'var(--font-cormorant), Georgia, serif' }}>
+    >
                 Stay Informed on 76111
               </h2>
               <p className="text-primary-foreground/60 text-sm">
