@@ -115,26 +115,30 @@ export default function InvestorsPage() {
       </Section>
 
       {/* Side-by-Side Pricing */}
-      <Section variant="content" maxWidth="4xl">
+      <Section variant="content" maxWidth="5xl">
         <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
-            A Smarter Way for Investors to List
+          <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-2">
+            Real Estate Investors Get Special Pricing
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Our investor program includes everything needed to list and sell on
-            MLS&mdash;without charging for services most investors never use.
+            Most sellers pay <span className="font-semibold text-foreground">$2,995</span> to
+            list on MLS. But active investors qualify for{" "}
+            <span className="font-semibold text-foreground">discounted pricing</span>.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* DirectList for Homeowners */}
-          <div className="rounded-xl border-2 border-border shadow-md overflow-hidden bg-card flex flex-col">
-            <div className="p-6 text-center bg-primary/5">
-              <h3 className="text-2xl font-semibold mb-1">
+        <div className="grid md:grid-cols-7 gap-4 md:gap-6 items-center">
+          {/* Standard Listing — passive reference */}
+          <div className="md:col-span-3 rounded-xl border border-border/60 shadow-sm overflow-hidden bg-card/80 flex flex-col opacity-85 order-2 md:order-1">
+            <div className="p-5 text-center bg-primary/5">
+              <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-2">
+                Standard Listing Package
+              </p>
+              <h3 className="text-lg font-semibold mb-1">
                 <StyledTierName name="DirectList" />
               </h3>
               <p
-                className="text-sm font-bold text-primary"
+                className="text-sm font-bold text-primary/70"
                 style={{
                   fontFamily:
                     "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
@@ -142,51 +146,50 @@ export default function InvestorsPage() {
               >
                 for Homeowners
               </p>
-              <p className="text-sm italic text-primary/70 mt-1">
-                Standard Listing Package
-              </p>
-              <div className="text-3xl font-bold text-primary mt-2">
+              <div className="text-2xl font-bold text-primary/70 mt-2">
                 $2,995
               </div>
             </div>
-            <div className="p-6 flex-grow">
-              <p className="text-sm font-medium text-muted-foreground mb-4">
+            <div className="p-5 flex-grow">
+              <p className="text-xs font-medium text-muted-foreground mb-3">
                 Everything you need to list on MLS
               </p>
-              <ul className="space-y-3">
+              <ul className="space-y-2">
                 {[
                   "MLS Listing + Syndication",
                   "Professional Photography",
-                  "Professionally Guided Pricing Strategy",
+                  "Guided Pricing Strategy",
                   "Digital Document Signing",
                   "Lockbox & Yard Sign",
                   "Showings via ShowingTime",
-                  "Recurring Market Assessments",
-                  "On Demand Services Available",
+                  "Market Assessments",
+                  "On Demand Services",
                 ].map((feature) => (
                   <li
                     key={feature}
-                    className="flex items-start gap-2 text-sm"
+                    className="flex items-start gap-2 text-xs text-muted-foreground"
                   >
-                    <HiCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                    <HiCheck className="h-4 w-4 text-muted-foreground/50 shrink-0 mt-0.5" />
                     <span>{feature}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="p-6 pt-0 text-center">
-              <Link
-                href={bp("/direct-list/get-started")}
-                className="inline-flex items-center justify-center px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
-              >
-                Get Started Today
-              </Link>
-            </div>
           </div>
 
-          {/* DirectList for Investors */}
-          <div className="rounded-xl border-2 border-secondary shadow-md overflow-hidden bg-card flex flex-col">
-            <div className="p-6 text-center bg-secondary/15">
+          {/* Investor Advantage — dominant card */}
+          <div className="md:col-span-4 relative mt-4 z-10 order-1 md:order-2">
+            {/* Investor Advantage badge */}
+            <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20">
+              <span className="inline-block bg-secondary text-secondary-foreground text-xs font-bold uppercase tracking-wider px-4 py-1.5 rounded-full shadow-md">
+                Investor Advantage
+              </span>
+            </div>
+            <div className="rounded-xl border-2 border-secondary shadow-xl bg-card flex flex-col overflow-hidden md:scale-[1.03]">
+            <div className="p-6 pt-8 text-center bg-secondary/15">
+              <p className="text-xs font-semibold uppercase tracking-wider text-secondary-foreground/80 mb-2">
+                Pay Less
+              </p>
               <h3 className="text-2xl font-semibold mb-1">
                 <StyledTierName name="DirectList" />
               </h3>
@@ -199,11 +202,13 @@ export default function InvestorsPage() {
               >
                 for Investors
               </p>
-              <p className="text-sm italic text-primary/70 mt-1">
-                Investor Pricing Available
-              </p>
-              <div className="text-3xl font-bold text-muted-foreground line-through mt-2">
-                $2,995
+              <div className="mt-2 flex flex-col items-center gap-1">
+                <span className="text-xl text-muted-foreground" style={{ textDecorationLine: 'line-through', textDecorationThickness: '3px' }}>
+                  $2,995
+                </span>
+                <span className="text-sm font-semibold text-primary/80 mt-1">
+                  Investor Pricing Available
+                </span>
               </div>
             </div>
             <div className="p-6 flex-grow">
@@ -213,11 +218,11 @@ export default function InvestorsPage() {
               </p>
               <ul className="space-y-3">
                 {[
-                  "MLS Listing + Syndication",
-                  "Professional Photography",
-                  "Digital Document Signing",
-                  "Lockbox & Yard Sign",
-                  "Showings via ShowingTime",
+                  "Same MLS Exposure & Syndication",
+                  "Same Professional Photography",
+                  "Same Showing System",
+                  "Same Contracts & Documents",
+                  "Same Lockbox & Yard Sign",
                   "On Demand Services Available",
                 ].map((feature) => (
                   <li
@@ -225,7 +230,7 @@ export default function InvestorsPage() {
                     className="flex items-start gap-2 text-sm"
                   >
                     <HiCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
-                    <span>{feature}</span>
+                    <span className="font-medium">{feature}</span>
                   </li>
                 ))}
               </ul>
@@ -233,10 +238,15 @@ export default function InvestorsPage() {
             <div className="p-6 pt-0 text-center">
               <Link
                 href={bp("/direct-list/investors/book")}
-                className="inline-flex items-center justify-center px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity text-base"
               >
-                See if you Qualify
+                <HiPhone className="h-5 w-5" />
+                Book a Call to Unlock Pricing
               </Link>
+              <p className="text-xs text-muted-foreground mt-2">
+                Just priced for investors.
+              </p>
+            </div>
             </div>
           </div>
         </div>
