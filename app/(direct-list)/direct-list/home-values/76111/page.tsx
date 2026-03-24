@@ -1,6 +1,7 @@
 // ABOUTME: Prototype — Zip code hub page for 76111 (Fort Worth, TX)
 // ABOUTME: Editorial aesthetic, hardcoded stats, live MLS map data
 
+import type { Metadata } from "next"
 import Link from "next/link"
 import { Section } from "@/components/layout"
 import { DirectListCTA } from "@/components/layout/DirectListCTA"
@@ -12,6 +13,22 @@ import ZipHeroMap from "@/components/market-stats/ZipHeroMap"
 import type { MarketSnapshot, MonthlyDataPoint } from "@/lib/market-stats"
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: "Home Values in 76111 — Fort Worth, TX | Market Data & Trends",
+  description: "Median sale price $285K, 26 days on market, 98.2% sale-to-list ratio. See 24-month trends, recent sales, and market snapshot for Fort Worth's Near Northside (76111).",
+  openGraph: {
+    title: "76111 Home Values — Fort Worth, TX",
+    description: "Median $285K · 26 DOM · 98.2% Sale-to-List · 2.1 Months Supply. Real market data for Fort Worth's Near Northside.",
+    siteName: "DirectList",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "76111 Home Values — Fort Worth, TX",
+    description: "Median $285K · 26 DOM · 98.2% Sale-to-List. Real MLS market data.",
+  },
+}
 
 function fmt(n: number) {
   return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 }).format(n)
