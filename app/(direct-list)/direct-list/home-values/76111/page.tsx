@@ -4,10 +4,11 @@
 import Link from "next/link"
 import { Section } from "@/components/layout"
 import { DirectListCTA } from "@/components/layout/DirectListCTA"
-import { getClosedListingsByZip } from "@/lib/listings-seo"
+import { getListingsNearby } from "@/lib/listings-seo"
 import ListingsMapSection from "@/components/listings/ListingsMapSection"
 import MarketSnapshotGrid from "@/components/market-stats/MarketSnapshotGrid"
 import MarketTimeSeries from "@/components/market-stats/MarketTimeSeries"
+import ZipHeroMap from "@/components/market-stats/ZipHeroMap"
 import type { MarketSnapshot, MonthlyDataPoint } from "@/lib/market-stats"
 
 export const dynamic = 'force-dynamic'
@@ -63,8 +64,8 @@ const timeSeries: MonthlyDataPoint[] = [
 ]
 
 export default async function ZipHubPage() {
-  // Live MLS data for the map — real clickable listing dots
-  const listings = await getClosedListingsByZip("76111")
+  // Live MLS data for the map — same approach as 2113 Bird St (proven to show dots)
+  const nearbyListings = await getListingsNearby(32.777, -97.314)
 
   return (
     <div className="bg-background">
@@ -72,19 +73,8 @@ export default async function ZipHubPage() {
           HERO — Immersive with texture, the headline stat front and center
       ──────────────────────────────────────────────────────────────── */}
       <section className="relative overflow-hidden">
-        {/* Background: deep navy with subtle grain texture */}
-        <div className="absolute inset-0 bg-primary-dark" />
-        <div className="absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
-          }}
-        />
-        {/* Geometric accent — diagonal line */}
-        <div className="absolute top-0 right-0 w-1/3 h-full opacity-5"
-          style={{
-            background: 'linear-gradient(135deg, transparent 40%, #d6b283 40%, #d6b283 41%, transparent 41%)',
-          }}
-        />
+        {/* 2-tone streets-only map background */}
+        <ZipHeroMap center={[-97.314, 32.777]} zoom={12.5} />
 
         <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
           {/* Breadcrumbs */}
@@ -246,8 +236,10 @@ export default async function ZipHubPage() {
           Recent Sales in 76111
         </h2>
         <ListingsMapSection
-          activeListings={[]}
-          closedListings={listings}
+          activeListings={nearbyListings.active.listings}
+          activeRadiusMiles={nearbyListings.active.radiusMiles}
+          closedListings={nearbyListings.closed.listings}
+          closedRadiusMiles={nearbyListings.closed.radiusMiles}
           initialCenter={[-97.314, 32.777]}
           initialZoom={13}
           clusteringEnabled={false}

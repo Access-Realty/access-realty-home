@@ -160,7 +160,7 @@ function baseQuery() {
     .from('mls_listings')
     .select(SEO_LISTING_FIELDS)
     .eq('mls_name', MLS_NAME)
-    .eq('standard_status', 'Closed')
+    .eq('mls_status', 'Closed')
     .not('latitude', 'is', null)
     .not('longitude', 'is', null)
     .gte('status_change_timestamp', twelveMonthsAgo)
