@@ -21,13 +21,14 @@ import {
   HiOutlineCheckBadge,
   HiCheck,
   HiArrowRight,
-  HiPhoto,
 } from "react-icons/hi2";
 import { GiHammerNails } from "react-icons/gi";
 import { HeroSection, Section } from "@/components/layout";
 import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { getStoredAddress } from "@/lib/addressStorage";
+import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider";
+import { publicAssetUrl } from "@/lib/storage";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
 
 // What you DON'T have to do cards
@@ -147,31 +148,58 @@ const considerations = [
   },
 ];
 
-// Case studies - keeping for credibility
-const caseStudies = [
+// Real showcase projects — financial data from Zoho Rehabs + MLS
+function makeRooms(project: string, rooms: { key: string; label: string }[]) {
+  return rooms.map((r) => ({
+    ...r,
+    before: publicAssetUrl(`price-launch/${project}/${r.key}-before.jpg`),
+    after: publicAssetUrl(`price-launch/${project}/${r.key}-after.jpg`),
+  }));
+}
+
+const showcaseProjects = [
   {
-    address: "1609 Pine St",
+    name: "Alexander",
+    address: "5113 Alexander Dr",
+    city: "Flower Mound, TX",
+    renovationCost: 86000,
+    salePrice: 559900,
+    status: "Sold" as const,
+    rooms: makeRooms("alexander", [
+      { key: "kit", label: "Kitchen" },
+      { key: "liv", label: "Living Room" },
+      { key: "bath", label: "Master Bath" },
+      { key: "front", label: "Front Elevation" },
+      { key: "pool", label: "Pool" },
+    ]),
+  },
+  {
+    name: "Cross Bend",
+    address: "816 Cross Bend Rd",
+    city: "Plano, TX",
+    renovationCost: 75000,
+    salePrice: 385000,
+    status: "Sale Pending" as const,
+    rooms: makeRooms("cross-bend", [
+      { key: "kit", label: "Kitchen" },
+      { key: "liv", label: "Living Room" },
+      { key: "bath", label: "Master Bath" },
+      { key: "front", label: "Front Elevation" },
+    ]),
+  },
+  {
+    name: "Ralph",
+    address: "1006 Ralph St",
     city: "Grand Prairie, TX",
-    beforeValue: 185000,
-    renovationCost: 42000,
-    salePrice: 275000,
-    netGain: 48000,
-  },
-  {
-    address: "1131 Willow Run Cir",
-    city: "Duncanville, TX",
-    beforeValue: 210000,
-    renovationCost: 35000,
-    salePrice: 295000,
-    netGain: 50000,
-  },
-  {
-    address: "100 Hickory Springs Dr",
-    city: "Euless, TX 76039",
-    beforeValue: 165000,
-    renovationCost: 38000,
-    salePrice: 248000,
-    netGain: 45000,
+    renovationCost: 68000,
+    salePrice: 244000,
+    status: "Sold" as const,
+    rooms: makeRooms("ralph", [
+      { key: "kit", label: "Kitchen" },
+      { key: "liv", label: "Living Room" },
+      { key: "bath", label: "Master Bath" },
+      { key: "front", label: "Front Elevation" },
+    ]),
   },
 ];
 
@@ -216,6 +244,11 @@ export default function PriceLaunchContent() {
   const bottomAddressInputRef = useRef<HTMLInputElement>(null);
   const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
+  const [selectedRooms, setSelectedRooms] = useState<Record<string, string>>({
+    Alexander: "kit",
+    "Cross Bend": "kit",
+    Ralph: "kit",
+  });
 
   // Pre-fill address from localStorage if available (from homepage or selling plan)
   useEffect(() => {
@@ -520,56 +553,81 @@ export default function PriceLaunchContent() {
         </div>
       </Section>
 
-      {/* Recent Projects - Kept for credibility */}
+      {/* Project Showcase */}
       <Section variant="content" maxWidth="5xl">
         <h2 className="text-2xl font-bold text-foreground mb-2 text-center">
           Recent Price Launch Projects
         </h2>
-        <p className="text-muted-foreground text-center mb-8">
-          Real results from properties we&apos;ve renovated and sold.
+        <p className="text-muted-foreground text-center mb-10">
+          Real results from properties we&apos;ve renovated and sold. Drag the slider to compare.
         </p>
 
-        <div className="grid md:grid-cols-3 gap-6">
-          {caseStudies.map((study, index) => (
-            <div
-              key={index}
-              className="bg-card border border-border rounded-xl overflow-hidden"
-            >
-              {/* Placeholder for before/after images */}
-              <div className="aspect-video bg-muted flex items-center justify-center">
-                <div className="text-center text-muted-foreground">
-                  <HiPhoto className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                  <span className="text-sm">Before / After</span>
+        <div className="space-y-16">
+          {showcaseProjects.map((project) => {
+            const selectedKey = selectedRooms[project.name] || "kit";
+            const selectedRoom = project.rooms.find((r) => r.key === selectedKey) || project.rooms[0];
+
+            return (
+              <div key={project.name} className="bg-card border border-border rounded-2xl overflow-hidden">
+                {/* Project header */}
+                <div className="flex items-center justify-between px-6 pt-6 pb-4">
+                  <div>
+                    <h3 className="text-xl font-bold text-primary">{project.address}</h3>
+                    <p className="text-sm text-muted-foreground">{project.city}</p>
+                  </div>
+                  {project.status === "Sale Pending" && (
+                    <span className="text-xs font-semibold bg-secondary/20 text-secondary px-3 py-1 rounded-full">
+                      Sale Pending
+                    </span>
+                  )}
                 </div>
-              </div>
 
-              <div className="p-6">
-                <h3 className="font-bold text-foreground mb-1">{study.address}</h3>
-                <p className="text-sm text-muted-foreground mb-4">{study.city}</p>
+                {/* Slider + financials */}
+                <div className="grid md:grid-cols-[1fr_280px]">
+                  <div className="px-6">
+                    <BeforeAfterSlider
+                      beforeSrc={selectedRoom.before}
+                      afterSrc={selectedRoom.after}
+                      beforeAlt={`${project.address} ${selectedRoom.label} before`}
+                      afterAlt={`${project.address} ${selectedRoom.label} after`}
+                    />
+                  </div>
 
-                <div className="space-y-2 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">As-Is Value</span>
-                    <span className="text-foreground">{formatCurrency(study.beforeValue)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Renovation Cost</span>
-                    <span className="text-foreground">{formatCurrency(study.renovationCost)}</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Sale Price</span>
-                    <span className="text-foreground font-semibold">{formatCurrency(study.salePrice)}</span>
-                  </div>
-                  <div className="border-t border-border pt-2 mt-2">
-                    <div className="flex justify-between">
-                      <span className="text-secondary font-medium">Extra Net Gain</span>
-                      <span className="text-secondary font-bold">+{formatCurrency(study.netGain)}</span>
+                  <div className="flex flex-col justify-center p-6 border-t md:border-t-0 md:border-l border-border">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Renovation Investment</p>
+                        <p className="text-2xl font-bold text-primary">~{formatCurrency(project.renovationCost)}</p>
+                      </div>
+                      <div>
+                        <p className="text-sm text-muted-foreground mb-1">Sale Price</p>
+                        <p className="text-2xl font-bold text-secondary">{formatCurrency(project.salePrice)}</p>
+                      </div>
                     </div>
                   </div>
                 </div>
+
+                {/* Room selector pills */}
+                <div className="px-6 py-4 border-t border-border flex gap-2 overflow-x-auto">
+                  {project.rooms.map((room) => (
+                    <button
+                      key={room.key}
+                      onClick={() =>
+                        setSelectedRooms((prev) => ({ ...prev, [project.name]: room.key }))
+                      }
+                      className={`px-4 py-2 rounded-full text-sm font-medium whitespace-nowrap transition-colors ${
+                        selectedKey === room.key
+                          ? "bg-primary text-white"
+                          : "bg-muted text-muted-foreground hover:bg-primary/10"
+                      }`}
+                    >
+                      {room.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </Section>
 
