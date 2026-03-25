@@ -27,7 +27,7 @@ import Accordion from "@/components/ui/Accordion";
 import { AddressInput, AddressData } from "@/components/direct-list/AddressInput";
 import { getStoredAddress } from "@/lib/addressStorage";
 import BeforeAfterSlider from "@/components/ui/BeforeAfterSlider";
-import { publicAssetUrl } from "@/lib/storage";
+import { publicAssetImageUrl } from "@/lib/storage";
 import { ProgramInquiryModal } from "@/components/solutions/ProgramInquiryModal";
 
 // What you DON'T have to do cards
@@ -148,11 +148,14 @@ const considerations = [
 ];
 
 // Real showcase projects — financial data from Zoho Rehabs + MLS
+// CDN endpoint serves auto-WebP + resized images for faster loading
+const IMG_OPTS = { width: 900, quality: 80 };
+
 function makeRooms(project: string, rooms: { key: string; label: string }[]) {
   return rooms.map((r) => ({
     ...r,
-    before: publicAssetUrl(`price-launch/${project}/${r.key}-before.jpg`),
-    after: publicAssetUrl(`price-launch/${project}/${r.key}-after.jpg`),
+    before: publicAssetImageUrl(`price-launch/${project}/${r.key}-before.jpg`, IMG_OPTS),
+    after: publicAssetImageUrl(`price-launch/${project}/${r.key}-after.jpg`, IMG_OPTS),
   }));
 }
 
@@ -161,8 +164,6 @@ const showcaseProjects = [
     name: "Alexander",
     address: "5113 Alexander Dr",
     city: "Flower Mound, TX",
-    renovationCost: 86000,
-    salePrice: 559900,
     status: "Sold" as const,
     rooms: makeRooms("alexander", [
       { key: "kit", label: "Kitchen" },
@@ -176,8 +177,6 @@ const showcaseProjects = [
     name: "Cross Bend",
     address: "816 Cross Bend Rd",
     city: "Plano, TX",
-    renovationCost: 75000,
-    salePrice: 385000,
     status: "Sale Pending" as const,
     rooms: makeRooms("cross-bend", [
       { key: "kit", label: "Kitchen" },
@@ -190,8 +189,6 @@ const showcaseProjects = [
     name: "Ralph",
     address: "1006 Ralph St",
     city: "Grand Prairie, TX",
-    renovationCost: 68000,
-    salePrice: 244000,
     status: "Sold" as const,
     rooms: makeRooms("ralph", [
       { key: "kit", label: "Kitchen" },
@@ -229,14 +226,6 @@ const faqs = [
     answer: "If the market shifts, we can adjust the price or explore our Seller Finance option to sell without steep discounts.",
   },
 ];
-
-function formatCurrency(amount: number) {
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}
 
 export default function PriceLaunchContent() {
   const addressInputRef = useRef<HTMLInputElement>(null);
@@ -579,29 +568,25 @@ export default function PriceLaunchContent() {
                   )}
                 </div>
 
-                {/* Slider + financials */}
-                <div className="grid md:grid-cols-[1fr_280px]">
-                  <div className="px-6">
-                    <BeforeAfterSlider
-                      beforeSrc={selectedRoom.before}
-                      afterSrc={selectedRoom.after}
-                      beforeAlt={`${project.address} ${selectedRoom.label} before`}
-                      afterAlt={`${project.address} ${selectedRoom.label} after`}
-                    />
-                  </div>
+                {/* Preload all room images so tab switching is instant */}
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <div className="hidden" aria-hidden="true">
+                  {project.rooms.map((room) => (
+                    <span key={room.key}>
+                      <img src={room.before} alt="" />
+                      <img src={room.after} alt="" />
+                    </span>
+                  ))}
+                </div>
 
-                  <div className="flex flex-col justify-center p-6 border-t md:border-t-0 md:border-l border-border">
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Renovation Investment</p>
-                        <p className="text-2xl font-bold text-primary">~{formatCurrency(project.renovationCost)}</p>
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground mb-1">Sale Price</p>
-                        <p className="text-2xl font-bold text-secondary">{formatCurrency(project.salePrice)}</p>
-                      </div>
-                    </div>
-                  </div>
+                {/* Slider */}
+                <div className="px-6">
+                  <BeforeAfterSlider
+                    beforeSrc={selectedRoom.before}
+                    afterSrc={selectedRoom.after}
+                    beforeAlt={`${project.address} ${selectedRoom.label} before`}
+                    afterAlt={`${project.address} ${selectedRoom.label} after`}
+                  />
                 </div>
 
                 {/* Room selector pills */}

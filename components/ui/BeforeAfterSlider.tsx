@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 
 interface BeforeAfterSliderProps {
@@ -28,6 +28,9 @@ export default function BeforeAfterSlider({
   const [position, setPosition] = useState(50);
   // Track which srcs have errored to swap in fallback without re-render loops
   const [failedSrcs, setFailedSrcs] = useState<Set<string>>(new Set());
+
+  // Reset slider to center when images change (room switch)
+  useEffect(() => { setPosition(50); }, [beforeSrc, afterSrc]);
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
 
