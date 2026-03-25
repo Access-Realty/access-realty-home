@@ -20,7 +20,6 @@ import {
   HiOutlineArrowTrendingUp,
   HiOutlineCheckBadge,
   HiCheck,
-  HiArrowRight,
 } from "react-icons/hi2";
 import { GiHammerNails } from "react-icons/gi";
 import { HeroSection, Section } from "@/components/layout";
@@ -244,11 +243,9 @@ export default function PriceLaunchContent() {
   const bottomAddressInputRef = useRef<HTMLInputElement>(null);
   const [addressData, setAddressData] = useState<AddressData | null>(null);
   const [showInquiryModal, setShowInquiryModal] = useState(false);
-  const [selectedRooms, setSelectedRooms] = useState<Record<string, string>>({
-    Alexander: "kit",
-    "Cross Bend": "kit",
-    Ralph: "kit",
-  });
+  const [selectedRooms, setSelectedRooms] = useState<Record<string, string>>(
+    () => Object.fromEntries(showcaseProjects.map((p) => [p.name, p.rooms[0].key]))
+  );
 
   // Pre-fill address from localStorage if available (from homepage or selling plan)
   useEffect(() => {

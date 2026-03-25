@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState, useRef, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
 
 interface BeforeAfterSliderProps {
@@ -23,17 +23,25 @@ export default function BeforeAfterSlider({
   beforeAlt = "Before renovation",
   afterAlt = "After renovation",
   aspectRatio = 0.667,
-  fallbackSrc = "/price-launch-hero.jpg",
+  fallbackSrc,
 }: BeforeAfterSliderProps) {
   const [position, setPosition] = useState(50);
-  const [actualBefore, setActualBefore] = useState(beforeSrc);
-  const [actualAfter, setActualAfter] = useState(afterSrc);
-
-  // Reset images when src props change (room switch)
-  useEffect(() => { setActualBefore(beforeSrc); }, [beforeSrc]);
-  useEffect(() => { setActualAfter(afterSrc); }, [afterSrc]);
+  // Track which srcs have errored to swap in fallback without re-render loops
+  const [failedSrcs, setFailedSrcs] = useState<Set<string>>(new Set());
   const containerRef = useRef<HTMLDivElement>(null);
   const isDragging = useRef(false);
+
+  const displayBefore = failedSrcs.has(beforeSrc) && fallbackSrc ? fallbackSrc : beforeSrc;
+  const displayAfter = failedSrcs.has(afterSrc) && fallbackSrc ? fallbackSrc : afterSrc;
+
+  const handleImageError = useCallback((src: string) => {
+    setFailedSrcs((prev) => {
+      if (prev.has(src)) return prev;
+      const next = new Set(prev);
+      next.add(src);
+      return next;
+    });
+  }, []);
 
   const updatePosition = useCallback((clientX: number) => {
     const container = containerRef.current;
@@ -82,32 +90,29 @@ export default function BeforeAfterSlider({
       onPointerMove={handlePointerMove}
       onPointerUp={handlePointerUp}
     >
-      {/* After image (full, behind) */}
       <Image
-        src={actualAfter}
+        src={displayAfter}
         alt={afterAlt}
         fill
         className="object-cover"
         sizes="(max-width: 768px) 100vw, 65vw"
-        onError={() => setActualAfter(fallbackSrc)}
+        onError={() => handleImageError(afterSrc)}
       />
 
-      {/* Before image (clipped) */}
       <div
         className="absolute inset-0"
         style={{ clipPath: `inset(0 ${100 - position}% 0 0)` }}
       >
         <Image
-          src={actualBefore}
+          src={displayBefore}
           alt={beforeAlt}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 65vw"
-          onError={() => setActualBefore(fallbackSrc)}
+          onError={() => handleImageError(beforeSrc)}
         />
       </div>
 
-      {/* Labels */}
       <span className="absolute top-3 left-3 bg-black/60 text-white text-xs font-semibold px-2 py-1 rounded pointer-events-none">
         Before
       </span>
@@ -115,13 +120,11 @@ export default function BeforeAfterSlider({
         After
       </span>
 
-      {/* Divider line */}
       <div
         className="absolute top-0 bottom-0 w-0.5 bg-white shadow-lg pointer-events-none"
         style={{ left: `${position}%`, transform: "translateX(-50%)" }}
       />
 
-      {/* Handle grip */}
       <div
         className="absolute top-1/2 -translate-y-1/2 z-10"
         style={{ left: `${position}%`, transform: "translate(-50%, -50%)" }}
@@ -134,26 +137,9 @@ export default function BeforeAfterSlider({
         onKeyDown={handleKeyDown}
       >
         <div className="h-10 w-10 rounded-full bg-white shadow-lg flex items-center justify-center">
-          <svg
-            width="16"
-            height="16"
-            viewBox="0 0 16 16"
-            fill="none"
-          >
-            <path
-              d="M5 3L2 8L5 13"
-              stroke="#284b70"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
-            <path
-              d="M11 3L14 8L11 13"
-              stroke="#284b70"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            />
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+            <path d="M5 3L2 8L5 13" stroke="#284b70" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+            <path d="M11 3L14 8L11 13" stroke="#284b70" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
           </svg>
         </div>
       </div>
