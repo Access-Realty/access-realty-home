@@ -11,8 +11,8 @@ The main brand color used for the sidebar, primary buttons, and key UI elements.
 
 | Format | Value |
 |--------|-------|
-| Hex    | `#284b70` |
-| RGB    | `rgb(40, 75, 112)` |
+| Hex    | `#284C71` |
+| RGB    | `rgb(40, 76, 113)` |
 
 **Usage:** Sidebar background, primary action buttons (Next), selected sidebar items text, card title text.
 
@@ -23,8 +23,8 @@ A lighter navy used for hover states and secondary backgrounds.
 
 | Format | Value |
 |--------|-------|
-| Hex    | `#3a6690` |
-| RGB    | `rgb(58, 102, 144)` |
+| Hex    | `#536f8c` |
+| RGB    | `rgb(83, 111, 140)` |
 
 **Usage:** Card header background, sidebar hover states, selected option buttons.
 
@@ -47,8 +47,8 @@ A softer tan used for subtle backgrounds and hover states.
 
 | Format | Value |
 |--------|-------|
-| Hex    | `#d1b99b` |
-| RGB    | `rgb(209, 185, 155)` |
+| Hex    | `#dec19b` |
+| RGB    | `rgb(222, 193, 155)` |
 
 **Usage:** Option button hover background (at 40% opacity), progress bar track, subtle borders.
 
@@ -108,18 +108,18 @@ Used for informational callouts and helper text.
 
 | Element | Color | Hex |
 |---------|-------|-----|
-| Sidebar background | Navy | `#284b70` |
-| Sidebar header | Navy Dark | `#1e3a5f` |
+| Sidebar background | Navy | `#284C71` |
+| Sidebar header | Navy Dark | `#1c344e` |
 | Sidebar active item | Tan Dark | `#d6b283` |
 | Sidebar hover | White @ 10% | `rgba(255, 255, 255, 0.1)` |
 | Card background | White | `#ffffff` |
-| Card header | Navy Light | `#3a6690` |
+| Card header | Navy Light | `#536f8c` |
 | Page background | Cream | `#f8f4ef` |
-| Primary button | Navy | `#284b70` |
-| Option button (selected) | Navy Light | `#3a6690` |
+| Primary button | Navy | `#284C71` |
+| Option button (selected) | Navy Light | `#536f8c` |
 | Option button (hover) | Tan Light @ 40% | `rgba(209, 185, 155, 0.4)` |
 | Progress bar fill | Tan Dark | `#d6b283` |
-| Progress bar track | Tan Light | `#d1b99b` |
+| Progress bar track | Tan Light | `#dec19b` |
 
 ---
 

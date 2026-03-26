@@ -77,7 +77,7 @@ Main property listings table containing active and historical listings from the 
 | `list_price` | decimal | Current list price |
 | `original_list_price` | decimal | Original list price |
 | `previous_list_price` | decimal | Previous list price |
-| `concessions` | text | Seller concessions |
+| `concessions` | numeric | Seller concessions amount in dollars |
 
 #### Status
 | Column | Type | Description |
