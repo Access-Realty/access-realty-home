@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
@@ -56,6 +56,7 @@ type InvestorStep =
 
 export default function InvestorsContent() {
   const bp = useBrandPath();
+  const flowRef = useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [step, setStep] = useState<InvestorStep>("info");
   const [contactData, setContactData] = useState({
@@ -101,14 +102,14 @@ export default function InvestorsContent() {
             {/* CTA */}
             <div className="flex flex-col items-start gap-4">
               <button
-                onClick={() => setStep("contact")}
+                onClick={() => {
+                  setStep("contact");
+                  setTimeout(() => flowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+                }}
                 className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 Get Started
               </button>
-              <p className="text-white/70">
-                Verify your property for Investor Pricing.
-              </p>
             </div>
           </div>
 
@@ -283,7 +284,10 @@ export default function InvestorsContent() {
               </div>
               <div className="p-6 pt-0 text-center">
                 <button
-                  onClick={() => setStep("contact")}
+                  onClick={() => {
+                    setStep("contact");
+                    setTimeout(() => flowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+                  }}
                   className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity text-base"
                 >
                   Get Started
@@ -343,7 +347,7 @@ export default function InvestorsContent() {
       {/* Multi-Step Flow Section */}
       {step !== "info" && (
         <Section variant="content" maxWidth="lg">
-          <div className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
+          <div ref={flowRef} className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
             <div className="p-6">
               {/* Contact Form */}
               {step === "contact" && (
@@ -654,7 +658,10 @@ export default function InvestorsContent() {
             Verify your property to unlock investor pricing.
           </p>
           <button
-            onClick={() => setStep("contact")}
+            onClick={() => {
+              setStep("contact");
+              setTimeout(() => flowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
+            }}
             className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
           >
             Get Started
