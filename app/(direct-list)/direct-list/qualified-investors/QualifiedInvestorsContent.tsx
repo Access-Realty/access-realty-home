@@ -14,7 +14,13 @@ import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutMod
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
 import type { CalendlyBookingResult } from "@/components/calendly/types";
 
-type PageStep = "pitch" | "contact" | "creating-lead" | "vetting" | "checkout" | "booking";
+type PageStep =
+  | "pitch"
+  | "contact"
+  | "creating-lead"
+  | "vetting"
+  | "checkout"
+  | "booking";
 
 interface ContactFormData {
   firstName: string;
@@ -639,7 +645,7 @@ export default function QualifiedInvestorsContent() {
       <EmbeddedCheckoutModal
         isOpen={showCheckout}
         onClose={() => setShowCheckout(false)}
-        plan="investor_1995"
+        plan="investor_service"
         planName="Investor"
         source="qualified-investors"
         leadId={leadId || undefined}

@@ -45,23 +45,37 @@ const faqItems = [
   },
 ];
 
-type InvestorStep = "info" | "contact" | "creating-lead" | "vetting" | "checkout" | "booking" | "success";
+type InvestorStep =
+  | "info"
+  | "contact"
+  | "creating-lead"
+  | "vetting"
+  | "checkout"
+  | "booking"
+  | "success";
 
 export default function InvestorsContent() {
   const bp = useBrandPath();
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [step, setStep] = useState<InvestorStep>("info");
-  const [contactData, setContactData] = useState({ firstName: "", lastName: "", email: "", phone: "" });
+  const [contactData, setContactData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+  });
   const [leadId, setLeadId] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [contactError, setContactError] = useState("");
-  const [bookingResult, setBookingResult] = useState<CalendlyBookingResult | null>(null);
+  const [bookingResult, setBookingResult] =
+    useState<CalendlyBookingResult | null>(null);
   const { originalTouch, latestTouch, currentParams } = useTrackingParams();
   const eventTypeUri = process.env.NEXT_PUBLIC_CALENDLY_INQUIRIES_URI || "";
 
   const formatPhone = (value: string) => {
     let digits = value.replace(/\D/g, "");
-    if (digits.length === 11 && digits.startsWith("1")) digits = digits.slice(1);
+    if (digits.length === 11 && digits.startsWith("1"))
+      digits = digits.slice(1);
     if (digits.length <= 3) return digits;
     if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
     return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
@@ -143,9 +157,13 @@ export default function InvestorsContent() {
             Real Estate Investors Get Special Pricing
           </h2>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Most sellers pay <span className="font-semibold text-foreground">$2,995</span> to
+            Most sellers pay{" "}
+            <span className="font-semibold text-foreground">$2,995</span> to
             list on MLS. But active investors qualify for{" "}
-            <span className="font-semibold text-foreground">discounted pricing</span>.
+            <span className="font-semibold text-foreground">
+              discounted pricing
+            </span>
+            .
           </p>
         </div>
 
@@ -208,66 +226,72 @@ export default function InvestorsContent() {
               </span>
             </div>
             <div className="rounded-xl border-2 border-secondary shadow-xl bg-card flex flex-col overflow-hidden md:scale-[1.03]">
-            <div className="p-6 pt-8 text-center bg-secondary/15">
-              <p className="text-xs font-semibold uppercase tracking-wider text-secondary-foreground/80 mb-2">
-                Pay Less
-              </p>
-              <h3 className="text-2xl font-semibold mb-1">
-                <StyledTierName name="DirectList" />
-              </h3>
-              <p
-                className="text-sm font-bold text-primary"
-                style={{
-                  fontFamily:
-                    "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
-                }}
-              >
-                for Investors
-              </p>
-              <div className="mt-2 flex flex-col items-center gap-1">
-                <span className="text-xl text-muted-foreground" style={{ textDecorationLine: 'line-through', textDecorationThickness: '3px' }}>
-                  $2,995
-                </span>
-                <div className="text-3xl font-bold text-primary mt-1">
-                  $1,995
+              <div className="p-6 pt-8 text-center bg-secondary/15">
+                <p className="text-xs font-semibold uppercase tracking-wider text-secondary-foreground/80 mb-2">
+                  Pay Less
+                </p>
+                <h3 className="text-2xl font-semibold mb-1">
+                  <StyledTierName name="DirectList" />
+                </h3>
+                <p
+                  className="text-sm font-bold text-primary"
+                  style={{
+                    fontFamily:
+                      "var(--font-be-vietnam-pro), 'Be Vietnam Pro', sans-serif",
+                  }}
+                >
+                  for Investors
+                </p>
+                <div className="mt-2 flex flex-col items-center gap-1">
+                  <span
+                    className="text-xl text-muted-foreground"
+                    style={{
+                      textDecorationLine: "line-through",
+                      textDecorationThickness: "3px",
+                    }}
+                  >
+                    $2,995
+                  </span>
+                  <div className="text-3xl font-bold text-primary mt-1">
+                    $1,995
+                  </div>
                 </div>
               </div>
-            </div>
-            <div className="p-6 flex-grow">
-              <p className="text-sm font-medium text-muted-foreground mb-4 italic">
-                Everything you need to list on MLS, without paying for extras
-                you&apos;ll never use.
-              </p>
-              <ul className="space-y-3">
-                {[
-                  "Same MLS Exposure & Syndication",
-                  "Same Professional Photography",
-                  "Same Showing System",
-                  "Same Contracts & Documents",
-                  "Same Lockbox & Yard Sign",
-                  "On Demand Services Available",
-                ].map((feature) => (
-                  <li
-                    key={feature}
-                    className="flex items-start gap-2 text-sm"
-                  >
-                    <HiCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
-                    <span className="font-medium">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-            <div className="p-6 pt-0 text-center">
-              <button
-                onClick={() => setStep("contact")}
-                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity text-base"
-              >
-                Get Started
-              </button>
-              <p className="text-xs text-muted-foreground mt-2">
-                Verify your property to unlock investor pricing.
-              </p>
-            </div>
+              <div className="p-6 flex-grow">
+                <p className="text-sm font-medium text-muted-foreground mb-4 italic">
+                  Everything you need to list on MLS, without paying for extras
+                  you&apos;ll never use.
+                </p>
+                <ul className="space-y-3">
+                  {[
+                    "Same MLS Exposure & Syndication",
+                    "Same Professional Photography",
+                    "Same Showing System",
+                    "Same Contracts & Documents",
+                    "Same Lockbox & Yard Sign",
+                    "On Demand Services Available",
+                  ].map((feature) => (
+                    <li
+                      key={feature}
+                      className="flex items-start gap-2 text-sm"
+                    >
+                      <HiCheck className="h-5 w-5 text-success shrink-0 mt-0.5" />
+                      <span className="font-medium">{feature}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="p-6 pt-0 text-center">
+                <button
+                  onClick={() => setStep("contact")}
+                  className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity text-base"
+                >
+                  Get Started
+                </button>
+                <p className="text-xs text-muted-foreground mt-2">
+                  Verify your property to unlock investor pricing.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -330,80 +354,173 @@ export default function InvestorsContent() {
                   >
                     &larr; Back
                   </button>
-                  <h3 className="text-xl font-bold text-foreground mb-1">Get Started</h3>
+                  <h3 className="text-xl font-bold text-foreground mb-1">
+                    Get Started
+                  </h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Enter your contact information to verify your investor qualification.
+                    Enter your contact information to verify your investor
+                    qualification.
                   </p>
-                  <form onSubmit={async (e) => {
-                    e.preventDefault();
-                    setStep("creating-lead");
-                    setContactError("");
-                    try {
-                      const res = await fetch("/api/leads", {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                          firstName: contactData.firstName,
-                          lastName: contactData.lastName,
-                          email: contactData.email,
-                          phone: contactData.phone,
-                          source: "website",
-                          landingUrl: typeof window !== "undefined" ? window.location.href : undefined,
-                          originalTouch, latestTouch, convertingTouch: currentParams,
-                        }),
-                      });
-                      if (!res.ok) throw new Error((await res.json()).error || "Failed");
-                      const { leadId: newId } = await res.json();
-                      setLeadId(newId);
+                  <form
+                    onSubmit={async (e) => {
+                      e.preventDefault();
+                      setStep("creating-lead");
+                      setContactError("");
                       try {
-                        await fetch("/api/program-inquiry", {
+                        const res = await fetch("/api/leads", {
                           method: "POST",
                           headers: { "Content-Type": "application/json" },
                           body: JSON.stringify({
-                            ...contactData, programName: "DirectList for Investors", address: "",
-                            attribution: {
-                              originalTouch: originalTouch?.utm_source ? `${originalTouch.utm_source}/${originalTouch.utm_medium || ""}/${originalTouch.utm_campaign || ""}` : null,
-                              latestTouch: latestTouch?.utm_source ? `${latestTouch.utm_source}/${latestTouch.utm_medium || ""}/${latestTouch.utm_campaign || ""}` : null,
-                            },
+                            firstName: contactData.firstName,
+                            lastName: contactData.lastName,
+                            email: contactData.email,
+                            phone: contactData.phone,
+                            source: "website",
+                            landingUrl:
+                              typeof window !== "undefined"
+                                ? window.location.href
+                                : undefined,
+                            originalTouch,
+                            latestTouch,
+                            convertingTouch: currentParams,
                           }),
                         });
-                      } catch { /* Slack notification is best-effort */ }
-                      setStep("vetting");
-                    } catch (err) {
-                      setContactError(err instanceof Error ? err.message : "Something went wrong");
-                      setStep("contact");
-                    }
-                  }} className="space-y-4">
+                        if (!res.ok)
+                          throw new Error((await res.json()).error || "Failed");
+                        const { leadId: newId } = await res.json();
+                        setLeadId(newId);
+                        try {
+                          await fetch("/api/program-inquiry", {
+                            method: "POST",
+                            headers: { "Content-Type": "application/json" },
+                            body: JSON.stringify({
+                              ...contactData,
+                              programName: "DirectList for Investors",
+                              address: "",
+                              attribution: {
+                                originalTouch: originalTouch?.utm_source
+                                  ? `${originalTouch.utm_source}/${originalTouch.utm_medium || ""}/${originalTouch.utm_campaign || ""}`
+                                  : null,
+                                latestTouch: latestTouch?.utm_source
+                                  ? `${latestTouch.utm_source}/${latestTouch.utm_medium || ""}/${latestTouch.utm_campaign || ""}`
+                                  : null,
+                              },
+                            }),
+                          });
+                        } catch {
+                          /* Slack notification is best-effort */
+                        }
+                        setStep("vetting");
+                      } catch (err) {
+                        setContactError(
+                          err instanceof Error
+                            ? err.message
+                            : "Something went wrong",
+                        );
+                        setStep("contact");
+                      }
+                    }}
+                    className="space-y-4"
+                  >
                     {contactError && (
-                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">{contactError}</div>
+                      <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+                        {contactError}
+                      </div>
                     )}
                     <div className="grid sm:grid-cols-2 gap-4">
                       <div>
-                        <label htmlFor="inv-firstName" className="block text-sm font-medium text-foreground mb-1">First Name</label>
-                        <input type="text" id="inv-firstName" required value={contactData.firstName}
-                          onChange={(e) => setContactData(p => ({ ...p, firstName: e.target.value }))}
-                          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="John" />
+                        <label
+                          htmlFor="inv-firstName"
+                          className="block text-sm font-medium text-foreground mb-1"
+                        >
+                          First Name
+                        </label>
+                        <input
+                          type="text"
+                          id="inv-firstName"
+                          required
+                          value={contactData.firstName}
+                          onChange={(e) =>
+                            setContactData((p) => ({
+                              ...p,
+                              firstName: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                          placeholder="John"
+                        />
                       </div>
                       <div>
-                        <label htmlFor="inv-lastName" className="block text-sm font-medium text-foreground mb-1">Last Name</label>
-                        <input type="text" id="inv-lastName" required value={contactData.lastName}
-                          onChange={(e) => setContactData(p => ({ ...p, lastName: e.target.value }))}
-                          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="Doe" />
+                        <label
+                          htmlFor="inv-lastName"
+                          className="block text-sm font-medium text-foreground mb-1"
+                        >
+                          Last Name
+                        </label>
+                        <input
+                          type="text"
+                          id="inv-lastName"
+                          required
+                          value={contactData.lastName}
+                          onChange={(e) =>
+                            setContactData((p) => ({
+                              ...p,
+                              lastName: e.target.value,
+                            }))
+                          }
+                          className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                          placeholder="Doe"
+                        />
                       </div>
                     </div>
                     <div>
-                      <label htmlFor="inv-email" className="block text-sm font-medium text-foreground mb-1">Email Address</label>
-                      <input type="email" id="inv-email" required value={contactData.email}
-                        onChange={(e) => setContactData(p => ({ ...p, email: e.target.value }))}
-                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="john@example.com" />
+                      <label
+                        htmlFor="inv-email"
+                        className="block text-sm font-medium text-foreground mb-1"
+                      >
+                        Email Address
+                      </label>
+                      <input
+                        type="email"
+                        id="inv-email"
+                        required
+                        value={contactData.email}
+                        onChange={(e) =>
+                          setContactData((p) => ({
+                            ...p,
+                            email: e.target.value,
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                        placeholder="john@example.com"
+                      />
                     </div>
                     <div>
-                      <label htmlFor="inv-phone" className="block text-sm font-medium text-foreground mb-1">Phone Number</label>
-                      <input type="tel" id="inv-phone" required value={contactData.phone}
-                        onChange={(e) => setContactData(p => ({ ...p, phone: formatPhone(e.target.value) }))}
-                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors" placeholder="(555) 123-4567" />
+                      <label
+                        htmlFor="inv-phone"
+                        className="block text-sm font-medium text-foreground mb-1"
+                      >
+                        Phone Number
+                      </label>
+                      <input
+                        type="tel"
+                        id="inv-phone"
+                        required
+                        value={contactData.phone}
+                        onChange={(e) =>
+                          setContactData((p) => ({
+                            ...p,
+                            phone: formatPhone(e.target.value),
+                          }))
+                        }
+                        className="w-full px-3 py-2 rounded-lg border border-border bg-background text-foreground focus:ring-2 focus:ring-primary focus:border-transparent transition-colors"
+                        placeholder="(555) 123-4567"
+                      />
                     </div>
-                    <button type="submit" className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors">
+                    <button
+                      type="submit"
+                      className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                    >
                       Continue
                     </button>
                   </form>
@@ -420,8 +537,12 @@ export default function InvestorsContent() {
               {/* Vetting */}
               {step === "vetting" && (
                 <div>
-                  <h3 className="text-xl font-bold text-foreground mb-1">Verify Your Property</h3>
-                  <p className="text-sm text-muted-foreground mb-4">Enter the address of the property you&apos;d like to list.</p>
+                  <h3 className="text-xl font-bold text-foreground mb-1">
+                    Verify Your Property
+                  </h3>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    Enter the address of the property you&apos;d like to list.
+                  </p>
                   <InvestorVettingFlow
                     email={contactData.email}
                     onPass={() => setStep("checkout")}
@@ -434,11 +555,18 @@ export default function InvestorsContent() {
               {step === "checkout" && (
                 <div className="text-center space-y-4 py-4">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full">
-                    <span className="text-green-700 font-semibold text-sm">Qualified for Investor Pricing</span>
+                    <span className="text-green-700 font-semibold text-sm">
+                      Qualified for Investor Pricing
+                    </span>
                   </div>
-                  <p className="text-muted-foreground text-sm">You&apos;re all set to proceed with the Investor package at $1,995.</p>
-                  <button onClick={() => setShowCheckout(true)}
-                    className="px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity">
+                  <p className="text-muted-foreground text-sm">
+                    You&apos;re all set to proceed with the Investor package at
+                    $1,995.
+                  </p>
+                  <button
+                    onClick={() => setShowCheckout(true)}
+                    className="px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity"
+                  >
                     Proceed to Checkout
                   </button>
                 </div>
@@ -456,7 +584,10 @@ export default function InvestorsContent() {
                   leadId={leadId}
                   programSource="investors"
                   programName="DirectList for Investors"
-                  onBooked={(result) => { setBookingResult(result); setStep("success"); }}
+                  onBooked={(result) => {
+                    setBookingResult(result);
+                    setStep("success");
+                  }}
                   onError={(err) => console.error("Booking error:", err)}
                   meetingInfo={{ type: "phone" }}
                   hostInfo={{ name: "Solutions Expert" }}
@@ -466,20 +597,44 @@ export default function InvestorsContent() {
               {/* Booking fallback */}
               {step === "booking" && (!eventTypeUri || !leadId) && (
                 <div className="text-center py-8 space-y-4">
-                  <p className="text-amber-700">We need to verify your qualification. Please book a call.</p>
-                  <Link href={bp("/direct-list/investors/book")} className="text-primary font-medium hover:underline">Book a Call</Link>
+                  <p className="text-amber-700">
+                    We need to verify your qualification. Please book a call.
+                  </p>
+                  <Link
+                    href={bp("/direct-list/investors/book")}
+                    className="text-primary font-medium hover:underline"
+                  >
+                    Book a Call
+                  </Link>
                 </div>
               )}
 
               {/* Success */}
               {step === "success" && bookingResult && (
                 <div className="text-center space-y-4 py-4">
-                  <h3 className="text-xl font-bold text-foreground">You&apos;re All Set</h3>
+                  <h3 className="text-xl font-bold text-foreground">
+                    You&apos;re All Set
+                  </h3>
                   <p className="text-muted-foreground text-sm">
-                    Your call is scheduled. A confirmation email has been sent to <span className="font-medium text-foreground">{contactData.email}</span>.
+                    Your call is scheduled. A confirmation email has been sent
+                    to{" "}
+                    <span className="font-medium text-foreground">
+                      {contactData.email}
+                    </span>
+                    .
                   </p>
-                  <button onClick={() => { setStep("info"); setContactData({ firstName: "", lastName: "", email: "", phone: "" }); }}
-                    className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors">
+                  <button
+                    onClick={() => {
+                      setStep("info");
+                      setContactData({
+                        firstName: "",
+                        lastName: "",
+                        email: "",
+                        phone: "",
+                      });
+                    }}
+                    className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                  >
                     Done
                   </button>
                 </div>
@@ -512,7 +667,7 @@ export default function InvestorsContent() {
       <EmbeddedCheckoutModal
         isOpen={showCheckout}
         onClose={() => setShowCheckout(false)}
-        plan="investor_1995"
+        plan="investor_service"
         planName="Investor"
         source="investors-page"
         leadId={leadId || undefined}
