@@ -29,6 +29,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const canonicalUrl = `https://direct-list.com/selling-resources/${slug}`;
 
   return {
+    metadataBase: new URL("https://direct-list.com"),
     title: `${resource.title} | DirectList Selling Resources`,
     description: resource.description,
     alternates: { canonical: canonicalUrl },

@@ -1,8 +1,22 @@
 // ABOUTME: Solutions overview page showcasing 7 service offerings
 // ABOUTME: Cards link to individual solution detail pages
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HeroSection, Section, AccessCTA } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Selling Solutions for Every Situation",
+  description:
+    "Cash offers, flat-fee MLS, renovation partnerships, seller financing, and more. Find the right way to sell your DFW home.",
+  alternates: { canonical: "https://access.realty/solutions" },
+  openGraph: {
+    title: "Seven Ways to Sell Your Home — Access Realty",
+    description:
+      "From traditional listings to creative alternatives. Compare selling solutions for your situation.",
+    url: "https://access.realty/solutions",
+  },
+};
 
 const solutions = [
   {

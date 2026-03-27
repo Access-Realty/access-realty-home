@@ -43,21 +43,29 @@ function getStripe(): Stripe {
 
 // Map plan IDs to Stripe price IDs
 // Price IDs must be configured in environment variables (from Stripe Dashboard)
-const PLAN_PRICE_MAP: Record<string, { priceId: string; name: string; amountCents: number }> = {
-  "direct_list": {
+const PLAN_PRICE_MAP: Record<
+  string,
+  { priceId: string; name: string; amountCents: number }
+> = {
+  direct_list: {
     priceId: process.env.STRIPE_PRICE_DIRECT_LIST || "",
     name: "DirectList",
     amountCents: 49500, // $495 upfront
   },
-  "direct_list_plus": {
+  direct_list_plus: {
     priceId: process.env.STRIPE_PRICE_DIRECT_LIST_PLUS || "",
     name: "DirectList+",
     amountCents: 99500, // $995 upfront
   },
-  "full_service": {
+  full_service: {
     priceId: process.env.STRIPE_PRICE_FULL_SERVICE || "",
     name: "Full Service",
     amountCents: 0, // No upfront - 3% at closing
+  },
+  investor_service: {
+    priceId: process.env.STRIPE_PRICE_INVESTOR_SERVICE || "",
+    name: "Investor Service",
+    amountCents: 199500, // $1,995 upfront (before coupon)
   },
 };
 
@@ -81,20 +89,29 @@ interface PropertySpecs {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { plan, source, utmParams, returnUrl, leadId, propertySpecs } = body as {
+    const {
+      plan,
+      source,
+      utmParams,
+      returnUrl,
+      leadId,
+      propertySpecs,
+      promotekitReferral,
+    } = body as {
       plan: string;
       source?: string;
       utmParams?: UTMParams;
       returnUrl?: string; // For embedded checkout return
       leadId?: string;
       propertySpecs?: PropertySpecs;
+      promotekitReferral?: string;
     };
 
     // Validate plan
     if (!plan || !PLAN_PRICE_MAP[plan]) {
       return NextResponse.json(
         { error: "Invalid plan selected" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -105,7 +122,7 @@ export async function POST(request: NextRequest) {
       console.error(`Missing Stripe price ID for plan: ${plan}`);
       return NextResponse.json(
         { error: "Payment configuration error. Please contact support." },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -153,7 +170,10 @@ export async function POST(request: NextRequest) {
     // Forward UTM params to the app
     if (utmParams) {
       Object.entries(utmParams).forEach(([key, value]) => {
-        if (value) queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+        if (value)
+          queryParams.push(
+            `${encodeURIComponent(key)}=${encodeURIComponent(value)}`,
+          );
       });
     }
 
@@ -183,15 +203,24 @@ export async function POST(request: NextRequest) {
         created_from: "marketing-site",
         // Lead ID for fetching property data in app
         ...(leadId && { lead_id: leadId }),
+        ...(promotekitReferral && { promotekit_referral: promotekitReferral }),
         // Property specs (user-reported, may differ from parcel data)
         ...(propertySpecs?.bedrooms && { bedrooms: propertySpecs.bedrooms }),
-        ...(propertySpecs?.fullBathrooms && { full_bathrooms: propertySpecs.fullBathrooms }),
-        ...(propertySpecs?.halfBathrooms && { half_bathrooms: propertySpecs.halfBathrooms }),
-        ...(propertySpecs?.yearBuilt && { year_built: propertySpecs.yearBuilt }),
+        ...(propertySpecs?.fullBathrooms && {
+          full_bathrooms: propertySpecs.fullBathrooms,
+        }),
+        ...(propertySpecs?.halfBathrooms && {
+          half_bathrooms: propertySpecs.halfBathrooms,
+        }),
+        ...(propertySpecs?.yearBuilt && {
+          year_built: propertySpecs.yearBuilt,
+        }),
         // UTM params for attribution tracking
         ...(utmParams?.utm_source && { utm_source: utmParams.utm_source }),
         ...(utmParams?.utm_medium && { utm_medium: utmParams.utm_medium }),
-        ...(utmParams?.utm_campaign && { utm_campaign: utmParams.utm_campaign }),
+        ...(utmParams?.utm_campaign && {
+          utm_campaign: utmParams.utm_campaign,
+        }),
         ...(utmParams?.utm_term && { utm_term: utmParams.utm_term }),
         ...(utmParams?.utm_content && { utm_content: utmParams.utm_content }),
       },
@@ -208,10 +237,11 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error("Stripe checkout session creation failed:", error);
 
-    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    const errorMessage =
+      error instanceof Error ? error.message : "Unknown error";
     return NextResponse.json(
       { error: "Failed to create checkout session", details: errorMessage },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }

@@ -1,7 +1,16 @@
 // ABOUTME: Privacy Policy page for Access Realty
 // ABOUTME: Legal privacy policy and data handling information
 
+import type { Metadata } from "next";
 import { HeroSection, Section, AccessCTA } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Privacy Policy",
+  description:
+    "How Access Realty collects, uses, and protects your personal information. Read our full privacy policy.",
+  alternates: { canonical: "https://access.realty/privacy" },
+  robots: { index: false, follow: true },
+};
 
 export default function PrivacyPolicy() {
   return (

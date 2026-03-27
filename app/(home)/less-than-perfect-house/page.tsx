@@ -1,9 +1,23 @@
 // ABOUTME: Hybrid page for sellers with homes needing repairs/updates
 // ABOUTME: Highlights Cash, 2 Payment, Price Launch, Uplist, and Seller Finance solutions
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Sell a House That Needs Work",
+  description:
+    "Home needs repairs? Sell as-is for cash, get renovations fronted, or price strategically. Options for every condition in Dallas–Fort Worth.",
+  alternates: { canonical: "https://access.realty/less-than-perfect-house" },
+  openGraph: {
+    title: "Sell Your Home As-Is — No Repairs Needed",
+    description:
+      "Foundation issues, outdated kitchen, deferred maintenance? Five solutions for selling a DFW home in any condition.",
+    url: "https://access.realty/less-than-perfect-house",
+  },
+};
 
 const solutions = [
   {

@@ -26,6 +26,7 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const canonicalUrl = `https://direct-list.com/for/${slug}`;
 
   return {
+    metadataBase: new URL("https://direct-list.com"),
     title: config.meta.title,
     description: config.meta.description,
     alternates: {

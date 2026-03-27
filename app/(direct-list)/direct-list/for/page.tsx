@@ -8,6 +8,7 @@ import { DirectListCTA } from "@/components/layout/DirectListCTA";
 import { PersonaGrid } from "./PersonaGrid";
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://direct-list.com"),
   title: "Sell Your Way | DirectList by Access Realty",
   description:
     "Every seller has a different story. Find the right approach for your home sale — flat fee MLS listing for $2,995 in Dallas-Fort Worth.",

@@ -43,6 +43,7 @@ interface EmbeddedCheckoutModalProps {
   onError?: (error: string) => void;
   leadId?: string;
   propertySpecs?: PropertySpecs;
+  promotekitReferral?: string;
 }
 
 export function EmbeddedCheckoutModal({
@@ -56,6 +57,7 @@ export function EmbeddedCheckoutModal({
   onError,
   leadId,
   propertySpecs,
+  promotekitReferral,
 }: EmbeddedCheckoutModalProps) {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -76,6 +78,7 @@ export function EmbeddedCheckoutModal({
           utmParams,
           leadId,
           propertySpecs,
+          promotekitReferral,
         }),
       })
         .then((res) => {
@@ -102,7 +105,7 @@ export function EmbeddedCheckoutModal({
           setLoading(false);
         });
     }
-  }, [isOpen, plan, source, utmParams, clientSecret, loading, onError, leadId, propertySpecs]);
+  }, [isOpen, plan, source, utmParams, clientSecret, loading, onError, leadId, propertySpecs, promotekitReferral]);
 
   // Reset state when modal closes
   useEffect(() => {

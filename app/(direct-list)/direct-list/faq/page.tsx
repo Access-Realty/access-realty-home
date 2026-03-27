@@ -1,8 +1,24 @@
 // ABOUTME: FAQ page for DirectList flat-fee MLS listing service
 // ABOUTME: Uses Accordion component to display common questions
 
+import type { Metadata } from "next";
 import Accordion from "@/components/ui/Accordion";
 import { HeroSection, Section, DirectListCTA } from "@/components/layout";
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://direct-list.com"),
+  title: "FAQ — DirectList Flat-Fee MLS Listing",
+  description:
+    "Common questions about DirectList flat-fee MLS listings. Fees, buyer's agents, photography, showings, and how the process works.",
+  alternates: { canonical: "https://direct-list.com/faq" },
+  openGraph: {
+    title: "Frequently Asked Questions — DirectList",
+    description:
+      "Everything you need to know about listing your home on the MLS with DirectList.",
+    url: "https://direct-list.com/faq",
+    siteName: "DirectList by Access Realty",
+  },
+};
 
 const faqItems = [
   {
@@ -42,9 +58,28 @@ const faqItems = [
   },
 ];
 
+// FAQ structured data derived entirely from our own static faqItems array (not user input),
+// so dangerouslySetInnerHTML is safe here — standard Next.js pattern for JSON-LD.
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqItems.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
 export default function FAQPage() {
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqSchema) }}
+      />
       {/* Hero */}
       <HeroSection maxWidth="3xl">
         <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-4">

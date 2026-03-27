@@ -45,12 +45,16 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
   const cityState = formatCityState(listing);
   const price = formatPrice(listing.list_price);
 
+  const listingUrl = `https://access.realty/homes-for-sale/${listing_id}`;
+
   return {
-    title: `${address}, ${cityState} | ${price} | Access Realty`,
+    title: `${address}, ${cityState} — ${price}`,
     description: listing.public_remarks?.slice(0, 160) || `${listing.bedrooms_total} bed, ${listing.bathrooms_total_decimal} bath home in ${listing.city}`,
+    alternates: { canonical: listingUrl },
     openGraph: {
-      title: `${address} | ${price}`,
+      title: `${address} — ${price}`,
       description: listing.public_remarks?.slice(0, 160) || `${listing.bedrooms_total} bed, ${listing.bathrooms_total_decimal} bath home`,
+      url: listingUrl,
       images: listing.photo_urls?.[0] ? [listing.photo_urls[0]] : undefined,
     },
   };

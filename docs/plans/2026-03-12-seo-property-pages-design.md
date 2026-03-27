@@ -100,22 +100,45 @@ Geographic content templates with spin syntax.
 
 ### `market_stats`
 
-Precomputed market aggregates from NTREIS data.
+Precomputed market aggregates from NTREIS data. Lives in the app repo database; full schema and aggregation logic defined in `access-realty-app/docs/superpowers/specs/2026-03-26-seo-market-stats-data-prep.md`.
+
+**Three period types per geography** — each hub page fetches three rows:
+
+| Period | Purpose | Example metrics |
+|--------|---------|-----------------|
+| `'YYYY-MM'` (e.g., `'2026-03'`) | Monthly activity snapshot | Active inventory, new listings, closed count, pending count |
+| `'trailing-3mo'` | Market tempo (3-month rolling) | DOM, sale-to-list, over/under list %, concession stats |
+| `'trailing-12mo'` | Headline price stats (12-month rolling) | Median sale price, price/sqft, YoY price change |
+
+Time windows are chosen to balance recency with statistical stability at zip-code level (~14 closings/month). Rate-based metrics (percentages, ratios) use 3 months for a stable ~42-sale pool. Price-based metrics use 12 months to smooth seasonality.
 
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | uuid | Primary key |
 | `geo_type` | text | `county`, `city`, `zip` |
 | `geo_id` | text | Geographic identifier |
-| `period` | text | e.g., "2026-03" |
-| `median_sale_price` | int | Median closed sale price |
-| `avg_dom` | int | Average days on market |
-| `months_of_supply` | float | Inventory absorption rate |
-| `pct_list_price_received` | float | Sale-to-list ratio |
-| `active_inventory` | int | Current active listing count |
-| `closed_last_30` | int | Closings in last 30 days |
-| `closed_last_90` | int | Closings in last 90 days |
+| `period` | text | `'YYYY-MM'`, `'trailing-3mo'`, or `'trailing-12mo'` |
+| `closed_count` | int | Sales closed during this period |
+| `median_sale_price` | int | Median sale price (list_price on closed listings) |
+| `median_price_per_sqft` | int | Median price per square foot |
+| `avg_dom` | int | Average days on market (list to contract) |
+| `median_dom` | int | Median days on market |
+| `pct_list_price_received` | numeric | Sale-to-list ratio (vs original asking) |
+| `pct_over_list` | numeric | % sold above original list price |
+| `pct_under_list` | numeric | % sold below original list price |
+| `yoy_price_change` | numeric | Year-over-year median price change (trailing-12mo only) |
+| `active_inventory` | int | Active listings at end of period |
+| `pending_inventory` | int | Currently pending listings at end of period |
+| `new_listings` | int | Listings entering market during period |
+| `months_of_supply` | numeric | active_inventory / 3-month avg monthly closings |
+| `pct_with_concessions` | numeric | % of closed sales with seller concessions |
+| `avg_concession_amount` | int | Avg concession $ (among sales with concessions) |
+| `avg_concession_pct` | numeric | Avg concession as % of sale price |
 | `computed_at` | timestamp | When stats were computed |
+
+### `market_stats_geos`
+
+Reference table defining the geographic scope: 15 DFW counties (5 core + 10 ring), plus all cities and zip codes within them. Cities and zips are dynamically discovered from `mls_listings` during each monthly refresh.
 
 ---
 
@@ -202,7 +225,7 @@ Top to bottom:
 4. **Property tax protest** — TODO (separately scoped project)
 5. **Recently sold near you** — 3-5 NTREIS closed sales, mini-map, brief comp methodology note linking to pillar page
 6. **Geographic content blocks** (spun) — Zip + City + School district + County narratives
-7. **Market snapshot** — Key stats from `market_stats` table: median price, DOM, market temperature (seller's/balanced/buyer's), inventory
+7. **Market snapshot** — Three-tier stats from `market_stats` table: headline price stats (trailing 12mo), market tempo (trailing 3mo: DOM, sale-to-list, over/under list, concessions), activity snapshot (current month: active, new, closed, pending, supply). Market temperature indicator derived from months of supply.
 8. **Our Track Record** — Map of your team's closed deals in this geographic area (static image on property pages, interactive on hub pages)
 9. **Net proceeds calculator** (React island) — Pre-fills AVM if unlocked; shows DirectList flat-fee savings vs. 3% commission
 10. **DirectList CTA** — Voice-guide aligned; "pricing strategy from a seasoned professional included"
@@ -268,8 +291,8 @@ Tiered sitemap index:
 
 | Cron | Frequency | Purpose |
 |------|-----------|---------|
-| `refresh-market-stats` | Weekly | Query NTREIS, compute aggregates per geo, write to `market_stats` |
-| `invalidate-hub-cache` | Weekly (after stats) | Purge CDN cache for hub pages |
+| `refresh-market-stats` | Monthly (1st of month) | Compute aggregates per geo for previous month + update trailing-3mo and trailing-12mo rows in `market_stats` |
+| `invalidate-hub-cache` | Monthly (after stats) | Purge CDN cache for hub pages |
 | `invalidate-property-cache` | Monthly | Purge CDN cache for property pages with new comps |
 | `build-new-pages` | Daily | Process `seo_build_queue`, load tax data for new parcels |
 | `send-subscriber-reports` | Daily | Check `next_report_date <= today`, query NTREIS, send via Resend, advance date |

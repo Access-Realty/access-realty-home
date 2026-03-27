@@ -88,7 +88,7 @@ export default function MarketSnapshotGrid({ snapshot }: { snapshot: MarketSnaps
       </div>
 
       {/* ── Activity & Dynamics — compact two-row grid ────────────────── */}
-      <div className="grid grid-cols-4 lg:grid-cols-8 gap-px bg-border/50 rounded-xl overflow-hidden">
+      <div className="grid grid-cols-4 lg:grid-cols-5 gap-px bg-border/50 rounded-xl overflow-hidden">
         {[
           { label: 'Active', value: fmtNum(s.activeInventory), sub: 'listings' },
           { label: 'New', value: fmtNum(s.newListings30d), sub: '30 days' },
@@ -98,6 +98,8 @@ export default function MarketSnapshotGrid({ snapshot }: { snapshot: MarketSnaps
           { label: 'Contract Rate', value: fmtPct(s.contractRate), sub: 'monthly' },
           { label: 'Over List', value: fmtPct(s.pctOverList), sub: 'sold above' },
           { label: 'Under List', value: fmtPct(s.pctUnderList), sub: 'sold below' },
+          { label: 'Concessions', value: fmtPct(s.concessionPct), sub: '% of solds' },
+          { label: 'Avg Concession', value: s.avgConcessionAmount != null ? fmt(s.avgConcessionAmount) : '—', sub: 'seller paid' },
         ].map((stat) => (
           <div key={stat.label} className="bg-card/80 px-3 py-3.5 text-center">
             <div className="text-[10px] text-muted-foreground uppercase tracking-wider font-medium">{stat.label}</div>

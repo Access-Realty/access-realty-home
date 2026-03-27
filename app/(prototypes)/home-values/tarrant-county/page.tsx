@@ -49,6 +49,8 @@ const snapshot: MarketSnapshot = {
   pctOverList: 18.6,
   pctUnderList: 48.3,
   contractRate: 28.3,
+  concessionPct: 34,
+  avgConcessionAmount: 9500,
 }
 
 const timeSeries: MonthlyDataPoint[] = [

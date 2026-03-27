@@ -1,10 +1,24 @@
 // ABOUTME: Staff directory page
 // ABOUTME: Lists all Access Realty team members with links to individual pages
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { getStaffMembers } from "@/lib/staff";
 import { HeroSection, Section, AccessCTA } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Our Team — DFW Real Estate Agents",
+  description:
+    "Meet the Access Realty team. Experienced agents serving Dallas–Fort Worth sellers with personalized strategies and local market expertise.",
+  alternates: { canonical: "https://access.realty/our-team" },
+  openGraph: {
+    title: "Meet the Access Realty Team",
+    description:
+      "Experienced Dallas–Fort Worth agents ready to help you sell your home.",
+    url: "https://access.realty/our-team",
+  },
+};
 import CompanyClosedListingsSection from "@/components/listings/CompanyClosedListingsSection";
 
 // Local avatar fallbacks (DB avatar_url takes precedence)

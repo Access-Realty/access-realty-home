@@ -22,6 +22,8 @@ export interface MarketSnapshot {
   pctOverList: number | null        // as percentage
   pctUnderList: number | null       // as percentage
   contractRate: number | null       // as percentage — pending / active per month
+  concessionPct: number | null      // as percentage — % of closed with seller concessions
+  avgConcessionAmount: number | null // dollar amount — avg concession among those that had one
 }
 
 export interface MonthlyDataPoint {
@@ -269,6 +271,8 @@ function computeSnapshot(rows: RawStatsRow[]): MarketSnapshot {
     pctOverList,
     pctUnderList,
     contractRate,
+    concessionPct: null,        // TODO: compute from concessions column
+    avgConcessionAmount: null,  // TODO: compute from concessions column
   }
 }
 
