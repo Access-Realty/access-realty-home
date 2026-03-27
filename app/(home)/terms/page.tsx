@@ -1,8 +1,17 @@
 // ABOUTME: Terms of Service page for Access Realty
 // ABOUTME: Legal terms and conditions for platform use
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HeroSection, Section, AccessCTA } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Terms of Service",
+  description:
+    "Terms of service for Access Realty and DirectList platforms. Read our legal terms and conditions.",
+  alternates: { canonical: "https://access.realty/terms" },
+  robots: { index: false, follow: true },
+};
 
 export default function TermsOfService() {
   return (

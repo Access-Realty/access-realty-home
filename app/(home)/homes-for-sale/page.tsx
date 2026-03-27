@@ -7,13 +7,15 @@ import { getListings } from "@/lib/listings";
 import { HeroSection, Section, AccessCTA } from "@/components/layout";
 
 export const metadata: Metadata = {
-  title: "Homes for Sale | Access Realty",
+  title: "Homes for Sale in Dallas–Fort Worth",
   description:
     "Browse homes for sale represented by Access Realty. Find your perfect home in the Dallas-Fort Worth area.",
+  alternates: { canonical: "https://access.realty/homes-for-sale" },
   openGraph: {
-    title: "Homes for Sale | Access Realty",
+    title: "Homes for Sale — Access Realty",
     description:
-      "Browse homes for sale represented by Access Realty. Find your perfect home in the Dallas-Fort Worth area.",
+      "Browse homes for sale represented by Access Realty in Dallas–Fort Worth.",
+    url: "https://access.realty/homes-for-sale",
   },
 };
 

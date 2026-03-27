@@ -1,9 +1,23 @@
 // ABOUTME: Hybrid page for sellers who want to avoid showings/negotiations
 // ABOUTME: Highlights Cash, 2 Payment, and Seller Finance solutions
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HiCheck, HiArrowRight, HiXMark } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Sell Without Showings or Negotiations",
+  description:
+    "Skip the open houses and back-and-forth. Sell your DFW home with cash offers, direct sales, or seller financing — no strangers in your home.",
+  alternates: { canonical: "https://access.realty/avoid-showings-negotiations" },
+  openGraph: {
+    title: "No Showings, No Negotiations — Sell on Your Terms",
+    description:
+      "Three hassle-free ways to sell your Dallas–Fort Worth home without open houses or buyer negotiations.",
+    url: "https://access.realty/avoid-showings-negotiations",
+  },
+};
 
 const solutions = [
   {

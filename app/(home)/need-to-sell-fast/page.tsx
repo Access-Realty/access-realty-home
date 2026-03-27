@@ -1,9 +1,23 @@
 // ABOUTME: Hybrid page for sellers who need to sell quickly
 // ABOUTME: Highlights Cash Offer, 2 Payment, and Seller Finance solutions
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Sell Your House Fast in Dallas–Fort Worth",
+  description:
+    "Need to sell quickly? Cash offers in 7 days, 2-payment plans, or seller financing. Multiple fast-close options for DFW homeowners.",
+  alternates: { canonical: "https://access.realty/need-to-sell-fast" },
+  openGraph: {
+    title: "Sell Your DFW Home Fast — Multiple Quick-Close Options",
+    description:
+      "Cash offer, 2-payment, or seller finance. Close in as little as 7 days with Access Realty.",
+    url: "https://access.realty/need-to-sell-fast",
+  },
+};
 
 const solutions = [
   {

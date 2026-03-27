@@ -49,9 +49,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   }
 
   const name = staff.full_name || `${staff.first_name} ${staff.last_name}`;
+  const agentUrl = `https://access.realty/our-team/${slug}`;
+
   return {
-    title: `${name} - ${staff.role || "Realtor"} | Access Realty`,
-    description: staff.bio[0]?.slice(0, 160),
+    title: `${name} — ${staff.role || "Realtor"}`,
+    description: staff.bio[0]?.slice(0, 160) || `${name}, ${staff.role || "Realtor"} at Access Realty serving Dallas–Fort Worth.`,
+    alternates: { canonical: agentUrl },
+    openGraph: {
+      title: `${name} — ${staff.role || "Realtor"} at Access Realty`,
+      description: staff.bio[0]?.slice(0, 160) || `Meet ${name}, serving DFW home sellers.`,
+      url: agentUrl,
+      ...(staff.avatar_url && { images: [staff.avatar_url] }),
+    },
   };
 }
 

@@ -1,9 +1,23 @@
 // ABOUTME: Hybrid page for sellers who want to maximize sale price
 // ABOUTME: Highlights Full Service Listing, DirectList, and Price Launch solutions
 
+import type { Metadata } from "next";
 import Link from "next/link";
 import { HiCheck, HiArrowRight } from "react-icons/hi2";
 import { HeroSection, Section } from "@/components/layout";
+
+export const metadata: Metadata = {
+  title: "Sell Your Home for the Most Money",
+  description:
+    "Maximize your DFW home sale with full-service agents, flat-fee MLS listings, or strategic pricing. Compare options and find your best path.",
+  alternates: { canonical: "https://access.realty/sell-for-the-most" },
+  openGraph: {
+    title: "Get Top Dollar for Your Home — Access Realty",
+    description:
+      "Three proven approaches to maximize your home's sale price in Dallas–Fort Worth.",
+    url: "https://access.realty/sell-for-the-most",
+  },
+};
 
 const solutions = [
   {

@@ -6,9 +6,18 @@ import { HeroSection, Section, DirectListCTA } from '@/components/layout';
 import { ResourceGrid } from './components/ResourceGrid';
 
 export const metadata: Metadata = {
-  title: 'Selling Resources | DirectList',
+  metadataBase: new URL("https://direct-list.com"),
+  title: "Selling Resources",
   description:
-    'Expert guides and videos to help you navigate every step of selling your home with confidence.',
+    "Expert guides and videos to help you navigate every step of selling your home with confidence.",
+  alternates: { canonical: "https://direct-list.com/selling-resources" },
+  openGraph: {
+    title: "Selling Resources — DirectList",
+    description:
+      "Free guides on pricing, staging, photography, and closing. Everything you need to sell your home like a pro.",
+    url: "https://direct-list.com/selling-resources",
+    siteName: "DirectList by Access Realty",
+  },
 };
 
 export default function SellingResourcesPage() {
