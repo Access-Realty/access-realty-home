@@ -103,8 +103,8 @@ export function DirectListFooter() {
               Ready to get started? Reach out to discuss your selling options.
             </p>
             <p className="text-sm">
-              <a href="tel:+19728207902" className="hover:text-secondary transition-colors">
-                (972) 820-7902
+              <a href="tel:+19728188184" className="hover:text-secondary transition-colors">
+                (972) 818-8184
               </a>
             </p>
             <p className="text-sm opacity-90">

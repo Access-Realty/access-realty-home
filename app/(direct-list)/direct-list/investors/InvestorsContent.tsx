@@ -3,11 +3,11 @@
 
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
-import { HiCheck, HiChevronDown } from "react-icons/hi2";
+import { HiCheck, HiChevronDown, HiXMark } from "react-icons/hi2";
 import { useBrandPath } from "@/lib/BrandProvider";
 import { StyledTierName } from "@/components/services/StyledTierName";
 import { InvestorVettingFlow } from "@/components/direct-list/InvestorVettingFlow";
@@ -50,13 +50,14 @@ type InvestorStep =
   | "contact"
   | "creating-lead"
   | "vetting"
+  | "vetting-reviewing"
+  | "vetting-failed"
   | "checkout"
   | "booking"
   | "success";
 
 export default function InvestorsContent() {
   const bp = useBrandPath();
-  const flowRef = useRef<HTMLDivElement>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [step, setStep] = useState<InvestorStep>("info");
   const [contactData, setContactData] = useState({
@@ -68,10 +69,23 @@ export default function InvestorsContent() {
   const [leadId, setLeadId] = useState<string | null>(null);
   const [showCheckout, setShowCheckout] = useState(false);
   const [contactError, setContactError] = useState("");
+  const [vettingFailReason, setVettingFailReason] = useState("");
+  const [propertyAddress, setPropertyAddress] = useState("");
   const [bookingResult, setBookingResult] =
     useState<CalendlyBookingResult | null>(null);
   const { originalTouch, latestTouch, currentParams } = useTrackingParams();
   const eventTypeUri = process.env.NEXT_PUBLIC_CALENDLY_INQUIRIES_URI || "";
+
+  const startFlow = useCallback(() => {
+    setStep("contact");
+  }, []);
+
+  // Listen for nav header "Get Started" button
+  useEffect(() => {
+    const handler = () => startFlow();
+    window.addEventListener("investor-get-started", handler);
+    return () => window.removeEventListener("investor-get-started", handler);
+  }, [startFlow]);
 
   const formatPhone = (value: string) => {
     let digits = value.replace(/\D/g, "");
@@ -102,10 +116,7 @@ export default function InvestorsContent() {
             {/* CTA */}
             <div className="flex flex-col items-start gap-4">
               <button
-                onClick={() => {
-                  setStep("contact");
-                  setTimeout(() => flowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
-                }}
+                onClick={startFlow}
                 className="inline-flex items-center justify-center gap-2 bg-secondary text-secondary-foreground px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
               >
                 Get Started
@@ -266,7 +277,6 @@ export default function InvestorsContent() {
                 <ul className="space-y-3">
                   {[
                     "Same MLS Exposure & Syndication",
-                    "Same Professional Photography",
                     "Same Showing System",
                     "Same Contracts & Documents",
                     "Same Lockbox & Yard Sign",
@@ -284,17 +294,11 @@ export default function InvestorsContent() {
               </div>
               <div className="p-6 pt-0 text-center">
                 <button
-                  onClick={() => {
-                    setStep("contact");
-                    setTimeout(() => flowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
-                  }}
+                  onClick={startFlow}
                   className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity text-base"
                 >
                   Get Started
                 </button>
-                <p className="text-xs text-muted-foreground mt-2">
-                  Verify your property to unlock investor pricing.
-                </p>
               </div>
             </div>
           </div>
@@ -344,26 +348,58 @@ export default function InvestorsContent() {
         </div>
       </Section>
 
-      {/* Multi-Step Flow Section */}
+      {/* Bottom CTA */}
+      <Section variant="cta" maxWidth="4xl" className="text-center">
+        <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
+          Ready to Get Started?
+        </h2>
+        <button
+          onClick={startFlow}
+          className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
+        >
+          Get Started
+          <span aria-hidden="true">&rarr;</span>
+        </button>
+      </Section>
+
+      {/* Investor Flow Modal */}
       {step !== "info" && (
-        <Section variant="content" maxWidth="lg">
-          <div ref={flowRef} className="bg-card rounded-2xl shadow-sm border border-border overflow-hidden">
-            <div className="p-6">
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center p-4"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="investor-flow-title"
+        >
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
+          <div className="relative bg-card rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+            {/* Header */}
+            <div className="flex items-center justify-between p-4 border-b border-border">
+              <h2 id="investor-flow-title" className="text-lg font-semibold text-foreground">
+                {step === "contact" && "Get Started"}
+                {step === "creating-lead" && "Get Started"}
+                {step === "vetting" && "Property Details"}
+                {step === "vetting-reviewing" && "Reviewing Property"}
+                {step === "vetting-failed" && "Verification Needed"}
+                {step === "checkout" && "Investor Pricing Unlocked"}
+                {step === "booking" && "Schedule a Call"}
+                {step === "success" && "You\u2019re All Set"}
+              </h2>
+              <button
+                onClick={() => setStep("info")}
+                className="p-2 hover:bg-muted rounded-full transition-colors"
+                aria-label="Close"
+              >
+                <HiXMark className="h-5 w-5 text-muted-foreground" />
+              </button>
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 overflow-y-auto p-6">
               {/* Contact Form */}
               {step === "contact" && (
                 <div>
-                  <button
-                    onClick={() => setStep("info")}
-                    className="text-sm text-primary hover:underline mb-4"
-                  >
-                    &larr; Back
-                  </button>
-                  <h3 className="text-xl font-bold text-foreground mb-1">
-                    Get Started
-                  </h3>
                   <p className="text-sm text-muted-foreground mb-4">
-                    Enter your contact information to verify your investor
-                    qualification.
+                    Enter your contact information to get started with your listing.
                   </p>
                   <form
                     onSubmit={async (e) => {
@@ -540,18 +576,56 @@ export default function InvestorsContent() {
 
               {/* Vetting */}
               {step === "vetting" && (
-                <div>
-                  <h3 className="text-xl font-bold text-foreground mb-1">
-                    Verify Your Property
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    Enter the address of the property you&apos;d like to list.
+                <InvestorVettingFlow
+                  email={contactData.email}
+                  onPass={(_parcelId, address) => {
+                    setPropertyAddress(address);
+                    setStep("checkout");
+                  }}
+                  onFail={(reason) => {
+                    setVettingFailReason(reason);
+                    setStep("vetting-reviewing");
+                    setTimeout(() => setStep("vetting-failed"), 2500);
+                  }}
+                />
+              )}
+
+              {/* Reviewing — deliberate pause before showing fail result */}
+              {step === "vetting-reviewing" && (
+                <div className="flex flex-col items-center justify-center py-12 gap-4">
+                  <div className="h-8 w-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+                  <p className="text-sm text-muted-foreground">Reviewing ownership records...</p>
+                </div>
+              )}
+
+              {/* Vetting Failed — explain why and offer booking */}
+              {step === "vetting-failed" && (
+                <div className="space-y-4 py-2">
+                  <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 space-y-2">
+                    <p className="font-semibold text-amber-800">
+                      We couldn&apos;t automatically verify investor qualification for this property.
+                    </p>
+                    <p className="text-sm text-amber-700">
+                      {vettingFailReason === "Homestead exemption detected"
+                        ? "This property has a homestead exemption on file, which typically indicates an owner-occupied residence rather than an investment property."
+                        : "We weren\u2019t able to find ownership records that indicate this is an investment property (such as entity ownership or a recent acquisition)."}
+                    </p>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    If this is an investment property, no problem — schedule a quick call and we&apos;ll verify your qualification personally.
                   </p>
-                  <InvestorVettingFlow
-                    email={contactData.email}
-                    onPass={() => setStep("checkout")}
-                    onFail={() => setStep("booking")}
-                  />
+                  <button
+                    onClick={() => setStep("booking")}
+                    className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                  >
+                    Schedule a Call
+                  </button>
+                  <button
+                    onClick={() => setStep("vetting")}
+                    className="w-full py-2 text-sm text-primary font-medium hover:underline"
+                  >
+                    Try a different address
+                  </button>
                 </div>
               )}
 
@@ -563,9 +637,13 @@ export default function InvestorsContent() {
                       Qualified for Investor Pricing
                     </span>
                   </div>
+                  {propertyAddress && (
+                    <p className="text-sm font-medium text-foreground">
+                      {propertyAddress}
+                    </p>
+                  )}
                   <p className="text-muted-foreground text-sm">
-                    You&apos;re all set to proceed with the Investor package at
-                    $1,995.
+                    You&apos;re all set to proceed with your listing.
                   </p>
                   <button
                     onClick={() => setShowCheckout(true)}
@@ -616,9 +694,6 @@ export default function InvestorsContent() {
               {/* Success */}
               {step === "success" && bookingResult && (
                 <div className="text-center space-y-4 py-4">
-                  <h3 className="text-xl font-bold text-foreground">
-                    You&apos;re All Set
-                  </h3>
                   <p className="text-muted-foreground text-sm">
                     Your call is scheduled. A confirmation email has been sent
                     to{" "}
@@ -645,29 +720,7 @@ export default function InvestorsContent() {
               )}
             </div>
           </div>
-        </Section>
-      )}
-
-      {/* Bottom CTA - shown only in info step */}
-      {step === "info" && (
-        <Section variant="cta" maxWidth="4xl" className="text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-foreground mb-4">
-            Ready to Get Started?
-          </h2>
-          <p className="text-muted-foreground mb-6 max-w-xl mx-auto">
-            Verify your property to unlock investor pricing.
-          </p>
-          <button
-            onClick={() => {
-              setStep("contact");
-              setTimeout(() => flowRef.current?.scrollIntoView({ behavior: "smooth", block: "center" }), 100);
-            }}
-            className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-primary-foreground font-semibold rounded-lg hover:bg-primary/90 transition-colors"
-          >
-            Get Started
-            <span aria-hidden="true">&rarr;</span>
-          </button>
-        </Section>
+        </div>
       )}
 
       {/* Checkout Modal */}

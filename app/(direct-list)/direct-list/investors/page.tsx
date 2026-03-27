@@ -11,11 +11,19 @@ export const metadata: Metadata = {
     "Flat-fee MLS listings for fix-and-flip and rental properties. Active investors qualify for $1,995 pricing — save thousands per deal with professional listing support.",
   alternates: { canonical: "https://direct-list.com/investors" },
   openGraph: {
-    title: "Investor MLS Listings — DirectList",
+    title: "List Investment Properties on MLS at a Flat Fee",
     description:
-      "List investment properties on the MLS at a flat fee. Save on every deal in your portfolio.",
+      "Flat-fee MLS listing built for investors. Same exposure, less cost.",
     url: "https://direct-list.com/investors",
     siteName: "DirectList by Access Realty",
+    images: [
+      {
+        url: "https://direct-list.com/DirectList_Investor.jpg",
+        width: 1080,
+        height: 1080,
+        alt: "DirectList — Built for Experienced Investors",
+      },
+    ],
   },
 };
 
