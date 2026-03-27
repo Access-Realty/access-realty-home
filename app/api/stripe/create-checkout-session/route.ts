@@ -59,6 +59,11 @@ const PLAN_PRICE_MAP: Record<string, { priceId: string; name: string; amountCent
     name: "Full Service",
     amountCents: 0, // No upfront - 3% at closing
   },
+  "investor_1995": {
+    priceId: process.env.STRIPE_PRICE_INVESTOR_1995 || "",
+    name: "Investor",
+    amountCents: 199500, // $1,995 upfront (before coupon)
+  },
 };
 
 // UTM parameters type
@@ -81,13 +86,14 @@ interface PropertySpecs {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { plan, source, utmParams, returnUrl, leadId, propertySpecs } = body as {
+    const { plan, source, utmParams, returnUrl, leadId, propertySpecs, promotekitReferral } = body as {
       plan: string;
       source?: string;
       utmParams?: UTMParams;
       returnUrl?: string; // For embedded checkout return
       leadId?: string;
       propertySpecs?: PropertySpecs;
+      promotekitReferral?: string;
     };
 
     // Validate plan
@@ -183,6 +189,7 @@ export async function POST(request: NextRequest) {
         created_from: "marketing-site",
         // Lead ID for fetching property data in app
         ...(leadId && { lead_id: leadId }),
+        ...(promotekitReferral && { promotekit_referral: promotekitReferral }),
         // Property specs (user-reported, may differ from parcel data)
         ...(propertySpecs?.bedrooms && { bedrooms: propertySpecs.bedrooms }),
         ...(propertySpecs?.fullBathrooms && { full_bathrooms: propertySpecs.fullBathrooms }),

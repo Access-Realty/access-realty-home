@@ -33,6 +33,26 @@ const localBusinessSchema = {
   },
 };
 
+const directListOrgSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "DirectList",
+  alternateName: "DirectList by Access Realty",
+  url: "https://direct-list.com",
+  description:
+    "Flat-fee MLS listing service for DFW homeowners. Professional photos, full syndication, and expert support — without the 6% commission.",
+  telephone: "+1-972-820-7902",
+  areaServed: {
+    "@type": "Place",
+    name: "Dallas-Fort Worth Metroplex",
+  },
+  parentOrganization: {
+    "@type": "RealEstateAgent",
+    name: "Access Realty",
+    url: "https://access.realty",
+  },
+};
+
 const beVietnamPro = Be_Vietnam_Pro({
   variable: "--font-be-vietnam-pro",
   subsets: ["latin"],
@@ -47,9 +67,28 @@ const cormorantGaramond = Cormorant_Garamond({
 });
 
 export const metadata: Metadata = {
-  title: "Access Realty - Sell Your House Your Way",
+  metadataBase: new URL("https://access.realty"),
+  title: {
+    default: "Access Realty — Sell Your House Your Way",
+    template: "%s | Access Realty",
+  },
   description:
     "Sell your home smarter, faster, and easier. Top selling agents, highly rated investors, and self-service listing options — all in one place.",
+  openGraph: {
+    type: "website",
+    siteName: "Access Realty",
+    locale: "en_US",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    "max-snippet": -1,
+    "max-image-preview": "large" as const,
+    "max-video-preview": -1,
+  },
   icons: {
     icon: [
       { url: "/favicon.ico", type: "image/x-icon" },
@@ -118,6 +157,13 @@ export default async function RootLayout({
         )}
         {brand === "directlist" && (
           <>
+            <Script
+              id="directlist-org-schema"
+              type="application/ld+json"
+              strategy="beforeInteractive"
+            >
+              {JSON.stringify(directListOrgSchema)}
+            </Script>
             <Script id="meta-pixel" strategy="afterInteractive">
               {`
                 !function(f,b,e,v,n,t,s)
@@ -141,6 +187,11 @@ export default async function RootLayout({
                 alt=""
               />
             </noscript>
+            <Script
+              src="https://cdn.promotekit.com/promotekit.js"
+              data-promotekit={process.env.NEXT_PUBLIC_PROMOTEKIT_ID || ""}
+              strategy="afterInteractive"
+            />
           </>
         )}
       </head>
