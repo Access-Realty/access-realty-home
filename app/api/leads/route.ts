@@ -1,6 +1,5 @@
-// ABOUTME: API route for capturing leads from DirectList get-started flow
-// ABOUTME: Uses service role to bypass RLS, stores lead with parcel FK
-// ABOUTME: Supports multi-touch attribution (first touch, latest touch, converting touch)
+// ABOUTME: API route for capturing and updating leads from DirectList get-started flow
+// ABOUTME: POST creates leads with multi-touch attribution; PATCH updates address/vetting fields
 
 import { NextRequest, NextResponse } from "next/server";
 import { getSupabaseAdmin } from "@/lib/supabase";
@@ -209,6 +208,69 @@ export async function POST(request: NextRequest) {
     });
   } catch (error) {
     console.error("Lead API error:", error);
+    return NextResponse.json(
+      { error: "Internal server error" },
+      { status: 500 }
+    );
+  }
+}
+
+// Fields allowed in PATCH updates (allowlist for safety)
+const PATCHABLE_FIELDS = new Set([
+  "street",
+  "city",
+  "state",
+  "zip",
+  "parcel_id",
+  "investor_vetting_passed",
+  "investor_vetting_reason",
+]);
+
+export async function PATCH(request: NextRequest) {
+  try {
+    const body = await request.json();
+    const { leadId, ...updates } = body;
+
+    if (!leadId || typeof leadId !== "string") {
+      return NextResponse.json(
+        { error: "leadId is required" },
+        { status: 400 }
+      );
+    }
+
+    // Filter to allowed fields only
+    const safeUpdates: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(updates)) {
+      if (PATCHABLE_FIELDS.has(key)) {
+        safeUpdates[key] = value;
+      }
+    }
+
+    if (Object.keys(safeUpdates).length === 0) {
+      return NextResponse.json(
+        { error: "No valid fields to update" },
+        { status: 400 }
+      );
+    }
+
+    const supabaseAdmin = getSupabaseAdmin();
+
+    const { error } = await supabaseAdmin
+      .from("leads")
+      .update(safeUpdates)
+      .eq("id", leadId);
+
+    if (error) {
+      console.error("Lead PATCH error:", error);
+      return NextResponse.json(
+        { error: "Failed to update lead" },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error("Lead PATCH API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }
