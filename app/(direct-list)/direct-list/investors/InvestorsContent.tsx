@@ -8,13 +8,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
 import { HiCheck, HiChevronDown, HiXMark } from "react-icons/hi2";
+import { loadStripe } from "@stripe/stripe-js";
+import {
+  EmbeddedCheckoutProvider,
+  EmbeddedCheckout,
+} from "@stripe/react-stripe-js";
 import { useBrandPath } from "@/lib/BrandProvider";
 import { StyledTierName } from "@/components/services/StyledTierName";
 import { InvestorVettingFlow } from "@/components/direct-list/InvestorVettingFlow";
-import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
 import type { CalendlyBookingResult } from "@/components/calendly/types";
 import { useTrackingParams } from "@/lib/useTrackingParams";
+
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 // FAQ items for fix & flip investors
 const faqItems = [
@@ -67,7 +75,6 @@ export default function InvestorsContent() {
     phone: "",
   });
   const [leadId, setLeadId] = useState<string | null>(null);
-  const [showCheckout, setShowCheckout] = useState(false);
   const [contactError, setContactError] = useState("");
   const [vettingFailReason, setVettingFailReason] = useState("");
   const [propertyAddress, setPropertyAddress] = useState("");
@@ -75,6 +82,69 @@ export default function InvestorsContent() {
     useState<CalendlyBookingResult | null>(null);
   const { originalTouch, latestTouch, currentParams } = useTrackingParams();
   const eventTypeUri = process.env.NEXT_PUBLIC_CALENDLY_INQUIRIES_URI || "";
+  const [clientSecret, setClientSecret] = useState<string | null>(null);
+  const [checkoutLoading, setCheckoutLoading] = useState(false);
+  const [checkoutError, setCheckoutError] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (step !== "checkout" || clientSecret || checkoutLoading) return;
+
+    const controller = new AbortController();
+    setCheckoutLoading(true);
+    setCheckoutError(null);
+
+    fetch("/api/stripe/create-checkout-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        plan: "investor_service",
+        source: "investors-page",
+        leadId,
+      }),
+      signal: controller.signal,
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Failed to create checkout session");
+        return res.json();
+      })
+      .then((data) => {
+        if (data.noPaymentRequired && data.redirectUrl) {
+          window.location.href = data.redirectUrl;
+        } else if (data.clientSecret) {
+          setClientSecret(data.clientSecret);
+        } else {
+          throw new Error("No client secret returned");
+        }
+      })
+      .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
+        setCheckoutError(
+          err instanceof Error ? err.message : "Failed to load checkout"
+        );
+      })
+      .finally(() => {
+        setCheckoutLoading(false);
+      });
+
+    return () => controller.abort();
+  }, [step, clientSecret, checkoutLoading, leadId]);
+
+  useEffect(() => {
+    if (step !== "checkout") {
+      setClientSecret(null);
+      setCheckoutError(null);
+      setCheckoutLoading(false);
+    }
+  }, [step]);
+
+  const patchLead = useCallback((patch: Record<string, unknown>) => {
+    if (!leadId) return;
+    fetch("/api/leads", {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ leadId, ...patch }),
+    }).catch(() => {});
+  }, [leadId]);
 
   const startFlow = useCallback(() => {
     setStep("contact");
@@ -371,7 +441,7 @@ export default function InvestorsContent() {
           aria-labelledby="investor-flow-title"
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className="relative bg-card rounded-xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col">
+          <div className={`relative bg-card rounded-xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col ${step === "checkout" ? "max-w-2xl" : "max-w-lg"}`}>
             {/* Header */}
             <div className="flex items-center justify-between p-4 border-b border-border">
               <h2 id="investor-flow-title" className="text-lg font-semibold text-foreground">
@@ -380,7 +450,7 @@ export default function InvestorsContent() {
                 {step === "vetting" && "Property Details"}
                 {step === "vetting-reviewing" && "Reviewing Property"}
                 {step === "vetting-failed" && "Verification Needed"}
-                {step === "checkout" && "Investor Pricing Unlocked"}
+                {step === "checkout" && "Checkout"}
                 {step === "booking" && "Schedule a Call"}
                 {step === "success" && "You\u2019re All Set"}
               </h2>
@@ -578,12 +648,25 @@ export default function InvestorsContent() {
               {step === "vetting" && (
                 <InvestorVettingFlow
                   email={contactData.email}
-                  onPass={(_parcelId, address) => {
+                  onPass={(parcelId, address, parcelData) => {
                     setPropertyAddress(address);
+                    patchLead({
+                      parcel_id: parcelId,
+                      street: parcelData.street_address || undefined,
+                      city: parcelData.city || undefined,
+                      state: parcelData.state || undefined,
+                      zip: parcelData.zip || undefined,
+                      investor_vetting_passed: true,
+                      investor_vetting_reason: "Automated vetting passed",
+                    });
                     setStep("checkout");
                   }}
                   onFail={(reason) => {
                     setVettingFailReason(reason);
+                    patchLead({
+                      investor_vetting_passed: false,
+                      investor_vetting_reason: reason,
+                    });
                     setStep("vetting-reviewing");
                     setTimeout(() => setStep("vetting-failed"), 2500);
                   }}
@@ -629,29 +712,33 @@ export default function InvestorsContent() {
                 </div>
               )}
 
-              {/* Checkout */}
-              {step === "checkout" && (
-                <div className="text-center space-y-4 py-4">
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-green-50 border border-green-200 rounded-full">
-                    <span className="text-green-700 font-semibold text-sm">
-                      Qualified for Investor Pricing
-                    </span>
-                  </div>
-                  {propertyAddress && (
-                    <p className="text-sm font-medium text-foreground">
-                      {propertyAddress}
-                    </p>
-                  )}
-                  <p className="text-muted-foreground text-sm">
-                    You&apos;re all set to proceed with your listing.
-                  </p>
+              {step === "checkout" && checkoutError && (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="text-red-600 mb-4 text-center">{checkoutError}</div>
                   <button
-                    onClick={() => setShowCheckout(true)}
-                    className="px-8 py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:opacity-90 transition-opacity"
+                    onClick={() => {
+                      setCheckoutError(null);
+                      setClientSecret(null);
+                    }}
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
                   >
-                    Proceed to Checkout
+                    Try Again
                   </button>
                 </div>
+              )}
+              {step === "checkout" && !checkoutError && (checkoutLoading || !clientSecret) && (
+                <div className="flex flex-col items-center justify-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mb-4" />
+                  <p className="text-muted-foreground">Loading checkout...</p>
+                </div>
+              )}
+              {step === "checkout" && !checkoutError && clientSecret && (
+                <EmbeddedCheckoutProvider
+                  stripe={stripePromise}
+                  options={{ clientSecret }}
+                >
+                  <EmbeddedCheckout />
+                </EmbeddedCheckoutProvider>
               )}
 
               {/* Booking (FAIL path) */}
@@ -723,15 +810,6 @@ export default function InvestorsContent() {
         </div>
       )}
 
-      {/* Checkout Modal */}
-      <EmbeddedCheckoutModal
-        isOpen={showCheckout}
-        onClose={() => setShowCheckout(false)}
-        plan="investor_service"
-        planName="Investor"
-        source="investors-page"
-        leadId={leadId || undefined}
-      />
     </div>
   );
 }

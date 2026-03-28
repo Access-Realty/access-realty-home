@@ -17,7 +17,7 @@ type VettingState = "idle" | "loading" | "passed" | "failed" | "error" | "exhaus
 interface InvestorVettingFlowProps {
   /** Email collected by parent — required for per-email rate limiting */
   email: string;
-  onPass: (parcelId: string, address: string) => void;
+  onPass: (parcelId: string, address: string, parcelData: { street_address?: string; city?: string; state?: string; zip?: string }) => void;
   onFail: (reason: string) => void;
   /** URL for the Book a Call fallback */
   bookCallHref?: string;
@@ -85,7 +85,12 @@ export function InvestorVettingFlow({
 
       if (data.vetting.passed) {
         setState("passed");
-        onPass(data.parcel.parcel_id, addressData.formattedAddress);
+        onPass(data.parcel.parcel_id, addressData.formattedAddress, {
+          street_address: data.parcel.street_address,
+          city: data.parcel.city,
+          state: data.parcel.state,
+          zip: data.parcel.zip,
+        });
       } else {
         setState("failed");
         onFail(data.vetting.reason);
