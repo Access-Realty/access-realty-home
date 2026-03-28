@@ -67,9 +67,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Call parcel-lookup Edge Function WITHOUT upsert so we always get fresh
-    // BatchData results. An investor may have purchased the property recently —
-    // the 90-day cache could still show the previous owner's data.
+    // Call parcel-lookup Edge Function with upsert to persist parcel data for lead linkage.
+    // Always fetches fresh BatchData (upsert overwrites any cached row).
     const response = await fetch(`${SUPABASE_URL}/functions/v1/parcel-lookup`, {
       method: "POST",
       headers: {
@@ -78,7 +77,7 @@ export async function POST(request: NextRequest) {
       },
       body: JSON.stringify({
         ...(address ? { address } : { street, city, state, zip }),
-        // Intentionally omitting upsert: true — always fetch fresh from BatchData
+        upsert: true,
       }),
     });
 
