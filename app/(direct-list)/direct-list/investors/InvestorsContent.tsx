@@ -87,7 +87,7 @@ export default function InvestorsContent() {
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (step !== "checkout" || clientSecret || checkoutLoading) return;
+    if (step !== "checkout" || clientSecret || checkoutLoading || checkoutError) return;
 
     const controller = new AbortController();
     setCheckoutLoading(true);
