@@ -8,6 +8,7 @@ import { HiXMark } from "react-icons/hi2";
 import type { AddressData } from "@/components/direct-list/AddressInput";
 import { clearAddress } from "@/lib/addressStorage";
 import { useTrackingParams } from "@/lib/useTrackingParams";
+import { formatPhone } from "@/lib/formatPhone";
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
 import type { CalendlyBookingResult } from "@/components/calendly/types";
 
@@ -57,18 +58,6 @@ export function ProgramInquiryModal({
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  // Format phone number as user types: (555) 123-4567
-  const formatPhone = (value: string) => {
-    let digits = value.replace(/\D/g, "");
-    // Strip leading "1" country code if autofill included it
-    if (digits.length === 11 && digits.startsWith("1")) {
-      digits = digits.slice(1);
-    }
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {

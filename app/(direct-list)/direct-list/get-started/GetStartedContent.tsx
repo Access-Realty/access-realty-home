@@ -21,6 +21,7 @@ import { GOOGLE_MAPS_LIBRARIES } from "@/lib/google-maps";
 import { EmbeddedCheckoutModal } from "@/components/checkout/EmbeddedCheckoutModal";
 import { HeroSection, Section } from "@/components/layout";
 import { useTrackingParams } from "@/lib/useTrackingParams";
+import { formatPhone } from "@/lib/formatPhone";
 import {
   HiOutlineArrowRight,
   HiOutlineArrowLeft,
@@ -450,18 +451,6 @@ export default function GetStartedContent() {
   const handleSpecsChange = (field: keyof EditableSpecs, value: string, numericOnly = true) => {
     const processedValue = numericOnly ? value.replace(/\D/g, "") : value;
     setEditableSpecs((prev) => ({ ...prev, [field]: processedValue }));
-  };
-
-  // Format phone number as user types
-  const formatPhone = (value: string) => {
-    let digits = value.replace(/\D/g, "");
-    // Strip leading "1" country code if autofill included it
-    if (digits.length === 11 && digits.startsWith("1")) {
-      digits = digits.slice(1);
-    }
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
 
   const handleContactChange = (field: keyof ContactForm, value: string) => {

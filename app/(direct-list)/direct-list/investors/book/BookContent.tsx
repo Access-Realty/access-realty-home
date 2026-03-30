@@ -7,6 +7,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { HiArrowLeft } from "react-icons/hi2";
 import { useTrackingParams } from "@/lib/useTrackingParams";
+import { formatPhone } from "@/lib/formatPhone";
 import { useBrandPath } from "@/lib/BrandProvider";
 import { CalendlyBooking } from "@/components/calendly/CalendlyBooking";
 import type { CalendlyBookingResult } from "@/components/calendly/types";
@@ -53,16 +54,6 @@ export default function BookContent() {
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const formatPhone = (value: string) => {
-    let digits = value.replace(/\D/g, "");
-    if (digits.length === 11 && digits.startsWith("1")) {
-      digits = digits.slice(1);
-    }
-    if (digits.length <= 3) return digits;
-    if (digits.length <= 6) return `(${digits.slice(0, 3)}) ${digits.slice(3)}`;
-    return `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 10)}`;
   };
 
   const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
