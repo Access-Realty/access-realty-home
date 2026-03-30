@@ -832,10 +832,10 @@ export default function InvestorsContent() {
 
             {/* Footer navigation — Back + forward action side by side */}
             {step !== "checkout" && step !== "creating-lead" && step !== "vetting-reviewing" && step !== "success" && backStepMap[step] && (
-              <div className="border-t border-border px-6 py-3 flex items-center justify-between gap-3">
+              <div className="border-t border-border px-6 py-3 flex items-center gap-3">
                 <button
                   onClick={goBack}
-                  className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
+                  className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
                 >
                   <HiArrowLeft className="h-4 w-4" />
                   Back
@@ -844,7 +844,7 @@ export default function InvestorsContent() {
                   <button
                     type="submit"
                     form="investor-contact-form"
-                    className="flex-1 py-2.5 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                    className="flex-1 py-2.5 rounded-lg font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
                     Continue
                   </button>
@@ -852,7 +852,7 @@ export default function InvestorsContent() {
                 {step === "vetting-failed" && (
                   <button
                     onClick={() => setStep("booking")}
-                    className="flex-1 py-2.5 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                    className="flex-1 py-2.5 rounded-lg font-semibold bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                   >
                     Schedule a Call
                   </button>
