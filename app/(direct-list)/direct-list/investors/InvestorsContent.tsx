@@ -7,7 +7,7 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
-import { HiCheck, HiChevronDown, HiXMark } from "react-icons/hi2";
+import { HiArrowLeft, HiCheck, HiChevronDown, HiXMark } from "react-icons/hi2";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   EmbeddedCheckoutProvider,
@@ -128,6 +128,33 @@ export default function InvestorsContent() {
       body: JSON.stringify({ leadId, ...patch }),
     }).catch(() => {});
   }, [leadId]);
+
+  // Steps that show a back button and where they go
+  const backStepMap: Partial<Record<InvestorStep, InvestorStep>> = {
+    contact: "info",
+    vetting: "contact",
+    "vetting-failed": "vetting",
+    checkout: "vetting",
+    booking: "vetting-failed",
+  };
+
+  const goBack = useCallback(() => {
+    const prev = backStepMap[step];
+    if (!prev) return;
+    if (prev === "info") {
+      activeFlowRef.current = false;
+      setClientSecret(null);
+      setCheckoutError(null);
+      setCheckoutLoading(false);
+    }
+    // Clear checkout state when backing out of checkout
+    if (step === "checkout") {
+      setClientSecret(null);
+      setCheckoutError(null);
+      setCheckoutLoading(false);
+    }
+    setStep(prev);
+  }, [step]);
 
   const startFlow = useCallback(() => {
     activeFlowRef.current = true;
@@ -416,36 +443,61 @@ export default function InvestorsContent() {
           aria-labelledby="investor-flow-title"
         >
           <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" />
-          <div className={`relative bg-card rounded-xl shadow-2xl w-full max-h-[90vh] overflow-hidden flex flex-col ${step === "checkout" ? "max-w-2xl" : "max-w-lg"}`}>
-            {/* Header */}
-            <div className="flex items-center justify-between p-4 border-b border-border">
-              <h2 id="investor-flow-title" className="text-lg font-semibold text-foreground">
-                {step === "contact" && "Get Started"}
-                {step === "creating-lead" && "Get Started"}
-                {step === "vetting" && "Property Details"}
-                {step === "vetting-reviewing" && "Reviewing Property"}
-                {step === "vetting-failed" && "Verification Needed"}
-                {step === "checkout" && "Checkout"}
-                {step === "booking" && "Schedule a Call"}
-                {step === "success" && "You\u2019re All Set"}
-              </h2>
-              <button
-                onClick={() => {
-                  activeFlowRef.current = false;
-                  setStep("info");
-                  setClientSecret(null);
-                  setCheckoutError(null);
-                  setCheckoutLoading(false);
-                }}
-                className="p-2 hover:bg-muted rounded-full transition-colors"
-                aria-label="Close"
-              >
-                <HiXMark className="h-5 w-5 text-muted-foreground" />
-              </button>
-            </div>
+          <div className={`relative bg-card rounded-xl shadow-2xl w-full overflow-hidden flex flex-col ${step === "checkout" ? "max-w-3xl max-h-[95vh]" : "max-w-lg max-h-[90vh]"}`}>
+            {/* Header — hidden for checkout since Stripe provides its own chrome */}
+            {step !== "checkout" && (
+              <div className="flex items-center justify-between p-4 border-b border-border">
+                <h2 id="investor-flow-title" className="text-lg font-semibold text-foreground">
+                  {step === "contact" && "Get Started"}
+                  {step === "creating-lead" && "Get Started"}
+                  {step === "vetting" && "Property Details"}
+                  {step === "vetting-reviewing" && "Reviewing Property"}
+                  {step === "vetting-failed" && "Verification Needed"}
+                  {step === "booking" && "Schedule a Call"}
+                  {step === "success" && "You\u2019re All Set"}
+                </h2>
+                <button
+                  onClick={() => {
+                    activeFlowRef.current = false;
+                    setStep("info");
+                    setClientSecret(null);
+                    setCheckoutError(null);
+                    setCheckoutLoading(false);
+                  }}
+                  className="p-2 hover:bg-muted rounded-full transition-colors"
+                  aria-label="Close"
+                >
+                  <HiXMark className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </div>
+            )}
+            {step === "checkout" && (
+              <>
+                <button
+                  onClick={goBack}
+                  className="absolute top-2 left-2 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-sm transition-colors"
+                  aria-label="Back"
+                >
+                  <HiArrowLeft className="h-5 w-5 text-muted-foreground" />
+                </button>
+                <button
+                  onClick={() => {
+                    activeFlowRef.current = false;
+                    setStep("info");
+                    setClientSecret(null);
+                    setCheckoutError(null);
+                    setCheckoutLoading(false);
+                  }}
+                  className="absolute top-2 right-2 z-10 p-2 bg-white/80 hover:bg-white rounded-full shadow-sm transition-colors"
+                  aria-label="Close"
+                >
+                  <HiXMark className="h-5 w-5 text-muted-foreground" />
+                </button>
+              </>
+            )}
 
             {/* Content */}
-            <div className="flex-1 overflow-y-auto p-6">
+            <div className={`flex-1 overflow-y-auto ${step === "checkout" ? "p-0" : "p-6"}`}>
               {/* Contact Form */}
               {step === "contact" && (
                 <div>
@@ -689,12 +741,6 @@ export default function InvestorsContent() {
                   >
                     Schedule a Call
                   </button>
-                  <button
-                    onClick={() => setStep("vetting")}
-                    className="w-full py-2 text-sm text-primary font-medium hover:underline"
-                  >
-                    Try a different address
-                  </button>
                 </div>
               )}
 
@@ -789,6 +835,19 @@ export default function InvestorsContent() {
                 </div>
               )}
             </div>
+
+            {/* Footer navigation — shown for interactive steps (not checkout, not transient spinners, not success) */}
+            {step !== "checkout" && step !== "creating-lead" && step !== "vetting-reviewing" && step !== "success" && backStepMap[step] && (
+              <div className="border-t border-border px-6 py-3">
+                <button
+                  onClick={goBack}
+                  className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                >
+                  <HiArrowLeft className="h-4 w-4" />
+                  Back
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}
