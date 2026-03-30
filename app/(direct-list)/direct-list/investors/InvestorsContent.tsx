@@ -198,10 +198,10 @@ export default function InvestorsContent() {
           <div className="hidden md:block">
             <div className="border-4 border-secondary rounded-lg overflow-hidden shadow-2xl">
               <Image
-                src="/hero-house-new.jpg"
-                alt="Investment property for sale"
-                width={1920}
-                height={1264}
+                src="/investors-hero.jpg"
+                alt="Real estate investor reviewing property blueprints"
+                width={1755}
+                height={1755}
                 className="w-full h-auto object-cover"
                 priority
               />
