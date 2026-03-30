@@ -95,6 +95,7 @@ export async function POST(request: NextRequest) {
       utmParams,
       returnUrl,
       leadId,
+      email,
       propertySpecs,
       promotekitReferral,
     } = body as {
@@ -103,6 +104,7 @@ export async function POST(request: NextRequest) {
       utmParams?: UTMParams;
       returnUrl?: string; // For embedded checkout return
       leadId?: string;
+      email?: string;
       propertySpecs?: PropertySpecs;
       promotekitReferral?: string;
     };
@@ -184,6 +186,7 @@ export async function POST(request: NextRequest) {
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       mode: "payment",
+      ...(email && { customer_email: email }),
       line_items: [
         {
           price: planConfig.priceId,

@@ -3,7 +3,7 @@
 
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
@@ -85,50 +85,39 @@ export default function InvestorsContent() {
   const [clientSecret, setClientSecret] = useState<string | null>(null);
   const [checkoutLoading, setCheckoutLoading] = useState(false);
   const [checkoutError, setCheckoutError] = useState<string | null>(null);
+  const activeFlowRef = useRef(false);
 
-  useEffect(() => {
-    if (step !== "checkout" || clientSecret || checkoutLoading || checkoutError) return;
+  const fetchCheckout = useCallback(async () => {
     setCheckoutLoading(true);
-
-    fetch("/api/stripe/create-checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        plan: "investor_service",
-        source: "investors-page",
-        leadId,
-      }),
-    })
-      .then((res) => {
-        if (!res.ok) throw new Error("Failed to create checkout session");
-        return res.json();
-      })
-      .then((data) => {
-        if (data.noPaymentRequired && data.redirectUrl) {
-          window.location.href = data.redirectUrl;
-        } else if (data.clientSecret) {
-          setClientSecret(data.clientSecret);
-        } else {
-          throw new Error("No client secret returned");
-        }
-      })
-      .catch((err) => {
-        setCheckoutError(
-          err instanceof Error ? err.message : "Failed to load checkout"
-        );
-      })
-      .finally(() => {
-        setCheckoutLoading(false);
+    setCheckoutError(null);
+    try {
+      const res = await fetch("/api/stripe/create-checkout-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          plan: "investor_service",
+          source: "investors-page",
+          leadId,
+          email: contactData.email,
+        }),
       });
-  }, [step, clientSecret, checkoutLoading, checkoutError, leadId]);
-
-  useEffect(() => {
-    if (step !== "checkout") {
-      setClientSecret(null);
-      setCheckoutError(null);
+      if (!res.ok) throw new Error("Failed to create checkout session");
+      const data = await res.json();
+      if (data.noPaymentRequired && data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+      } else if (data.clientSecret) {
+        setClientSecret(data.clientSecret);
+      } else {
+        throw new Error("No client secret returned");
+      }
+    } catch (err) {
+      setCheckoutError(
+        err instanceof Error ? err.message : "Failed to load checkout"
+      );
+    } finally {
       setCheckoutLoading(false);
     }
-  }, [step]);
+  }, [leadId, contactData.email]);
 
   const patchLead = useCallback((patch: Record<string, unknown>) => {
     if (!leadId) return;
@@ -140,6 +129,7 @@ export default function InvestorsContent() {
   }, [leadId]);
 
   const startFlow = useCallback(() => {
+    activeFlowRef.current = true;
     setStep("contact");
   }, []);
 
@@ -448,7 +438,13 @@ export default function InvestorsContent() {
                 {step === "success" && "You\u2019re All Set"}
               </h2>
               <button
-                onClick={() => setStep("info")}
+                onClick={() => {
+                  activeFlowRef.current = false;
+                  setStep("info");
+                  setClientSecret(null);
+                  setCheckoutError(null);
+                  setCheckoutLoading(false);
+                }}
                 className="p-2 hover:bg-muted rounded-full transition-colors"
                 aria-label="Close"
               >
@@ -652,7 +648,12 @@ export default function InvestorsContent() {
                       investor_vetting_passed: true,
                       investor_vetting_reason: "Automated vetting passed",
                     });
-                    setTimeout(() => setStep("checkout"), 2000);
+                    // Fetch checkout session while showing green card for 2s
+                    const checkout = fetchCheckout();
+                    const delay = new Promise(r => setTimeout(r, 2000));
+                    Promise.all([checkout, delay]).then(() => {
+                      if (activeFlowRef.current) setStep("checkout");
+                    });
                   }}
                   onFail={(reason) => {
                     setVettingFailReason(reason);
@@ -709,10 +710,7 @@ export default function InvestorsContent() {
                 <div className="flex flex-col items-center justify-center py-12">
                   <div className="text-red-600 mb-4 text-center">{checkoutError}</div>
                   <button
-                    onClick={() => {
-                      setCheckoutError(null);
-                      setClientSecret(null);
-                    }}
+                    onClick={() => fetchCheckout()}
                     className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 transition-colors"
                   >
                     Try Again
