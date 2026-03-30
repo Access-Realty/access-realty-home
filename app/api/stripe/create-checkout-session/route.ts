@@ -98,6 +98,7 @@ export async function POST(request: NextRequest) {
       email,
       propertySpecs,
       promotekitReferral,
+      promoCode,
     } = body as {
       plan: string;
       source?: string;
@@ -107,6 +108,7 @@ export async function POST(request: NextRequest) {
       email?: string;
       propertySpecs?: PropertySpecs;
       promotekitReferral?: string;
+      promoCode?: string;
     };
 
     // Validate plan
@@ -183,6 +185,32 @@ export async function POST(request: NextRequest) {
 
     // Create Stripe Checkout session in embedded mode (stays on our site)
     const stripe = getStripe();
+
+    // If a promo code was provided (e.g., from a URL param), look it up and
+    // apply it as a discount. When applied, Stripe's built-in "Add code" UI is
+    // hidden since the discount is already active. If no code or invalid code,
+    // fall back to letting users enter codes manually via Stripe's UI.
+    let discountConfig: { discounts: { promotion_code: string }[] } | { allow_promotion_codes: true } =
+      { allow_promotion_codes: true };
+
+    if (promoCode) {
+      try {
+        const promoCodes = await stripe.promotionCodes.list({
+          code: promoCode,
+          active: true,
+          limit: 1,
+        });
+        if (promoCodes.data.length > 0) {
+          discountConfig = {
+            discounts: [{ promotion_code: promoCodes.data[0].id }],
+          };
+        }
+      } catch (err) {
+        // If promo code lookup fails, fall back to manual entry
+        console.error("Promo code lookup failed:", err);
+      }
+    }
+
     const session = await stripe.checkout.sessions.create({
       ui_mode: "embedded",
       mode: "payment",
@@ -200,6 +228,7 @@ export async function POST(request: NextRequest) {
       payment_intent_data: {
         setup_future_usage: "off_session",
       },
+      ...discountConfig,
       metadata: {
         tier: plan,
         source: source || "services-page",
@@ -227,7 +256,6 @@ export async function POST(request: NextRequest) {
         ...(utmParams?.utm_term && { utm_term: utmParams.utm_term }),
         ...(utmParams?.utm_content && { utm_content: utmParams.utm_content }),
       },
-      allow_promotion_codes: true,
       // Collect billing address for compliance (includes name)
       billing_address_collection: "required",
     });

@@ -69,6 +69,11 @@ export function EmbeddedCheckoutModal({
       setLoading(true);
       setError(null);
 
+      // Pass promo code from URL param if present (e.g., affiliate links)
+      const urlCode = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("code")
+        : null;
+
       fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -79,6 +84,7 @@ export function EmbeddedCheckoutModal({
           leadId,
           propertySpecs,
           promotekitReferral,
+          ...(urlCode && { promoCode: urlCode }),
         }),
       })
         .then((res) => {

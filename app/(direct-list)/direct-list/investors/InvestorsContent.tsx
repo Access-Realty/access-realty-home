@@ -92,6 +92,10 @@ export default function InvestorsContent() {
     setCheckoutLoading(true);
     setCheckoutError(null);
     try {
+      // Pass promo code from URL param (e.g., affiliate links with ?code=INVEST500)
+      const urlCode = typeof window !== "undefined"
+        ? new URLSearchParams(window.location.search).get("code")
+        : null;
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -100,6 +104,7 @@ export default function InvestorsContent() {
           source: "investors-page",
           leadId,
           email: contactData.email,
+          ...(urlCode && { promoCode: urlCode }),
         }),
       });
       if (!res.ok) throw new Error("Failed to create checkout session");
