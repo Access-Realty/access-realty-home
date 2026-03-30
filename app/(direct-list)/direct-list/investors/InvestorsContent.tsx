@@ -96,6 +96,10 @@ export default function InvestorsContent() {
       const urlCode = typeof window !== "undefined"
         ? new URLSearchParams(window.location.search).get("code")
         : null;
+      // PromoteKit affiliate tracking — pk.js sets this cookie/global on referral link visits
+      const promoteKitRef = typeof window !== "undefined"
+        ? (window as unknown as Record<string, unknown>).promotekit_referral as string | undefined
+        : undefined;
       const res = await fetch("/api/stripe/create-checkout-session", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -105,6 +109,7 @@ export default function InvestorsContent() {
           leadId,
           email: contactData.email,
           ...(urlCode && { promoCode: urlCode }),
+          ...(promoteKitRef && { promotekitReferral: promoteKitRef }),
         }),
       });
       if (!res.ok) throw new Error("Failed to create checkout session");

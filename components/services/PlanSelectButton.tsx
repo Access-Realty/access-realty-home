@@ -60,6 +60,8 @@ export function PlanSelectButton({
 
     // Capture UTM params at the moment of click
     const utmParams = getUTMParams();
+    // PromoteKit affiliate tracking — pk.js sets this cookie/global on referral link visits
+    const promoteKitRef = (window as unknown as Record<string, unknown>).promotekit_referral as string | undefined;
 
     try {
       const response = await fetch("/api/stripe/create-checkout-session", {
@@ -71,6 +73,7 @@ export function PlanSelectButton({
           plan: planId,
           source: "services-page",
           utmParams,
+          ...(promoteKitRef && { promotekitReferral: promoteKitRef }),
         }),
       });
 

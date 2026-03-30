@@ -1346,6 +1346,7 @@ export default function GetStartedContent() {
               utm_term: latestTouch?.utm_term || currentParams.utm_term,
               utm_content: latestTouch?.utm_content || currentParams.utm_content,
             }}
+            promotekitReferral={typeof window !== "undefined" ? (window as unknown as Record<string, unknown>).promotekit_referral as string | undefined : undefined}
           />
         );
       })()}

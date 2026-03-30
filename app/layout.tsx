@@ -188,7 +188,7 @@ export default async function RootLayout({
               />
             </noscript>
             <Script
-              src="https://cdn.promotekit.com/promotekit.js"
+              src="https://cdn.promotekit.com/pk.js"
               data-promotekit={process.env.NEXT_PUBLIC_PROMOTEKIT_ID || ""}
               strategy="afterInteractive"
             />

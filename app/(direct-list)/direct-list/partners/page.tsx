@@ -1,5 +1,4 @@
-// app/(direct-list)/direct-list/partners/page.tsx
-// ABOUTME: Partners/affiliate recruitment page — noindex, links to PromoteKit signup
+// ABOUTME: Partners/affiliate recruitment page — noindex, targets DFW wholesalers
 // ABOUTME: Server wrapper exports metadata; delegates rendering to PartnersContent
 
 import type { Metadata } from "next";
@@ -7,9 +6,9 @@ import PartnersContent from "./PartnersContent";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://direct-list.com"),
-  title: "Partner with DirectList — Earn $150 Per Referral",
+  title: "DirectList Partner Program — Earn $150 Per Referral | DFW Wholesalers",
   description:
-    "Join the DirectList affiliate program. Earn $150 for every investor who lists with us through your referral link.",
+    "DFW wholesalers & dispo managers: earn $150 per signup. Monetize your buyers list and convert dead leads into revenue with the DirectList Partner Program.",
   alternates: { canonical: "https://direct-list.com/partners" },
   robots: { index: false, follow: false },
 };
