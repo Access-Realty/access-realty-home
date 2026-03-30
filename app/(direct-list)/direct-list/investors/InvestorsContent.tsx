@@ -166,6 +166,13 @@ export default function InvestorsContent() {
     setStep("contact");
   }, []);
 
+  // Tell the header to hide/show when the modal flow is active
+  useEffect(() => {
+    const event = step !== "info" ? "directlist-flow-active" : "directlist-flow-inactive";
+    window.dispatchEvent(new Event(event));
+    return () => { window.dispatchEvent(new Event("directlist-flow-inactive")); };
+  }, [step]);
+
   // Listen for nav header "Get Started" button
   useEffect(() => {
     const handler = () => startFlow();

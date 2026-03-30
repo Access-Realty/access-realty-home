@@ -3,6 +3,7 @@
 
 "use client";
 
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
@@ -41,6 +42,21 @@ export function DirectListHeader() {
     pathname === "/direct-list/get-started" || pathname === "/get-started";
   const isInvestorsPage =
     pathname === "/direct-list/investors" || pathname === "/investors";
+
+  // Hide header when a checkout/wizard flow is active
+  const [flowActive, setFlowActive] = useState(false);
+  useEffect(() => {
+    const show = () => setFlowActive(true);
+    const hide = () => setFlowActive(false);
+    window.addEventListener("directlist-flow-active", show);
+    window.addEventListener("directlist-flow-inactive", hide);
+    return () => {
+      window.removeEventListener("directlist-flow-active", show);
+      window.removeEventListener("directlist-flow-inactive", hide);
+    };
+  }, []);
+
+  if (flowActive) return null;
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-muted/95 backdrop-blur-sm z-50 border-b border-border shadow-sm">

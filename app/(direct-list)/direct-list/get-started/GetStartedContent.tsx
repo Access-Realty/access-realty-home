@@ -299,6 +299,13 @@ export default function GetStartedContent() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [showCheckout, setShowCheckout] = useState(false);
   const [leadId, setLeadId] = useState<string | null>(null);
+
+  // Tell the header to hide/show when checkout modal is open
+  useEffect(() => {
+    const event = showCheckout ? "directlist-flow-active" : "directlist-flow-inactive";
+    window.dispatchEvent(new Event(event));
+    return () => { window.dispatchEvent(new Event("directlist-flow-inactive")); };
+  }, [showCheckout]);
   const [expandedTiers, setExpandedTiers] = useState<Set<string>>(new Set());
 
   const toggleExpanded = (tierId: string) => {
