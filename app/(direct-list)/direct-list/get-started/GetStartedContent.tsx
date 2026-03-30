@@ -1290,29 +1290,27 @@ export default function GetStartedContent() {
                       I have read and agree to the Terms of Service
                     </span>
                   </label>
-                  <button
-                    onClick={() => setShowCheckout(true)}
-                    disabled={!termsAccepted}
-                    className="w-full py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                  >
-                    Continue to Payment
-                    <HiOutlineArrowRight className="h-4 w-4" />
-                  </button>
-                </div>
-
-                {/* Back Button */}
-                <div>
-                  <button
-                    onClick={() => {
-                      setStep("service");
-                      setSelectedTierId(null);
-                      setTermsAccepted(false);
-                    }}
-                    className="flex items-center gap-2 py-2.5 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
-                  >
-                    <HiOutlineArrowLeft className="h-4 w-4" />
-                    Back to Plans
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button
+                      onClick={() => {
+                        setStep("service");
+                        setSelectedTierId(null);
+                        setTermsAccepted(false);
+                      }}
+                      className="flex items-center gap-2 py-3 px-4 rounded-lg font-medium bg-white border-2 border-primary text-primary hover:bg-primary/5 transition-colors"
+                    >
+                      <HiOutlineArrowLeft className="h-4 w-4" />
+                      Back
+                    </button>
+                    <button
+                      onClick={() => setShowCheckout(true)}
+                      disabled={!termsAccepted}
+                      className="flex-1 py-3 px-6 rounded-lg font-semibold transition-all bg-primary text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                    >
+                      Continue to Payment
+                      <HiOutlineArrowRight className="h-4 w-4" />
+                    </button>
+                  </div>
                 </div>
               </div>
             );
