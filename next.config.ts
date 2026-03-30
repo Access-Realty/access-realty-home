@@ -46,6 +46,18 @@ const nextConfig: NextConfig = {
         destination: "https://direct-list.com/:path*",
         permanent: true,
       },
+      {
+        source: "/app",
+        has: [{ type: "host", value: "direct-list.com" }],
+        destination: "https://access.realty/app",
+        permanent: true,
+      },
+      {
+        source: "/app/:path*",
+        has: [{ type: "host", value: "direct-list.com" }],
+        destination: "https://access.realty/app/:path*",
+        permanent: true,
+      },
     ];
   },
   async rewrites() {
