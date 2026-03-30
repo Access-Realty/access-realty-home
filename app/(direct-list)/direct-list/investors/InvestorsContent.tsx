@@ -568,6 +568,7 @@ export default function InvestorsContent() {
                         setStep("contact");
                       }
                     }}
+                    id="investor-contact-form"
                     className="space-y-4"
                   >
                     {contactError && (
@@ -665,12 +666,6 @@ export default function InvestorsContent() {
                         placeholder="(555) 123-4567"
                       />
                     </div>
-                    <button
-                      type="submit"
-                      className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
-                    >
-                      Continue
-                    </button>
                   </form>
                 </div>
               )}
@@ -740,12 +735,6 @@ export default function InvestorsContent() {
                   <p className="text-sm text-muted-foreground">
                     If this is an investment property, no problem — schedule a quick call and we&apos;ll verify your qualification personally.
                   </p>
-                  <button
-                    onClick={() => setStep("booking")}
-                    className="w-full py-3 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
-                  >
-                    Schedule a Call
-                  </button>
                 </div>
               )}
 
@@ -841,16 +830,33 @@ export default function InvestorsContent() {
               )}
             </div>
 
-            {/* Footer navigation — shown for interactive steps (not checkout, not transient spinners, not success) */}
+            {/* Footer navigation — Back + forward action side by side */}
             {step !== "checkout" && step !== "creating-lead" && step !== "vetting-reviewing" && step !== "success" && backStepMap[step] && (
-              <div className="border-t border-border px-6 py-3">
+              <div className="border-t border-border px-6 py-3 flex items-center justify-between gap-3">
                 <button
                   onClick={goBack}
-                  className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+                  className="flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium text-primary border border-primary/30 rounded-lg hover:bg-primary/5 transition-colors"
                 >
                   <HiArrowLeft className="h-4 w-4" />
                   Back
                 </button>
+                {step === "contact" && (
+                  <button
+                    type="submit"
+                    form="investor-contact-form"
+                    className="flex-1 py-2.5 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                  >
+                    Continue
+                  </button>
+                )}
+                {step === "vetting-failed" && (
+                  <button
+                    onClick={() => setStep("booking")}
+                    className="flex-1 py-2.5 bg-secondary text-secondary-foreground font-semibold rounded-lg hover:bg-secondary/90 transition-colors"
+                  >
+                    Schedule a Call
+                  </button>
+                )}
               </div>
             )}
           </div>
