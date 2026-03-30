@@ -88,10 +88,7 @@ export default function InvestorsContent() {
 
   useEffect(() => {
     if (step !== "checkout" || clientSecret || checkoutLoading || checkoutError) return;
-
-    const controller = new AbortController();
     setCheckoutLoading(true);
-    setCheckoutError(null);
 
     fetch("/api/stripe/create-checkout-session", {
       method: "POST",
@@ -101,7 +98,6 @@ export default function InvestorsContent() {
         source: "investors-page",
         leadId,
       }),
-      signal: controller.signal,
     })
       .then((res) => {
         if (!res.ok) throw new Error("Failed to create checkout session");
@@ -117,7 +113,6 @@ export default function InvestorsContent() {
         }
       })
       .catch((err) => {
-        if (err instanceof DOMException && err.name === "AbortError") return;
         setCheckoutError(
           err instanceof Error ? err.message : "Failed to load checkout"
         );
@@ -125,9 +120,7 @@ export default function InvestorsContent() {
       .finally(() => {
         setCheckoutLoading(false);
       });
-
-    return () => controller.abort();
-  }, [step, clientSecret, checkoutLoading, leadId]);
+  }, [step, clientSecret, checkoutLoading, checkoutError, leadId]);
 
   useEffect(() => {
     if (step !== "checkout") {
@@ -659,7 +652,7 @@ export default function InvestorsContent() {
                       investor_vetting_passed: true,
                       investor_vetting_reason: "Automated vetting passed",
                     });
-                    setStep("checkout");
+                    setTimeout(() => setStep("checkout"), 2000);
                   }}
                   onFail={(reason) => {
                     setVettingFailReason(reason);
