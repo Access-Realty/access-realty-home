@@ -80,7 +80,7 @@ export function DirectListHeader() {
           )}
           <nav className="flex items-center gap-4">
             <a
-              href="/app"
+              href={process.env.NEXT_PUBLIC_APP_URL || "/app"}
               className="text-foreground/70 hover:text-foreground text-sm md:text-base font-medium transition-colors"
             >
               Sign In
