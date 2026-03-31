@@ -54,7 +54,7 @@ export default function Accordion({ items, allowMultiple = false }: AccordionPro
             </button>
             <div
               className={`overflow-hidden transition-all duration-200 ${
-                isOpen ? "max-h-96 pb-5" : "max-h-0"
+                isOpen ? "max-h-[800px] pb-5" : "max-h-0"
               }`}
             >
               <p className="text-muted-foreground">{item.answer}</p>

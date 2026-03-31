@@ -7,7 +7,8 @@ import { useState, useEffect, useCallback, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { HeroSection, Section } from "@/components/layout";
-import { HiArrowLeft, HiCheck, HiChevronDown, HiXMark } from "react-icons/hi2";
+import { HiArrowLeft, HiCheck, HiXMark } from "react-icons/hi2";
+import Accordion from "@/components/ui/Accordion";
 import { loadStripe } from "@stripe/stripe-js";
 import {
   EmbeddedCheckoutProvider,
@@ -28,29 +29,99 @@ const stripePromise = loadStripe(
 // FAQ items for fix & flip investors
 const faqItems = [
   {
-    question: "Will buyer's agents still show my property?",
+    question: "What is DirectList?",
     answer:
-      "Yes. Your property is listed on the MLS, where buyer's agents are already searching. Nothing changes from their perspective.",
+      "DirectList is a flat-fee MLS listing platform built for investors who want maximum exposure without paying traditional commissions.",
   },
   {
-    question: "Who handles negotiations?",
+    question: "How fast can I get my property listed on the MLS?",
     answer:
-      "You stay in control, but you're not alone. Our licensed agents are available to provide guidance and advice whenever you need it without forcing you into a full-service commission.",
+      "Your listing goes live within 24 hours of submission. If you add professional photography, it typically delivers in 2–3 business days, and your listing is activated immediately upon delivery.",
   },
   {
-    question: "Will my home get the same exposure as a traditional listing?",
+    question: "Once my home is listed, where can buyers find it?",
     answer:
-      "Yes. Your flip is listed on the MLS, which feeds major real estate platforms buyers and agents already use. DirectList gives you professional exposure without the premium fees.",
+      "Your property appears on the MLS and syndicates to major platforms including Zillow, Realtor.com, Homes.com, and more.",
   },
   {
-    question: "Is this only for experienced investors?",
+    question: "Are there any hidden fees or additional costs beyond the flat fee?",
     answer:
-      "No. DirectList works for both new and experienced fix & flip investors. The system does most of the work, and support is available if you need it.",
+      "No, there are no hidden fees. Optional add-on services are available: Professional Photos ($149), Floor Plan ($49), On-Market Consultation ($99), On-Site Property Evaluation ($199), Contract Negotiation ($149), and Amendment Negotiation ($149).",
   },
   {
-    question: "What if I need help during the listing?",
+    question: "Are photos included?",
     answer:
-      "You can reach out to our licensed agents anytime for advice, strategy, or clarification. You get help when you want it.",
+      "Photos are not included by default. Professional photography is available as an add-on for $149.",
+  },
+  {
+    question: "What is an On-Market Consultation?",
+    answer:
+      "An optional strategy session that provides guidance on pricing adjustments, market conditions, competing listings, and overall listing strategy.",
+  },
+  {
+    question: "What is an On-Site Property Evaluation?",
+    answer:
+      "An optional service where an agent evaluates your property's condition, reviews comparable sales, and develops a pricing strategy based on current market trends.",
+  },
+  {
+    question: "What is Contract Negotiation?",
+    answer:
+      "An optional service that provides agent guidance through contract terms and direct negotiations with the buyer's agent after an offer is received.",
+  },
+  {
+    question: "What is Amendment Negotiation?",
+    answer:
+      "An optional service that assists with post-inspection repair requests, concession negotiations, and other buyer requests.",
+  },
+  {
+    question: "What happens when I receive an offer?",
+    answer:
+      "You'll be notified immediately when an offer is submitted. You can review the offer through your portal and choose to accept, counter, or decline.",
+  },
+  {
+    question: "How do showings work? Do I need to coordinate them myself?",
+    answer:
+      "No. A professional showing service manages all coordination. You control your availability and can approve or decline showing requests.",
+  },
+  {
+    question: "Can I make changes to my listing after it goes live?",
+    answer:
+      "Yes. Our support team can update your pricing, descriptions, photos, and other details as needed.",
+  },
+  {
+    question: "Do I choose the buyer's agent commission?",
+    answer:
+      "Yes, you decide what to offer. The current market standard is approximately 3%. Offering a lower commission is your choice, but often the commission will be reflected in the offer presented and the amount requested will be reflected in the negotiations.",
+  },
+  {
+    question: "Will my listing look any different to buyers or agents?",
+    answer:
+      "No. Your property appears identical to any traditionally listed home. It is listed through a licensed brokerage and shows up on the MLS and all major search platforms the same way.",
+  },
+  {
+    question: "Can I use my own title company?",
+    answer:
+      "Yes. You can use any title company you prefer, or you can use DirectList's vetted title partner who is already familiar with investor transactions.",
+  },
+  {
+    question: "Is there a limit to how many properties I can list?",
+    answer:
+      "No, there are no limits. DirectList supports single properties and multi-property portfolios.",
+  },
+  {
+    question: "What kind of support do I get throughout the transaction?",
+    answer:
+      "Flexible, on-demand support is available at any stage of the transaction. You choose how much help you need.",
+  },
+  {
+    question: "Can I list land?",
+    answer:
+      "Yes. Land and vacant lots are eligible for listing through DirectList.",
+  },
+  {
+    question: "Does DirectList use licensed realtors?",
+    answer:
+      "Yes, every listing is handled by experienced, licensed real estate professionals who specialize in working with investors.",
   },
 ];
 
@@ -67,7 +138,6 @@ type InvestorStep =
 
 export default function InvestorsContent() {
   const bp = useBrandPath();
-  const [openFaq, setOpenFaq] = useState<number | null>(null);
   const [step, setStep] = useState<InvestorStep>("info");
   const [contactData, setContactData] = useState({
     firstName: "",
@@ -402,38 +472,8 @@ export default function InvestorsContent() {
           </h2>
         </div>
 
-        <div className="space-y-3">
-          {faqItems.map((item, index) => {
-            const isOpen = openFaq === index;
-            return (
-              <div
-                key={index}
-                className="bg-card border border-border rounded-xl overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenFaq(isOpen ? null : index)}
-                  className="w-full flex items-center justify-between px-6 py-4 text-left"
-                  aria-expanded={isOpen}
-                >
-                  <span className="font-semibold text-primary pr-4">
-                    {item.question}
-                  </span>
-                  <HiChevronDown
-                    className={`h-5 w-5 text-primary shrink-0 transition-transform duration-200 ${
-                      isOpen ? "rotate-180" : ""
-                    }`}
-                  />
-                </button>
-                <div
-                  className={`overflow-hidden transition-all duration-200 ${
-                    isOpen ? "max-h-96 pb-4" : "max-h-0"
-                  }`}
-                >
-                  <p className="text-muted-foreground px-6">{item.answer}</p>
-                </div>
-              </div>
-            );
-          })}
+        <div className="bg-card border border-border rounded-xl p-6 md:p-8">
+          <Accordion items={faqItems} />
         </div>
       </Section>
 
