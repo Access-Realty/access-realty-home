@@ -1,0 +1,54 @@
+# ABOUTME: Nightly deploy trigger — pushes a [deploy] commit at midnight CT if there are changes
+# ABOUTME: Also supports manual trigger via workflow_dispatch
+
+name: Nightly Deploy
+
+on:
+  schedule:
+    - cron: '0 6 * * *' # Midnight CT (UTC-6)
+  workflow_dispatch: # Manual trigger from GitHub Actions UI
+
+jobs:
+  deploy-if-changed:
+    name: Deploy if new commits
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check for changes since last deploy
+        id: check
+        run: |
+          LAST_DEPLOY=$(git log --all --grep='\[deploy\]' --format="%H" -1 2>/dev/null || echo "")
+          if [ -z "$LAST_DEPLOY" ]; then
+            echo "No previous [deploy] commit found — deploying"
+            echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+          elif [ "$(git rev-parse HEAD)" = "$LAST_DEPLOY" ]; then
+            echo "HEAD is the last deploy commit — nothing new to deploy"
+            echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+          else
+            COMMITS_SINCE=$(git rev-list "$LAST_DEPLOY"..HEAD --count)
+            echo "$COMMITS_SINCE commits since last deploy"
+            if [ "$COMMITS_SINCE" -gt 0 ]; then
+              echo "should_deploy=true" >> "$GITHUB_OUTPUT"
+            else
+              echo "should_deploy=false" >> "$GITHUB_OUTPUT"
+            fi
+          fi
+
+      - name: Push deploy commit
+        if: steps.check.outputs.should_deploy == 'true' || github.event_name == 'workflow_dispatch'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          EVENT_NAME: ${{ github.event_name }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          DEPLOY_DATE=$(date -u +%Y-%m-%d)
+          git commit --allow-empty -m "[deploy] nightly build ${DEPLOY_DATE}"
+          git push origin main
