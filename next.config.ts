@@ -62,22 +62,30 @@ const nextConfig: NextConfig = {
   },
   async rewrites() {
     if (!appOrigin) return [];
-    return [
-      { source: "/app/:path*", destination: `${appOrigin}/app/:path*` },
-      { source: "/crm/:path*", destination: `${appOrigin}/crm/:path*` },
-      { source: "/buyers/:path*", destination: `${appOrigin}/buyers/:path*` },
-      { source: "/api/:path*", destination: `${appOrigin}/api/:path*` },
-      { source: "/photos/:path*", destination: `${appOrigin}/photos/:path*` },
-      { source: "/assets/:path*", destination: `${appOrigin}/assets/:path*` },
-      {
-        source: "/favicons/:path*",
-        destination: `${appOrigin}/favicons/:path*`,
-      },
-      {
-        source: "/watermarks/:path*",
-        destination: `${appOrigin}/watermarks/:path*`,
-      },
-    ];
+    // Marketing site has its own API routes (leads, stripe, investor-vetting,
+    // etc.) that must be served locally. The /api catch-all goes in `fallback`
+    // so it only applies when no local route matches.
+    return {
+      beforeFiles: [],
+      afterFiles: [
+        { source: "/app/:path*", destination: `${appOrigin}/app/:path*` },
+        { source: "/crm/:path*", destination: `${appOrigin}/crm/:path*` },
+        { source: "/buyers/:path*", destination: `${appOrigin}/buyers/:path*` },
+        { source: "/photos/:path*", destination: `${appOrigin}/photos/:path*` },
+        { source: "/assets/:path*", destination: `${appOrigin}/assets/:path*` },
+        {
+          source: "/favicons/:path*",
+          destination: `${appOrigin}/favicons/:path*`,
+        },
+        {
+          source: "/watermarks/:path*",
+          destination: `${appOrigin}/watermarks/:path*`,
+        },
+      ],
+      fallback: [
+        { source: "/api/:path*", destination: `${appOrigin}/api/:path*` },
+      ],
+    };
   },
 };
 

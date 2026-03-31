@@ -1,7 +1,14 @@
-// ABOUTME: API route for Solutions program inquiries (Price Launch, 2% Payment, etc.)
-// ABOUTME: Sends Slack notification to needs-attention channel
+// ABOUTME: API route for program inquiries and investor lead notifications
+// ABOUTME: Routes Slack notifications to needs-attention (actionable) or app-audit (informational)
 
 import { NextRequest, NextResponse } from "next/server";
+
+type SlackChannel = "needs-attention" | "app-audit";
+
+const SLACK_WEBHOOKS: Record<SlackChannel, string | undefined> = {
+  "needs-attention": process.env.SLACK_WEBHOOK_NEEDS_ATTENTION,
+  "app-audit": process.env.SLACK_WEBHOOK_APP_AUDIT,
+};
 
 interface ProgramInquiryData {
   firstName: string;
@@ -10,109 +17,149 @@ interface ProgramInquiryData {
   phone: string;
   programName: string;
   address: string;
+  channel?: SlackChannel;
   attribution?: {
     originalTouch: string | null;
     latestTouch: string | null;
   };
 }
 
+function buildInquiryBlocks(data: ProgramInquiryData) {
+  return [
+    {
+      type: "header",
+      text: {
+        type: "plain_text",
+        text: "New Program Inquiry",
+        emoji: false,
+      },
+    },
+    {
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: `*Name:*\n${data.firstName} ${data.lastName}`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Program:*\n${data.programName}`,
+        },
+      ],
+    },
+    {
+      type: "section",
+      fields: [
+        {
+          type: "mrkdwn",
+          text: `*Email:*\n<mailto:${data.email}|${data.email}>`,
+        },
+        {
+          type: "mrkdwn",
+          text: `*Phone:*\n${data.phone}`,
+        },
+      ],
+    },
+    ...(data.address
+      ? [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `*Property:*\n${data.address}`,
+            },
+          },
+        ]
+      : []),
+    ...(data.attribution?.originalTouch || data.attribution?.latestTouch
+      ? [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: `*Attribution:*\n${
+                data.attribution.originalTouch
+                  ? `Original: ${data.attribution.originalTouch}`
+                  : ""
+              }${
+                data.attribution.originalTouch && data.attribution.latestTouch
+                  ? "\n"
+                  : ""
+              }${
+                data.attribution.latestTouch &&
+                data.attribution.latestTouch !== data.attribution.originalTouch
+                  ? `Latest: ${data.attribution.latestTouch}`
+                  : ""
+              }`,
+            },
+          },
+        ]
+      : []),
+    {
+      type: "context",
+      elements: [
+        {
+          type: "mrkdwn",
+          text: `Submitted via access.realty/solutions/${data.programName.toLowerCase().replace(/\s+/g, "-")} | ${new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })} CT`,
+        },
+      ],
+    },
+  ];
+}
+
+function buildAuditBlocks(data: ProgramInquiryData) {
+  return [
+    {
+      type: "section",
+      text: {
+        type: "mrkdwn",
+        text: `Investor lead entered checkout flow: *${data.firstName} ${data.lastName}* (${data.email})`,
+      },
+    },
+    ...(data.attribution?.originalTouch
+      ? [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: `Source: ${data.attribution.originalTouch} | ${new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })} CT`,
+              },
+            ],
+          },
+        ]
+      : [
+          {
+            type: "context",
+            elements: [
+              {
+                type: "mrkdwn",
+                text: new Date().toLocaleString("en-US", { timeZone: "America/Chicago" }) + " CT",
+              },
+            ],
+          },
+        ]),
+  ];
+}
+
 async function sendSlackNotification(data: ProgramInquiryData) {
-  const webhookUrl = process.env.SLACK_WEBHOOK_NEEDS_ATTENTION;
+  const channel: SlackChannel = data.channel || "needs-attention";
+  const webhookUrl = SLACK_WEBHOOKS[channel];
 
   if (!webhookUrl) {
-    console.log("Slack webhook not configured, skipping notification");
+    console.log(`Slack webhook for ${channel} not configured, skipping notification`);
     return;
   }
 
-  const message = {
-    blocks: [
-      {
-        type: "header",
-        text: {
-          type: "plain_text",
-          text: "New Program Inquiry",
-          emoji: false,
-        },
-      },
-      {
-        type: "section",
-        fields: [
-          {
-            type: "mrkdwn",
-            text: `*Name:*\n${data.firstName} ${data.lastName}`,
-          },
-          {
-            type: "mrkdwn",
-            text: `*Program:*\n${data.programName}`,
-          },
-        ],
-      },
-      {
-        type: "section",
-        fields: [
-          {
-            type: "mrkdwn",
-            text: `*Email:*\n<mailto:${data.email}|${data.email}>`,
-          },
-          {
-            type: "mrkdwn",
-            text: `*Phone:*\n${data.phone}`,
-          },
-        ],
-      },
-      ...(data.address
-        ? [
-            {
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: `*Property:*\n${data.address}`,
-              },
-            },
-          ]
-        : []),
-      // Attribution info (if available)
-      ...(data.attribution?.originalTouch || data.attribution?.latestTouch
-        ? [
-            {
-              type: "section",
-              text: {
-                type: "mrkdwn",
-                text: `*Attribution:*\n${
-                  data.attribution.originalTouch
-                    ? `Original: ${data.attribution.originalTouch}`
-                    : ""
-                }${
-                  data.attribution.originalTouch && data.attribution.latestTouch
-                    ? "\n"
-                    : ""
-                }${
-                  data.attribution.latestTouch &&
-                  data.attribution.latestTouch !== data.attribution.originalTouch
-                    ? `Latest: ${data.attribution.latestTouch}`
-                    : ""
-                }`,
-              },
-            },
-          ]
-        : []),
-      {
-        type: "context",
-        elements: [
-          {
-            type: "mrkdwn",
-            text: `Submitted via access.realty/solutions/${data.programName.toLowerCase().replace(/\s+/g, "-")} | ${new Date().toLocaleString("en-US", { timeZone: "America/Chicago" })} CT`,
-          },
-        ],
-      },
-    ],
-  };
+  const blocks = channel === "app-audit"
+    ? buildAuditBlocks(data)
+    : buildInquiryBlocks(data);
 
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(message),
+      body: JSON.stringify({ blocks }),
     });
 
     if (!response.ok) {
@@ -126,7 +173,7 @@ async function sendSlackNotification(data: ProgramInquiryData) {
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { firstName, lastName, email, phone, programName, address, attribution } = body as ProgramInquiryData;
+    const { firstName, lastName, email, phone, programName, address, attribution, channel } = body as ProgramInquiryData;
 
     // Validate required fields
     if (!firstName?.trim() || !lastName?.trim() || !email?.trim() || !phone?.trim() || !programName?.trim()) {
@@ -153,6 +200,7 @@ export async function POST(request: NextRequest) {
       phone: phone.trim(),
       programName: programName.trim(),
       address: address?.trim() || "",
+      channel,
       attribution,
     });
 

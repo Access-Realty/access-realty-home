@@ -557,6 +557,7 @@ export default function InvestorsContent() {
                               ...contactData,
                               programName: "DirectList for Investors",
                               address: "",
+                              channel: "app-audit",
                               attribution: {
                                 originalTouch: originalTouch?.utm_source
                                   ? `${originalTouch.utm_source}/${originalTouch.utm_medium || ""}/${originalTouch.utm_campaign || ""}`

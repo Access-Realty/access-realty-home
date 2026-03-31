@@ -117,6 +117,7 @@ Identifies the specific campaign or promotion.
 | `2026_launch` | Metroplex Homebuyers partner campaigns |
 | `absentee-owner` | Absentee owner prospecting |
 | `probate` | Probate list prospecting |
+| `investor_fixnflip` | Facebook investor lookalike audience (FIXNFLIP500 promo) |
 
 ### utm_term
 
