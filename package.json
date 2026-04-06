@@ -17,7 +17,7 @@
     "@sentry/nextjs": "^10.42.0",
     "@stripe/react-stripe-js": "^5.4.1",
     "@stripe/stripe-js": "^8.6.0",
-    "@supabase/supabase-js": "^2.89.0",
+    "@supabase/supabase-js": "^2.101.1",
     "framer-motion": "^12.34.0",
     "lucide-react": "^0.563.0",
     "mapbox-gl": "^3.20.0",
